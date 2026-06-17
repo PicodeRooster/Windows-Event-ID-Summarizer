@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "README.md",
+                "file": "assets/source-js.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for README"
+              "title": "Backlinks for source-js"
             }
           },
           {
@@ -183,6 +183,30 @@
       "bases:Create new base": false
     }
   },
-  "active": "acba3b44ebc6d66b",
-  "lastOpenFiles": []
+  "active": "a149767306c14f8f",
+  "lastOpenFiles": [
+    "assets/source.sh",
+    "assets/Untitled Document",
+    "references/id-list.md",
+    "id-list.md",
+    "full-list.md",
+    "assets/full-list.md",
+    "references/source-js.md",
+    "references/full-list.md",
+    "references/bash-commands-used/printed-ids-only.md",
+    "references/bash-commands-used",
+    "assets/source-js.md",
+    "README.md",
+    "sec.js",
+    "main.js",
+    "assets/bash-commands-used/printed-ids-only.md",
+    "assets/full-list..md",
+    "assets/bash-commands-used/full-list.md",
+    "assets/bash-commands-used",
+    "assets/full-list2.md",
+    "assets",
+    "Untitled Folder",
+    "python/data_collector.py",
+    "python"
+  ]
 }
