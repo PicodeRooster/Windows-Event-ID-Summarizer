@@ -5,11 +5,11 @@ import os
 
 base_url = "https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx"
 
+#List of all Windows Security Event IDs
 with open(os.path.join(os.path.dirname(__file__), "..", "references", "full-list.md"), "r", encoding="utf-8") as f:
     event_ids = f.read().splitlines()
 
 def scrape_content(event_id):
-
     url = f"{base_url}?eventid={event_id}"
     page = urlopen(url)
     html_bytes = page.read()
@@ -68,7 +68,7 @@ for id in event_ids:
         else:
             f.write("," + "\n" + new_json_string)
 
-#Add very last "]" to JSON file
+#Add very last closing bracket "]" to JSON file
 with open(DATA_FILE, "r+", encoding="utf-8") as f:
     lines = f.readlines()
     if lines[-1] == "}":
