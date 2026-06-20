@@ -61,3 +61,34 @@ title = html[start_index:end_index]
 print(title) #Windows Security Log Encyclopedia
 ```
 
+
+demo.py
+Traceback (most recent call last):
+  File "/media/pico/Coco1/Portfolio/Projects/Python/Windows-Event-ID-Summarizer/python/demo.py", line 1, in <module>
+    with open("../assets/data.json", "a", encoding="utf-8") as f:
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+FileNotFoundError: [Errno 2] No such file or directory: '../assets/data.json'
+Let me check the file and project structure.
+
+Read demo.py
+Bash List project root directory
+IN
+ls /media/pico/Coco1/Portfolio/Projects/Python/Windows-Event-ID-Summarizer/
+
+OUT
+assets
+python
+README.md
+references
+The assets/ directory exists but data.json doesn't. The git status also shows assets/data.json as untracked, meaning it exists on disk now — let me check.
+
+Bash List assets directory
+IN
+ls /media/pico/Coco1/Portfolio/Projects/Python/Windows-Event-ID-Summarizer/assets/
+
+OUT
+data.json
+source.sh
+assets/data.json exists. The problem is that ../assets/data.json is a relative path resolved from the current working directory when you run the script, not from the script's location. If you run demo.py from inside the python/ folder it works, but if you run it from the project root it looks for assets/ one level up from there (which doesn't exist).
+
+The fix is to build the path relative to the script file itself:
