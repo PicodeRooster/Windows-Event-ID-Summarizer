@@ -3,17 +3,13 @@ import re
 import json
 import os
 
-'''
-User Security Encyclopedia for log name
-Use Windows learn for event description
-'''
+base_url = "https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx"
 
 #List of all Windows Security Event IDs
 with open(os.path.join(os.path.dirname(__file__), "..", "assets", "full-list.md"), "r", encoding="utf-8") as f:
     event_ids = f.read().splitlines()
 
 def scrape_content(event_id):
-    base_url = "https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx"
     url = f"{base_url}?eventid={event_id}"
     page = urlopen(url)
     html_bytes = page.read()
@@ -32,12 +28,7 @@ def scrape_content(event_id):
     # I DO NOT recommend this approach
     # When available, always scrape content using HTML identifiers
 
-    # --- Goofy Code --- NOT RECOMMENDED --- This might be what can be replaced with Windows Learn
-    #html.find("<td>eventId</td>")
-    #stopPoint = """
-    #</td>
-    #</tr>
-    # """
+    # --- Goofy Code --- NOT RECOMMENDED ---
 
     stopPoint_contentMargin = """
       </div>
@@ -65,7 +56,6 @@ def scrape_content(event_id):
     event_id = dict([('log', log), ('description', description)])
     return event_id
 
-'''
 DATA_FILE = os.path.join(os.path.dirname(__file__), "..", "assets", "data.json")
 
 data = {}
@@ -75,4 +65,3 @@ for id in event_ids:
 
 with open(DATA_FILE, "w", encoding="utf-8") as f:
     json.dump(data, f, indent=2)
-'''
