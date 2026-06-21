@@ -12,7 +12,11 @@ for line in fp:
         continue
     if pos in (0, 3):
         new_line = re.findall(pattern, line, flags=re.DOTALL)
-        print("".join(new_line))
+        if pos == 0:
+            print(f"<id>{new_line[0]}</id>")
+        if pos == 3:
+            print(f"  <description>{new_line[0]}</description>")
+#        print("".join(new_line))
     pos += 1
 
 fp.close()
