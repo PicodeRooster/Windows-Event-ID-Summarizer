@@ -57,19 +57,10 @@ def scrape_content(event_id):
 
 DATA_FILE = os.path.join(os.path.dirname(__file__), "..", "assets", "data.json")
 
+data = {}
+
 for id in event_ids:
-    new_entry = scrape_content(id)
+    data[id] = scrape_content(id)
 
-    with open(DATA_FILE, "a", encoding="utf-8") as f:
-        new_json_string = json.dumps(new_entry, indent=1)
-    
-        if(os.path.getsize(DATA_FILE) == 0):
-            f.write("[\n" + new_json_string)
-        else:
-            f.write("," + "\n" + new_json_string)
-
-#Add very last closing bracket "]" to JSON file
-with open(DATA_FILE, "r+", encoding="utf-8") as f:
-    lines = f.readlines()
-    if lines[-1] == "}":
-        f.write("\n]")    
+with open(DATA_FILE, "w", encoding="utf-8") as f:
+    json.dump(data, f, indent=2)
