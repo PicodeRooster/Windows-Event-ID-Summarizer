@@ -1,104 +1,73 @@
 # Windows Event ID Summarizer
 
-Input Windows Event ID, return simplified summary. 
-Web scrape 
-Data should live in local folder - final product should work offline-free - probably JSON file
-User inputs id number
-Program returns full code text with summary
-AI? Probably, just for personalized summary - info insn't exactly the same each time. 
-Agent is narrow, trained only on its own data. 
-Llama? It's free
+Look up a Windows Event ID and get a plain-language summary back — offline, with no external API calls at query time.
 
-For this setup, a small local model with a strict system prompt and RAG. The strictness of the system prompt is what prevents hallucination/external context — not the model's size.
+## How it works
 
-### The simplest possible stack
+1. **Build the reference data** (`python/xml_build.py`) — scrapes two sources and merges them into `assets/events.xml`:
+   - **[Microsoft Learn — Appendix L: Events to Monitor](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/appendix-l--events-to-monitor)** (`ms_scrape()`) — the definitive list of *which* security Event IDs matter. No per-event description text.
+   - **[Ultimate Windows Security Encyclopedia](https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/default.aspx)** (`uws_scrape()`) — looked up one Event ID at a time via `?eventid=<id>`, for the event title text.
+2. **Summarize at query time** (planned) — a local LLM reads the relevant entry from `events.xml` and generates a natural-language summary, so wording varies without needing internet access or an external API.
 
-**Ollama** (run the model locally, zero setup) + **a small model** + **a Python script that loads your JSON, finds the relevant bits, and stuffs them into the prompt.**
+## Current status
 
-You don't even need a vector DB for this if your JSON isn't enormous. You can do it with pure Python.
+- The scrape pipeline (`ms_scrape → full_list_scrape → uws_scrape → write_out`) runs end-to-end and produces `assets/events.xml` (~500 event IDs).
+- **Known limitation:** UWS's HTML has no reliable identifiers around the actual description paragraph, so only the short event *title* is captured today. The `<description>` field in `events.xml` currently holds that title, not the fuller description text. Fixing this scrape (or finding a better source) is the next step before the data is genuinely useful for summarization.
 
-#### Model recommendation
+  This was the vision, workarounds and all, before ultimately realizing that each eventid link was too inconsistent with its usage of tags to make reliably scrape this section. It would have lead to more manual work to scrape with the fix I had and attempt to remove the unnecessary sections:
 
-**Qwen2.5 3B or Mistral 7B via Ollama** — both are free, run locally, follow instructions well, and small enough to be fast on a regular machine. Qwen2.5 3B will run on basically anything.
+  ```python
+  # The main content is located in a <div> with a class "contentMargin"
+  # so we're using a longer approach to locate the tag holding the event description
 
----
-```
-response = requests.get(URL)
-html_data = response.text
-```
----
+  # --- Event Description ---
+  stopPoint_contentMargin = """
+    </div>
+  </div>
+  """
 
-### Two data sources
+  contentMargin_index = html.find('<div id="contentMargin">')
+  contentMargin_start_index = contentMargin_index + len('<div id="contentMargin">')
+  contentMargin_end_index = html.find(stopPoint_contentMargin, contentMargin_start_index)
+  contentMargin = html[contentMargin_start_index:contentMargin_end_index]
 
-No single website has everything needed, so `xml_build.py` scrapes two sites and merges the results:
+  # Using "contentMargin" as one of our only class names, we can use more sneaky tricks to locate the description
+  startingPoint_description = "</ul>"
+  stopPoint_description = "</p><h2>"
+  description_index = contentMargin.find(startingPoint_description)
+  description_start_index = description_index + len(startingPoint_description)
+  description_end_index = contentMargin.find(stopPoint_description, description_start_index)
+  description = contentMargin[description_start_index:description_end_index].strip()
+  description = re.sub(r'^<p>', '', description)  # easiest way to strip the leading <p> tag
+  ```
 
-1. **Microsoft Learn — [Appendix L: Events to Monitor](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/appendix-l--events-to-monitor)** (`ms_scrape()`) — the source for *which* Event IDs matter. This page has the definitive table of security Event IDs worth tracking, but no per-event description text.
-2. **Ultimate Windows Security Encyclopedia** (`uws_scrape()`, see target source below) — the source for the actual *log name and description* text, looked up one Event ID at a time via `?eventid=<id>`.
+  Full version, comments and all, still lives in [`uws_scrape()`](python/xml_build.py#L48-L75).
+- The summarization/query side (LLM + lookup script) hasn't been built yet.
 
-`full_list_scrape()` ties them together: it walks the ID list, calls `uws_scrape()` for each one, and writes the combined ID + description data out to `events.html` / `events.xml`.
+## Planned stack
 
-Target source. Terms of service mention nothing on webscraping:
-`https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/default.aspx`
+**Ollama** (run a model locally) + a small instruction-tuned model + a Python script that loads `events.xml`, finds the relevant entry, and stuffs it into the prompt. No vector DB needed at this data size — a strict system prompt plus a small, well-scoped context (RAG in the loosest sense) is what keeps the model from hallucinating or pulling in outside context, not model size.
 
-All event id links follow the pattern
-`https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventid=<eventID>`
+Candidate models: **Qwen2.5 3B** or **Mistral 7B** via Ollama — free, local, follow instructions well. Qwen2.5 3B is light enough to run on most hardware.
 
-```
-<div>contentMargin </div>
-        <p class="hey">
-        1105: Event log automatic backup
-    </p>
-    
-    <p>This event is only logged when "When maximum log size is reached:" is set to "Archive the log when full, do not overwrite events". When the log reaches maximum size Windows saves it to %systemroot%\System32\Winevt\Logs\ with the file name Archive-Security-YYYY-MM-DD-HH-MM-SS-NNN.evtx.</p>
+## Usage
 
-```
-
-urllib building block
-
-```
-from urllib.request import urlopen
-
-url = "https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/"
-page = urlopen(url)
-html_bytes = page.read()
-html = html_bytes.decode("utf-8")
-
-title_index = html.find("<title>")
-start_index = title_index + len("<title>")
-end_index = html.find("</title>")
-title = html[start_index:end_index]
-
-print(title) #Windows Security Log Encyclopedia
-```
-```
-Traceback (most recent call last):
-  File "/media/pico/Coco1/Portfolio/Projects/Python/Windows-Event-ID-Summarizer/python/demo.py", line 1, in <module>
-    with open("../assets/data.json", "a", encoding="utf-8") as f:
-         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-FileNotFoundError: [Errno 2] No such file or directory: '../assets/data.json'
+```bash
+python python/xml_build.py
 ```
 
-Read demo.py
-Bash List project root directory
-IN
-ls /media/pico/Coco1/Portfolio/Projects/Python/Windows-Event-ID-Summarizer/
+Rebuilds `assets/events.html` and `assets/events.xml` from scratch by re-scraping both sources.
 
-OUT
-assets
-python
-README.md
-references
-The assets/ directory exists but data.json doesn't. The git status also shows assets/data.json as untracked, meaning it exists on disk now — let me check.
+## Project layout
 
-Bash List assets directory
-IN
-ls /media/pico/Coco1/Portfolio/Projects/Python/Windows-Event-ID-Summarizer/assets/
+```
+python/xml_build.py   scrape + build pipeline
+assets/full-list.md    input list of Event IDs (from ms_scrape)
+assets/events.html      intermediate scrape output
+assets/events.xml       final merged ID + description data
+assets/archive/         earlier scraping attempts, kept for reference
+```
 
-OUT
-data.json
-source.sh
-assets/data.json exists. The problem is that ../assets/data.json is a relative path resolved from the current working directory when you run the script, not from the script's location. If you run demo.py from inside the python/ folder it works, but if you run it from the project root it looks for assets/ one level up from there (which doesn't exist).
+## Notes
 
-The fix is to build the path relative to the script file itself:
-
-Each sites description location was too varied to be able to scrape UWS with my intended method. There may be a different way to scrape the page's content description, but I have only managed to scrape the event ID log title
+- UWS's terms of service don't prohibit scraping; this project scrapes at a low, one-time build rate rather than per-query.

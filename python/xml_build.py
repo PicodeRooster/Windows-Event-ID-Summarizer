@@ -45,34 +45,6 @@ def uws_scrape(event_id):
     log = html[log_start_index:log_end_index].strip()
     log = log[5:].strip()
     
-    ''' The main content is located in a <div> with a class "contentMargin" 
-    so we're using a longer approach to locate the tag holding the event description 
-    
-   # --- Event Description ---   
-    stopPoint_contentMargin = """
-      </div>
-    </div>
-    """
-
-    Te amo Nicole!!!
-
-    contentMargin_index = html.find('<div id="contentMargin">')
-    contentMargin_start_index = contentMargin_index + len('<div id="contentMargin">')
-    contentMargin_end_index = html.find(stopPoint_contentMargin, contentMargin_start_index)
-    contentMargin = html[contentMargin_start_index:contentMargin_end_index]
-  
-    # Using "contentMargin" as one of our only class names, we can use more sneaky tricks to locate the description
-    startingPoint_description= "</ul>"
-    stopPoint_description= "</p><h2>"
-    description_index = contentMargin.find(startingPoint_description)
-    description_start_index = description_index + len(startingPoint_description)
-    description_end_index = contentMargin.find(stopPoint_description, description_start_index)
-    description = contentMargin[description_start_index:description_end_index].strip()
-    description = re.sub(r'^<p>', '', description) # <-- The value for "description" gets reassigned here as it is the easiest way of removing the <p> tag that prints. 
-    
-    # Again, these are work-arounds I used to manage the lack of named tags in the HTML code.
-    # View `ms_scrape.py` for a better demonstration of web scraping code 
-    '''
     event = dict([('event_id', event_id), ('log', log),])
     return event
 
