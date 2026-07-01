@@ -27,6 +27,16 @@ response = requests.get(URL)
 html_data = response.text
 ```
 ---
+
+### Two data sources
+
+No single website has everything needed, so `xml_build.py` scrapes two sites and merges the results:
+
+1. **Microsoft Learn — [Appendix L: Events to Monitor](https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/appendix-l--events-to-monitor)** (`ms_scrape()`) — the source for *which* Event IDs matter. This page has the definitive table of security Event IDs worth tracking, but no per-event description text.
+2. **Ultimate Windows Security Encyclopedia** (`uws_scrape()`, see target source below) — the source for the actual *log name and description* text, looked up one Event ID at a time via `?eventid=<id>`.
+
+`full_list_scrape()` ties them together: it walks the ID list, calls `uws_scrape()` for each one, and writes the combined ID + description data out to `events.html` / `events.xml`.
+
 Target source. Terms of service mention nothing on webscraping:
 `https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/default.aspx`
 
@@ -60,15 +70,13 @@ title = html[start_index:end_index]
 
 print(title) #Windows Security Log Encyclopedia
 ```
-
-
-demo.py
+```
 Traceback (most recent call last):
   File "/media/pico/Coco1/Portfolio/Projects/Python/Windows-Event-ID-Summarizer/python/demo.py", line 1, in <module>
     with open("../assets/data.json", "a", encoding="utf-8") as f:
          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 FileNotFoundError: [Errno 2] No such file or directory: '../assets/data.json'
-Let me check the file and project structure.
+```
 
 Read demo.py
 Bash List project root directory
@@ -92,3 +100,5 @@ source.sh
 assets/data.json exists. The problem is that ../assets/data.json is a relative path resolved from the current working directory when you run the script, not from the script's location. If you run demo.py from inside the python/ folder it works, but if you run it from the project root it looks for assets/ one level up from there (which doesn't exist).
 
 The fix is to build the path relative to the script file itself:
+
+Each sites description location was too varied to be able to scrape UWS with my intended method. There may be a different way to scrape the page's content description, but I have only managed to scrape the event ID log title

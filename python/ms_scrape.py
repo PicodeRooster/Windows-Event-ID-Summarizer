@@ -1,5 +1,4 @@
 from urllib.request import urlopen
-import os
 import re
 
 url = "https://learn.microsoft.com/en-us/windows-server/identity/ad-ds/plan/appendix-l--events-to-monitor"
