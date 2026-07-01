@@ -54,6 +54,8 @@ def uws_scrape(event_id):
     </div>
     """
 
+    Te amo Nicole!!!
+
     contentMargin_index = html.find('<div id="contentMargin">')
     contentMargin_start_index = contentMargin_index + len('<div id="contentMargin">')
     contentMargin_end_index = html.find(stopPoint_contentMargin, contentMargin_start_index)
