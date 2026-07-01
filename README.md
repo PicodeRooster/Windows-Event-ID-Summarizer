@@ -43,6 +43,7 @@ Look up a Windows Event ID and get a plain-language summary back — offline, wi
 
   Full version, comments and all, still lives in [`uws_scrape()`](python/xml_build.py#L48-L75).
 - The summarization/query side (LLM + lookup script) hasn't been built yet.
+- **Design decision:** the goal is a single `xml_build.py` that does exactly three things — 1) scrape the source pages, 2) collect the data, 3) export it to a structured file. Earlier scripts (`json_build.py`, `ms_scrape.py`) tried to split this across multiple files, but once it was clear one script could do the whole job, they were moved to `assets/archive/` rather than kept alongside the working version.
 
 ## Planned stack
 
@@ -63,10 +64,12 @@ Rebuilds `assets/events.html` and `assets/events.xml` from scratch by re-scrapin
 ```
 python/xml_build.py   scrape + build pipeline
 assets/full-list.md    input list of Event IDs (from ms_scrape)
-assets/events.html      intermediate scrape output
-assets/events.xml       final merged ID + description data
+assets/events.html      raw scrape dump — malformed/incorrect HTML, not meant to be parsed as real HTML
+assets/events.xml       the actual database — this is what agents/scripts should read
 assets/archive/         earlier scraping attempts, kept for reference
 ```
+
+`events.html` is just a dumping ground for raw `<tr>`/`<td>` fragments pulled straight out of the source pages — it was never valid HTML and isn't meant to be. It's questionable whether it needs to exist at all, malformed or not; `write_out()` currently parses it as an intermediate step on the way to `events.xml`, but the pipeline could plausibly skip straight to XML.
 
 ## Notes
 
