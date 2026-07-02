@@ -1,6 +1,63 @@
 <?xml version"1.0"?>
     <eventIdListings title="Windows Security Events">
     <event>
+     <id>1</id> 
+      <source>Kernel-EventTracing</source>         
+       <description>The backing-file for the real-time session "PCA file tracing session" has reached its maximum size. As a result, new events will not be logged to this session until space becomes available. This error is often caused by starting a trace session in real-time mode without having any real-time consumers.</description>       
+     </event>
+
+    <event>
+     <id>3</id>  
+      <source>Kernel-EventTracing</source>    
+       <description>Session "Microsoft.Windows.Security.Biometrics.Face/Trace" stopped due to the following error: 0xC0000188</description>       
+     </event>
+
+    <event>
+     <id>4</id>
+      <source>Kernel-EventTracing</source>
+       <description>The maximum file size for session "Microsoft.Windows.Security.Biometrics.Face/Trace" has been reached. As a result, events might be lost (not logged) to file "C:\windows\system32\LogFiles\WMI\FaceTelManually.etl". The maximum files size is currently set to 5242880 bytes.</description>       
+     </event>
+
+    <event>
+     <id>9</id>
+      <source>Security-Kerberos</source>
+       <description>The client has failed to validate the domain controller certificate for [domain controller]. The following error was returned from the certificate validation process: A certificate chain could not be built to a trusted root authority.</description>       
+     </event>
+
+    <event>
+     <id>21</id>
+      <source>HAL</source>
+       <description>The hardware real-time clock was not queried because evaluation of the ACPI Time and Alarm Device method failed.  Status: 0xC00000BB.</description>       
+     </event>
+
+    <event>
+     <id>36</id>
+      <source>Volsnap</source>
+       <description>The shadow copies of volume C: were aborted because the shadow copy storage could not grow due to a user imposed limit.</description>       
+     </event>
+
+    <event>
+     <id>196</id>
+      <description>
+       USB device draining system power when system is idle.                   
+       USB Device: VID: 0xBDA PID: 0x8153 REV: 0x3100             
+       Removal action failed: SkippedAsPersistentIoObserved
+        </description>       
+     </event>
+
+    <event>
+     <id>201</id>
+     <source>DeviceManagement-Enterprise-Diagnostics-Provider</source>
+      <description>MDM Session: OMA-DM message failed to be sent. Result: (Unknown Win32 Error code: 0x801901ad).</description>       
+     </event>
+
+    <event>
+     <id>404</id>
+     <source>DeviceManagement-Enterprise-Diagnostics-Provider</source>
+      <description>MDM ConfigurationManager: Command failure status. Configuration Source ID: (7F67DD5C-C68B-4216-82F4-990223A5ACDC), Enrollment Name: (MDMDeviceWithAAD), Provider Name: (Policy), Command Type: (Add: from Replace or Add), CSP URI: (./Device/Vendor/MSFT/Policy/ConfigOperations/ADMXInstall/Receiver/Properties/Policy/FakePolicy/Version), Result: (The system cannot find the file specified.).</description>       
+     </event>
+
+    <event>
      <id>4618</id>      
       <description>A monitored security event pattern has occurred.</description>       
      </event>
@@ -4014,4 +4071,9 @@
      <id>8191</id>      
       <description>Highest System-Defined Audit Message Value</description>       
      </event>
-     
+
+    <event>
+     <id>16002</id>      
+      <description>Closing a TCP socket with local port number 55157 in process 5284 is taking longer than expected. The local port number may not be available until the close operation is completed. This happens typically due to misbehaving network drivers. Ensure latest updates are installed for Windows and any third-party networking software including NIC drivers, firewalls, or other security products. </description>       
+     </event>   
+<eventIdListings>
