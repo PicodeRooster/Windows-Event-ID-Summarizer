@@ -8,19 +8,19 @@
     
      <id>2</id> 
       <source>Kernel-EventTracing</source>         
-       <description>Session "" failed to start with the following error: 0xC000000D</description>       
+       <description>Session __SESSION_NAME__ failed to start with the following error: 0xC000000D</description>       
      </event>
 
     <event>
      <id>3</id>  
       <source>Kernel-EventTracing</source>    
-       <description>Session "Microsoft.Windows.Security.Biometrics.Face/Trace" stopped due to the following error: 0xC0000188</description>       
+       <description>Session __SESSION_NAME__ stopped due to the following error: 0xC0000188</description>       
      </event>
 
     <event>
      <id>4</id>
       <source>Kernel-EventTracing</source>
-       <description>The maximum file size for session "Microsoft.Windows.Security.Biometrics.Face/Trace" has been reached. As a result, events might be lost (not logged) to file "C:\windows\system32\LogFiles\WMI\FaceTelManually.etl". The maximum files size is currently set to 5242880 bytes.</description>       
+       <description>The maximum file size for session __SESSION_NAME__ has been reached. As a result, events might be lost (not logged) to file "C:\windows\system32\LogFiles\<__SESSION_PATH__>". The maximum files size is currently set to __BYTE_SIZE__ bytes.</description>       
      </event>
 
     <event>
@@ -28,6 +28,13 @@
       <source>Security-Kerberos</source>
        <description>The client has failed to validate the domain controller certificate for [domain controller]. The following error was returned from the certificate validation process: A certificate chain could not be built to a trusted root authority.</description>       
      </event>
+
+    <event>
+     <id>20</id>
+      <source>Windows Update Agent</source>
+       <description>Installation error. Provides the application the update version that failed to install with the application name, along with stop codes.</description>       
+     </event>
+
 
     <event>
      <id>21</id>
@@ -39,6 +46,18 @@
      <id>36</id>
       <source>Volsnap</source>
        <description>The shadow copies of volume C: were aborted because the shadow copy storage could not grow due to a user imposed limit.</description>       
+     </event>
+
+    <event>
+     <id>41</id>
+      <source>Kernel-Power</source>
+       <description>The system has rebooted without cleanly shutting down first. This error could be caused if the system stopped responding, crashed, or lost power unexpectedly.</description>       
+     </event>
+
+    <event>
+     <id>167</id>
+     <source>Hyper-V-Hypervisor</source>
+      <description>The hypervisor did not enable mitigations for side channel vulnerabilities for virtual machines because HyperThreading is enabled. To enable mitigations for virtual machines, disable HyperThreading.</description>       
      </event>
 
     <event>
@@ -57,15 +76,89 @@
      </event>
 
     <event>
+     <id>202</id>
+     <source>DeviceSetupManager</source>
+      <description>The Network List Manager reports no connectivity to the internet.</description>       
+     </event>
+
+    <event>
+     <id>219</id>
+     <source>Kernel-PnP</source>
+      <description>
+        The driver \Driver\WUDFRd failed to load.
+        Device: PCI\VEN_8086&DEV_A71D&SUBSYS_0CFB1028&REV_01\3&11583659&1&20
+        Status: 0xC0000365
+      </description>       
+     </event>
+
+    <event>
      <id>404</id>
       <source>DeviceManagement-Enterprise-Diagnostics-Provider</source>
        <description>MDM ConfigurationManager: Command failure status. Configuration Source ID: (7F67DD5C-C68B-4216-82F4-990223A5ACDC), Enrollment Name: (MDMDeviceWithAAD), Provider Name: (Policy), Command Type: (Add: from Replace or Add), CSP URI: (./Device/Vendor/MSFT/Policy/ConfigOperations/ADMXInstall/Receiver/Properties/Policy/FakePolicy/Version), Result: (The system cannot find the file specified.).</description>       
      </event>
 
+     <event>
+     <id>1000</id>
+     <source>Application Error</source>      
+      <description>.  
+        Faulty application crashings. Provides the application name, version number, time stamp and additional stop codes from Windows environment to review the error in-depth.
+      </description>       
+     </event>
+
+    <event>
+     <id>1022</id>      
+      <source>.NET Runtime</source>      
+      <description>.NET Runtime version 4.0.30319.0 - There was a failure initializing profiling API attach infrastructure.  This process will not allow a profiler to attach.  HRESULT: 0x80004005.  Process ID (decimal): 22268.  Message ID: [0x2509].</description>       
+     </event>
+
+    <event>
+     <id>1026</id>      
+      <source>.NET Runtime</source>      
+      <description>.NET Runtime version 4.0.30319.0 - There was a failure initializing profiling API attach infrastructure.  This process will not allow a profiler to attach.  HRESULT: 0x80004005.  Process ID (decimal): 22268.  Message ID: [0x2509].</description>       
+     </event>
+
+    <event>
+     <id>1100</id>      
+      <description>The event logging service has shut down</description>       
+     </event>
+     
+    <event>
+     <id>1101</id>      
+      <description>Audit events have been dropped by the transport.</description>       
+     </event>
+     
+    <event>
+     <id>1102</id>      
+      <description>The audit log was cleared</description>       
+     </event>
+     
+    <event>
+     <id>1104</id>      
+      <description>The security Log is now full</description>       
+     </event>
+     
+    <event>
+     <id>1105</id>      
+      <description>Event log automatic backup</description>       
+     </event>
+     
+    <event>
+     <id>1108</id>      
+      <description>The event logging service encountered an error</description>       
+     </event>
+     
     <event>
      <id>4108</id>
       <source>DeviceManagement-Enterprise-Diagnostics-Provider</source>      
        <description>MDM Declared Configuration resource cleanup task failed.</description>       
+     </event>
+
+    <event>
+     <id>4227</id>
+      <source>Tcpip</source>      
+       <description>
+       TCP/IP failed to establish an outgoing connection because the selected local endpoint was recently used to connect to the same remote endpoint. This error typically occurs when outgoing connections are opened and closed at a high rate, causing all available local ports to be used and forcing TCP/IP to reuse a local port for an outgoing connection. To minimize the risk of data corruption, the TCP/IP standard requires a minimum time period to elapse between successive connections from a given local endpoint to a given remote endpoint.
+        </description>       
      </event>
 
     <event>
@@ -77,52 +170,7 @@
      <id>4649</id>      
       <description>A replay attack was detected. May be a harmless false positive due to misconfiguration error.</description>       
      </event>
-     
-    <event>
-     <id>4719</id>      
-      <description>System audit policy was changed.</description>       
-     </event>
-     
-    <event>
-     <id>4765</id>      
-      <description>SID History was added to an account.</description>       
-     </event>
-     
-    <event>
-     <id>4766</id>      
-      <description>An attempt to add SID History to an account failed.</description>       
-     </event>
-     
-    <event>
-     <id>4794</id>      
-      <description>An attempt was made to set the Directory Services Restore Mode.</description>       
-     </event>
-     
-    <event>
-     <id>4897</id>      
-      <description>Role separation enabled.</description>       
-     </event>
-     
-    <event>
-     <id>4964</id>      
-      <description>Special groups have been assigned to a new logon.</description>       
-     </event>
-     
-    <event>
-     <id>5124</id>      
-      <description>A security setting was updated on the OCSP Responder Service.</description>       
-     </event>
-     
-    <event>
-     <id>N/A</id>      
-      <description>Possible denial-of-service (DoS) attack.</description>       
-     </event>
-     
-    <event>
-     <id>1102</id>      
-      <description>The audit log was cleared.</description>       
-     </event>
-     
+         
     <event>
      <id>4621</id>      
       <description>Administrator recovered system from CrashOnAuditFail. Users who are not administrators will now be allowed to log on. Some auditable activity might not have been recorded.</description>       
@@ -166,6 +214,11 @@
     <event>
      <id>4716</id>      
       <description>Trusted domain information was modified.</description>       
+     </event>
+          
+    <event>
+     <id>4719</id>      
+      <description>System audit policy was changed.</description>       
      </event>
      
     <event>
@@ -212,12 +265,27 @@
      <id>4764</id>      
       <description>A group's type was changed.</description>       
      </event>
+ 
+    <event>
+     <id>4765</id>      
+      <description>SID History was added to an account.</description>       
+     </event>
      
+    <event>
+     <id>4766</id>      
+      <description>An attempt to add SID History to an account failed.</description>       
+     </event>
+
     <event>
      <id>4780</id>      
       <description>The ACL was set on accounts which are members of administrators groups.</description>       
      </event>
-     
+    
+    <event>
+     <id>4794</id>      
+      <description>An attempt was made to set the Directory Services Restore Mode.</description>       
+     </event>
+        
     <event>
      <id>4816</id>      
       <description>RPC detected an integrity violation while decrypting an incoming message.</description>       
@@ -272,6 +340,11 @@
      <id>4896</id>      
       <description>One or more rows have been deleted from the certificate database.</description>       
      </event>
+
+    <event>
+     <id>4897</id>      
+      <description>Role separation enabled.</description>       
+     </event>
      
     <event>
      <id>4906</id>      
@@ -307,7 +380,12 @@
      <id>4962</id>      
       <description>IPsec dropped an inbound packet that failed a replay check. The inbound packet had too low a sequence number to ensure it was not a replay.</description>       
      </event>
-     
+
+    <event>
+     <id>4964</id>      
+      <description>Special groups have been assigned to a new logon.</description>       
+     </event>
+
     <event>
      <id>4963</id>      
       <description>IPsec dropped an inbound clear text packet that should have been secured. This is usually due to the remote computer changing its IPsec policy without informing this computer. This could also be a spoofing attack attempt.</description>       
@@ -399,6 +477,11 @@
      </event>
      
     <event>
+     <id>5124</id>      
+      <description>A security setting was updated on the OCSP Responder Service.</description>       
+     </event>
+
+    <event>
      <id>5376</id>      
       <description>Credential Manager credentials were backed up.</description>       
      </event>
@@ -442,7 +525,7 @@
      <id>5828</id>      
       <description>The Netlogon service denied a vulnerable Netlogon secure channel connection using a trust account.</description>       
      </event>
-     
+
     <event>
      <id>6145</id>      
       <description>One or more errors occurred while processing security policy in the Group Policy objects.</description>       
@@ -1873,95 +1956,9 @@
       <description>Network Policy Server granted access to a user.</description>       
      </event>
      
-    <event>
-     <id>N/A</id>      
-      <description>A handle to an object was requested.</description>       
-     </event>
+    
      
-    <event>
-     <id>N/A</id>      
-      <description>Object open for delete.</description>       
-     </event>
-     
-    <event>
-     <id>N/A</id>      
-      <description>User Account Type Changed.</description>       
-     </event>
-     
-    <event>
-     <id>N/A</id>      
-      <description>IPsec policy agent started.</description>       
-     </event>
-     
-    <event>
-     <id>N/A</id>      
-      <description>IPsec policy agent disabled.</description>       
-     </event>
-     
-    <event>
-     <id>N/A</id>      
-      <description>IPsec policy agent.</description>       
-     </event>
-     
-    <event>
-     <id>N/A</id>      
-      <description>IPsec policy agent encountered a potential serious failure.</description>       
-     </event>
-     
-    <event>
-     <id>24577</id>      
-      <description>Encryption of volume started.</description>       
-     </event>
-     
-    <event>
-     <id>24578</id>      
-      <description>Encryption of volume stopped.</description>       
-     </event>
-     
-    <event>
-     <id>24579</id>      
-      <description>Encryption of volume completed.</description>       
-     </event>
-     
-    <event>
-     <id>24580</id>      
-      <description>Decryption of volume started.</description>       
-     </event>
-     
-    <event>
-     <id>24581</id>      
-      <description>Decryption of volume stopped.</description>       
-     </event>
-     
-    <event>
-     <id>24582</id>      
-      <description>Decryption of volume completed.</description>       
-     </event>
-     
-    <event>
-     <id>24583</id>      
-      <description>Conversion worker thread for volume started.</description>       
-     </event>
-     
-    <event>
-     <id>24584</id>      
-      <description>Conversion worker thread for volume temporarily stopped.</description>       
-     </event>
-     
-    <event>
-     <id>24588</id>      
-      <description>The conversion operation on volume %2 encountered a bad sector error. Please validate the data on this volume.</description>       
-     </event>
-     
-    <event>
-     <id>24595</id>      
-      <description>Volume %2 contains bad clusters. These clusters will be skipped during conversion.</description>       
-     </event>
-     
-    <event>
-     <id>24621</id>      
-      <description>Initial state check: Rolling volume conversion transaction on %2.</description>       
-     </event>
+
      
     <event>
      <id>5049</id>      
@@ -1973,35 +1970,6 @@
       <description>IPsec Services has started successfully.</description>       
      </event>
      
-    <event>
-     <id>1100</id>      
-      <description>The event logging service has shut down</description>       
-     </event>
-     
-    <event>
-     <id>1101</id>      
-      <description>Audit events have been dropped by the transport.</description>       
-     </event>
-     
-    <event>
-     <id>1102</id>      
-      <description>The audit log was cleared</description>       
-     </event>
-     
-    <event>
-     <id>1104</id>      
-      <description>The security Log is now full</description>       
-     </event>
-     
-    <event>
-     <id>1105</id>      
-      <description>Event log automatic backup</description>       
-     </event>
-     
-    <event>
-     <id>1108</id>      
-      <description>The event logging service encountered an error</description>       
-     </event>
      
     <event>
      <id>4608</id>      
@@ -2834,6 +2802,32 @@
      </event>
      
     <event>
+     
+    <event>
+     <id>4822</id>      
+      <description>NTLM authentication failed because the account was a member of the Protected User group</description>       
+     </event>
+     
+    <event>
+     <id>4823</id>      
+      <description>NTLM authentication failed because access control restrictions are required</description>       
+     </event>
+     
+    <event>
+     <id>4824</id>      
+     
+    <event>
+     <id>4822</id>      
+      <description>NTLM authentication failed because the account was a member of the Protected User group</description>       
+     </event>
+     
+    <event>
+     <id>4823</id>      
+      <description>NTLM authentication failed because access control restrictions are required</description>       
+     </event>
+     
+    <event>
+     <id>4824</id>      
      <id>4826</id>      
       <description>Boot Configuration Data loaded</description>       
      </event>
@@ -4087,4 +4081,100 @@
      <id>16002</id>      
       <description>Closing a TCP socket with local port number 55157 in process 5284 is taking longer than expected. The local port number may not be available until the close operation is completed. This happens typically due to misbehaving network drivers. Ensure latest updates are installed for Windows and any third-party networking software including NIC drivers, firewalls, or other security products. </description>       
      </event>   
+
+    <event>
+     <id>24577</id>      
+      <description>Encryption of volume started.</description>       
+     </event>
+     
+    <event>
+     <id>24578</id>      
+      <description>Encryption of volume stopped.</description>       
+     </event>
+     
+    <event>
+     <id>24579</id>      
+      <description>Encryption of volume completed.</description>       
+     </event>
+     
+    <event>
+     <id>24580</id>      
+      <description>Decryption of volume started.</description>       
+     </event>
+     
+    <event>
+     <id>24581</id>      
+      <description>Decryption of volume stopped.</description>       
+     </event>
+     
+    <event>
+     <id>24582</id>      
+      <description>Decryption of volume completed.</description>       
+     </event>
+     
+    <event>
+     <id>24583</id>      
+      <description>Conversion worker thread for volume started.</description>       
+     </event>
+     
+    <event>
+     <id>24584</id>      
+      <description>Conversion worker thread for volume temporarily stopped.</description>       
+     </event>
+     
+    <event>
+     <id>24588</id>      
+      <description>The conversion operation on volume %2 encountered a bad sector error. Please validate the data on this volume.</description>       
+     </event>
+     
+    <event>
+     <id>24595</id>      
+      <description>Volume %2 contains bad clusters. These clusters will be skipped during conversion.</description>       
+     </event>
+     
+    <event>
+     <id>24621</id>      
+      <description>Initial state check: Rolling volume conversion transaction on %2.</description>       
+     </event>
+
+    <event>
+     <id>N/A</id>      
+      <description>Possible denial-of-service (DoS) attack.</description>       
+     </event>
+
+
+     <event>
+     <id>N/A</id>      
+      <description>A handle to an object was requested.</description>       
+     </event>
+     
+    <event>
+     <id>N/A</id>      
+      <description>Object open for delete.</description>       
+     </event>
+     
+    <event>
+     <id>N/A</id>      
+      <description>User Account Type Changed.</description>       
+     </event>
+     
+    <event>
+     <id>N/A</id>      
+      <description>IPsec policy agent started.</description>       
+     </event>
+     
+    <event>
+     <id>N/A</id>      
+      <description>IPsec policy agent disabled.</description>       
+     </event>
+     
+    <event>
+     <id>N/A</id>      
+      <description>IPsec policy agent.</description>       
+     </event>
+     
+    <event>
+     <id>N/A</id>      
+      <description>IPsec policy agent encountered a potential serious failure.</description>       
+     </event>
 <eventIdListings>
