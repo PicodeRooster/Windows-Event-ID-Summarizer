@@ -5,6 +5,11 @@
       <source>Kernel-EventTracing</source>         
        <description>The backing-file for the real-time session "PCA file tracing session" has reached its maximum size. As a result, new events will not be logged to this session until space becomes available. This error is often caused by starting a trace session in real-time mode without having any real-time consumers.</description>       
      </event>
+    
+     <id>2</id> 
+      <source>Kernel-EventTracing</source>         
+       <description>Session "" failed to start with the following error: 0xC000000D</description>       
+     </event>
 
     <event>
      <id>3</id>  
@@ -53,8 +58,14 @@
 
     <event>
      <id>404</id>
-     <source>DeviceManagement-Enterprise-Diagnostics-Provider</source>
-      <description>MDM ConfigurationManager: Command failure status. Configuration Source ID: (7F67DD5C-C68B-4216-82F4-990223A5ACDC), Enrollment Name: (MDMDeviceWithAAD), Provider Name: (Policy), Command Type: (Add: from Replace or Add), CSP URI: (./Device/Vendor/MSFT/Policy/ConfigOperations/ADMXInstall/Receiver/Properties/Policy/FakePolicy/Version), Result: (The system cannot find the file specified.).</description>       
+      <source>DeviceManagement-Enterprise-Diagnostics-Provider</source>
+       <description>MDM ConfigurationManager: Command failure status. Configuration Source ID: (7F67DD5C-C68B-4216-82F4-990223A5ACDC), Enrollment Name: (MDMDeviceWithAAD), Provider Name: (Policy), Command Type: (Add: from Replace or Add), CSP URI: (./Device/Vendor/MSFT/Policy/ConfigOperations/ADMXInstall/Receiver/Properties/Policy/FakePolicy/Version), Result: (The system cannot find the file specified.).</description>       
+     </event>
+
+    <event>
+     <id>4108</id>
+      <source>DeviceManagement-Enterprise-Diagnostics-Provider</source>      
+       <description>MDM Declared Configuration resource cleanup task failed.</description>       
      </event>
 
     <event>
