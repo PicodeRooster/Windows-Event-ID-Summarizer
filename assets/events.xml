@@ -128,8 +128,9 @@
      </event>
      
     <event>
-     <id>1102</id>      
-      <description>The audit log was cleared</description>       
+     <id>1102</id> 
+      <knowledge>Criticality: Medium/High — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
+       <description>The audit log was cleared</description>       
      </event>
      
     <event>
@@ -162,117 +163,147 @@
      </event>
 
     <event>
-     <id>4618</id>      
+     <id>4618</id>
+     <knowledge>
+     Potentially high criticality — investigate on first occurrence. Important note: Windows does not log Event ID 4618 by default. This event is only generated when a specific audit policy has been configured in advance to monitor for a defined pattern of security events (set via "Audit: Generate monitored security log events" or an equivalent SACL/monitoring rule in Group Policy). Because most systems leave the relevant GPOs set to Not Configured, 4618 will typically be absent from logs even on systems with otherwise healthy auditing — its absence does not indicate that no matching activity occurred, only that monitoring for it wasn't explicitly enabled. If 4618 does appear, treat it as high-signal: it means a predefined suspicious pattern was deliberately configured and then triggered.
+For comprehensive logging, including relevant Event IDs, administrators should configure appropriate audit policies in Computer Configuration\Security Settings\Advanced Audit Policy Configuration and Computer Configuration\Administrative Templates\Windows Components, and other relevant sections of Group Policy. Given these variables, it's essential for organizations to review and, if necessary, adjust their Windows security audit configurations to align with their security and compliance goals. This ensures that significant events are captured in the Windows Event Viewer, effectively supporting security and compliance requirements.
+     </knowledge>      
       <description>A monitored security event pattern has occurred.</description>       
      </event>
-     
+
     <event>
-     <id>4649</id>      
-      <description>A replay attack was detected. May be a harmless false positive due to misconfiguration error.</description>       
-     </event>
-         
-    <event>
-     <id>4621</id>      
+     <id>4621</id>
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>      
       <description>Administrator recovered system from CrashOnAuditFail. Users who are not administrators will now be allowed to log on. Some auditable activity might not have been recorded.</description>       
+     </event> 
+
+    <event>
+     <id>4649</id>
+      <knowledge>
+     This event is logged when Windows detects a Kerberos authentication request that appears to be a replay of a previous request (same authenticator reused within the replay cache window). This is a built-in Kerberos protection and doesn't require special audit policy configuration to trigger — but it does require Kerberos authentication auditing to be enabled and logged in the first place, which itself is not universally on by default depending on version/edition and GPO configuration.
+A 4649 event is inherently high-signal: it indicates either a genuine replay attack attempt, or (more commonly in practice) a client/network issue — such as clock skew, ticket caching bugs, or NAT/load-balancer misconfigurations causing duplicate authentication attempts. Because false positives from misconfiguration are common, 4649 findings should be corroborated against source IP, client behavior, and timing before escalating as malicious.
+For comprehensive logging, including relevant Event IDs, administrators should configure appropriate audit policies in Computer Configuration\Security Settings\Advanced Audit Policy Configuration and Computer Configuration\Administrative Templates\Windows Components, and other relevant sections of Group Policy. Given these variables, it's essential for organizations to review and, if necessary, adjust their Windows security audit configurations to align with their security and compliance goals. This ensures that significant events are captured in the Windows Event Viewer, effectively supporting security and compliance requirements.
+       </knowledge>      
+        <description>A replay attack was detected. May be a harmless false positive due to misconfiguration error.</description>       
      </event>
      
     <event>
-     <id>4675</id>      
-      <description>SIDs were filtered.</description>       
+     <id>4675</id> 
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>     
+       <description>SIDs were filtered.</description>       
      </event>
      
     <event>
-     <id>4692</id>      
-      <description>Backup of data protection master key was attempted.</description>       
+     <id>4692</id>
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>      
+       <description>Backup of data protection master key was attempted.</description>       
      </event>
      
     <event>
-     <id>4693</id>      
-      <description>Recovery of data protection master key was attempted.</description>       
+     <id>4693</id>
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>     
+       <description>Recovery of data protection master key was attempted.</description>       
      </event>
      
     <event>
      <id>4706</id>      
-      <description>A new trust was created to a domain.</description>       
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
+       <description>A new trust was created to a domain.</description>       
      </event>
      
     <event>
-     <id>4713</id>      
-      <description>Kerberos policy was changed.</description>       
+     <id>4713</id>
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>      
+       <description>Kerberos policy was changed.</description>       
      </event>
      
     <event>
-     <id>4714</id>      
-      <description>Encrypted data recovery policy was changed.</description>       
+     <id>4714</id>   
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>   
+       <description>Encrypted data recovery policy was changed.</description>       
      </event>
      
     <event>
-     <id>4715</id>      
-      <description>The audit policy (SACL) on an object was changed.</description>       
+     <id>4715</id>
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>      
+       <description>The audit policy (SACL) on an object was changed.</description>       
      </event>
      
     <event>
-     <id>4716</id>      
-      <description>Trusted domain information was modified.</description>       
+     <id>4716</id>  
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>    
+       <description>Trusted domain information was modified.</description>       
      </event>
           
     <event>
-     <id>4719</id>      
+     <id>4719</id> 
+     <knowledge>Potentially high criticality — investigate on first occurrence.</knowledge>     
       <description>System audit policy was changed.</description>       
      </event>
      
     <event>
-     <id>4724</id>      
-      <description>An attempt was made to reset an account's password.</description>       
+     <id>4724</id>  
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>    
+        <description>An attempt was made to reset an account's password.</description>       
      </event>
      
     <event>
-     <id>4727</id>      
-      <description>A security-enabled global group was created.</description>       
+     <id>4727</id>   
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>   
+       <description>A security-enabled global group was created.</description>       
      </event>
      
     <event>
-     <id>4735</id>      
-      <description>A security-enabled local group was changed.</description>       
+     <id>4735</id>
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>      
+       <description>A security-enabled local group was changed.</description>       
      </event>
      
     <event>
      <id>4737</id>      
-      <description>A security-enabled global group was changed.</description>       
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
+       <description>A security-enabled global group was changed.</description>       
      </event>
      
     <event>
-     <id>4739</id>      
-      <description>Domain Policy was changed.</description>       
+     <id>4739</id> 
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>     
+       <description>Domain Policy was changed.</description>       
      </event>
      
     <event>
-     <id>4754</id>      
-      <description>A security-enabled universal group was created.</description>       
+     <id>4754</id>   
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>   
+       <description>A security-enabled universal group was created.</description>       
      </event>
      
     <event>
-     <id>4755</id>      
-      <description>A security-enabled universal group was changed.</description>       
+     <id>4755</id>  
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>    
+       <description>A security-enabled universal group was changed.</description>       
      </event>
      
     <event>
-     <id>4764</id>      
-      <description>A security-disabled group was deleted.</description>       
+     <id>4764</id> 
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>     
+       <description>A security-disabled group was deleted.</description>       
      </event>
      
     <event>
-     <id>4764</id>      
-      <description>A group's type was changed.</description>       
+     <id>4764</id>
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>      
+       <description>A group's type was changed.</description>       
      </event>
  
     <event>
-     <id>4765</id>      
+     <id>4765</id>
+     <knowledge>Potentially high criticality — investigate on first occurrence.</knowledge>
       <description>SID History was added to an account.</description>       
      </event>
      
     <event>
      <id>4766</id>      
+     <knowledge>Potentially high criticality — investigate on first occurrence.</knowledge>
       <description>An attempt to add SID History to an account failed.</description>       
      </event>
 
@@ -282,292 +313,350 @@
      </event>
     
     <event>
-     <id>4794</id>      
+     <id>4794</id>
+     <knowledge>Potentially high criticality — investigate on first occurrence.</knowledge>
       <description>An attempt was made to set the Directory Services Restore Mode.</description>       
      </event>
         
     <event>
      <id>4816</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>RPC detected an integrity violation while decrypting an incoming message.</description>       
      </event>
      
     <event>
      <id>4865</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>A trusted forest information entry was added.</description>       
      </event>
      
     <event>
      <id>4866</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>A trusted forest information entry was removed.</description>       
      </event>
      
     <event>
      <id>4867</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>A trusted forest information entry was modified.</description>       
      </event>
      
     <event>
      <id>4868</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The certificate manager denied a pending certificate request.</description>       
      </event>
      
     <event>
      <id>4870</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Certificate Services revoked a certificate.</description>       
      </event>
      
     <event>
      <id>4882</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The security permissions for Certificate Services changed.</description>       
      </event>
      
     <event>
      <id>4885</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The audit filter for Certificate Services changed.</description>       
      </event>
      
     <event>
      <id>4890</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The certificate manager settings for Certificate Services changed.</description>       
      </event>
      
     <event>
      <id>4892</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>A property of Certificate Services changed.</description>       
      </event>
      
     <event>
      <id>4896</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>One or more rows have been deleted from the certificate database.</description>       
      </event>
 
     <event>
      <id>4897</id>      
+     <knowledge>Potentially high criticality — investigate on first occurrence.</knowledge>
       <description>Role separation enabled.</description>       
      </event>
      
     <event>
      <id>4906</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The CrashOnAuditFail value has changed.</description>       
      </event>
      
     <event>
      <id>4907</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Auditing settings on object were changed.</description>       
      </event>
      
     <event>
      <id>4908</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Special Groups Logon table modified.</description>       
      </event>
      
     <event>
      <id>4912</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Per User Audit Policy was changed.</description>       
      </event>
      
     <event>
      <id>4960</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec dropped an inbound packet that failed an integrity check. If this problem persists, it could indicate a network issue or that packets are being modified in transit to this computer. Verify that the packets sent from the remote computer are the same as those received by this computer. This error might also indicate interoperability problems with other IPsec implementations.</description>       
      </event>
      
     <event>
      <id>4961</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec dropped an inbound packet that failed a replay check. If this problem persists, it could indicate a replay attack against this computer.</description>       
      </event>
      
     <event>
      <id>4962</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec dropped an inbound packet that failed a replay check. The inbound packet had too low a sequence number to ensure it was not a replay.</description>       
      </event>
 
     <event>
-     <id>4964</id>      
+     <id>4964</id>   
+     <knowledge>Potentially high criticality — investigate on first occurrence.</knowledge>
       <description>Special groups have been assigned to a new logon.</description>       
      </event>
 
     <event>
      <id>4963</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec dropped an inbound clear text packet that should have been secured. This is usually due to the remote computer changing its IPsec policy without informing this computer. This could also be a spoofing attack attempt.</description>       
      </event>
      
     <event>
      <id>4965</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec received a packet from a remote computer with an incorrect Security Parameter Index (SPI). This is usually caused by malfunctioning hardware that is corrupting packets. If these errors persist, verify that the packets sent from the remote computer are the same as those received by this computer. This error may also indicate interoperability problems with other IPsec implementations. In that case, if connectivity is not impeded, then these events can be ignored.</description>       
      </event>
      
     <event>
      <id>4976</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>During Main Mode negotiation, IPsec received an invalid negotiation packet. If this problem persists, it could indicate a network issue or an attempt to modify or replay this negotiation.</description>       
      </event>
      
     <event>
      <id>4977</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>During Quick Mode negotiation, IPsec received an invalid negotiation packet. If this problem persists, it could indicate a network issue or an attempt to modify or replay this negotiation.</description>       
      </event>
      
     <event>
      <id>4978</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>During Extended Mode negotiation, IPsec received an invalid negotiation packet. If this problem persists, it could indicate a network issue or an attempt to modify or replay this negotiation.</description>       
      </event>
      
     <event>
      <id>4983</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>An IPsec Extended Mode negotiation failed. The corresponding Main Mode security association has been deleted.</description>       
      </event>
      
     <event>
      <id>4984</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>An IPsec Extended Mode negotiation failed. The corresponding Main Mode security association has been deleted.</description>       
      </event>
      
     <event>
      <id>5027</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Windows Firewall Service was unable to retrieve the security policy from the local storage. The service will continue enforcing the current policy.</description>       
      </event>
      
     <event>
      <id>5028</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Windows Firewall Service was unable to parse the new security policy. The service will continue with currently enforced policy.</description>       
      </event>
      
     <event>
      <id>5029</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Windows Firewall Service failed to initialize the driver. The service will continue to enforce the current policy.</description>       
      </event>
      
     <event>
      <id>5030</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Windows Firewall Service failed to start.</description>       
      </event>
      
     <event>
      <id>5035</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Windows Firewall Driver failed to start.</description>       
      </event>
      
     <event>
      <id>5037</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Windows Firewall Driver detected critical runtime error. Terminating.</description>       
      </event>
      
     <event>
      <id>5038</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Code integrity determined that the image hash of a file is not valid. The file could be corrupt due to unauthorized modification or the invalid hash could indicate a potential disk device error.</description>       
      </event>
      
     <event>
      <id>5120</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>OCSP Responder Service Started.</description>       
      </event>
      
     <event>
      <id>5121</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>OCSP Responder Service Stopped.</description>       
      </event>
      
     <event>
      <id>5122</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>A configuration entry changed in OCSP Responder Service.</description>       
      </event>
      
     <event>
      <id>5123</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>A configuration entry changed in OCSP Responder Service.</description>       
      </event>
      
     <event>
      <id>5124</id>      
+     <knowledge>Potentially high criticality — investigate on first occurrence.</knowledge>
       <description>A security setting was updated on the OCSP Responder Service.</description>       
      </event>
 
     <event>
      <id>5376</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Credential Manager credentials were backed up.</description>       
      </event>
      
     <event>
      <id>5377</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Credential Manager credentials were restored from a backup.</description>       
      </event>
      
     <event>
      <id>5453</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>An IPsec negotiation with a remote computer failed because the IKE and AuthIP IPsec Keying Modules (IKEEXT) service is not started.</description>       
      </event>
      
     <event>
      <id>5480</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec Services failed to get the complete list of network interfaces on the computer. This poses a potential security risk because some of the network interfaces may not get the protection provided by the applied IPsec filters. Use the IP Security Monitor snap-in to diagnose the problem.</description>       
      </event>
      
     <event>
      <id>5483</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec Services failed to initialize RPC server. IPsec Services could not be started.</description>       
      </event>
      
     <event>
      <id>5484</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec Services has experienced a critical failure and has been shut down. The shutdown of IPsec Services can put the computer at greater risk of network attack or expose the computer to potential security risks.</description>       
      </event>
      
     <event>
      <id>5485</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec Services failed to process some IPsec filters on a plug-and-play event for network interfaces. This poses a potential security risk because some of the network interfaces may not get the protection provided by the applied IPsec filters. Use the IP Security Monitor snap-in to diagnose the problem.</description>       
      </event>
      
     <event>
      <id>5827</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Netlogon service denied a vulnerable Netlogon secure channel connection from a machine account.</description>       
      </event>
      
     <event>
      <id>5828</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Netlogon service denied a vulnerable Netlogon secure channel connection using a trust account.</description>       
      </event>
 
     <event>
      <id>6145</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>One or more errors occurred while processing security policy in the Group Policy objects.</description>       
      </event>
      
     <event>
      <id>6273</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server denied access to a user.</description>       
      </event>
      
     <event>
      <id>6274</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server discarded the request for a user.</description>       
      </event>
      
     <event>
      <id>6275</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server discarded the accounting request for a user.</description>       
      </event>
      
     <event>
      <id>6276</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server quarantined a user.</description>       
      </event>
      
     <event>
      <id>6277</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server granted access to a user but put it on probation because the host did not meet the defined health policy.</description>       
      </event>
      
     <event>
      <id>6278</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server granted full access to a user because the host met the defined health policy.</description>       
      </event>
      
     <event>
      <id>6279</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server locked the user account due to repeated failed authentication attempts.</description>       
      </event>
      
     <event>
      <id>6280</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server unlocked the user account.</description>       
      </event>
      
@@ -583,21 +672,25 @@
      
     <event>
      <id>24586</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>An error was encountered converting volume.</description>       
      </event>
      
     <event>
      <id>24592</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>An attempt to automatically restart conversion on volume %2 failed.</description>       
      </event>
      
     <event>
      <id>24593</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Metadata write: Volume %2 returning errors while trying to modify metadata. If failures continue, decrypt volume.</description>       
      </event>
      
     <event>
      <id>24594</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Metadata rebuild: An attempt to write a copy of metadata on volume %2 failed and may appear as disk corruption. If failures continue, decrypt volume.</description>       
      </event>
      
@@ -2753,6 +2846,7 @@
      
     <event>
      <id>4816</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>RPC detected an integrity violation while decrypting an incoming message</description>       
      </event>
      
@@ -2844,21 +2938,25 @@
      
     <event>
      <id>4865</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>A trusted forest information entry was added</description>       
      </event>
      
     <event>
      <id>4866</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>A trusted forest information entry was removed</description>       
      </event>
      
     <event>
      <id>4867</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>A trusted forest information entry was modified</description>       
      </event>
      
     <event>
      <id>4868</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The certificate manager denied a pending certificate request</description>       
      </event>
      
@@ -2869,6 +2967,7 @@
      
     <event>
      <id>4870</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Certificate Services revoked a certificate</description>       
      </event>
      
@@ -2929,6 +3028,7 @@
      
     <event>
      <id>4882</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The security permissions for Certificate Services changed</description>       
      </event>
      
@@ -2944,6 +3044,7 @@
      
     <event>
      <id>4885</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The audit filter for Certificate Services changed</description>       
      </event>
      
@@ -2969,6 +3070,7 @@
      
     <event>
      <id>4890</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The certificate manager settings for Certificate Services changed.</description>       
      </event>
      
@@ -2979,6 +3081,7 @@
      
     <event>
      <id>4892</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>A property of Certificate Services changed</description>       
      </event>
      
@@ -2999,6 +3102,7 @@
      
     <event>
      <id>4896</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>One or more rows have been deleted from the certificate database</description>       
      </event>
      
@@ -3039,16 +3143,19 @@
      
     <event>
      <id>4906</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The CrashOnAuditFail value has changed</description>       
      </event>
      
     <event>
      <id>4907</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Auditing settings on object were changed</description>       
      </event>
      
     <event>
      <id>4908</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Special Groups Logon table modified</description>       
      </event>
      
@@ -3069,6 +3176,7 @@
      
     <event>
      <id>4912</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Per User Audit Policy was changed</description>       
      </event>
      
@@ -3199,21 +3307,25 @@
      
     <event>
      <id>4960</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec dropped an inbound packet that failed an integrity check</description>       
      </event>
      
     <event>
      <id>4961</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec dropped an inbound packet that failed a replay check</description>       
      </event>
      
     <event>
      <id>4962</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec dropped an inbound packet that failed a replay check</description>       
      </event>
      
     <event>
      <id>4963</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec dropped an inbound clear text packet that should have been secured</description>       
      </event>
      
@@ -3224,21 +3336,25 @@
      
     <event>
      <id>4965</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec received a packet from a remote computer with an incorrect Security Parameter Index (SPI).</description>       
      </event>
      
     <event>
      <id>4976</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>During Main Mode negotiation, IPsec received an invalid negotiation packet.</description>       
      </event>
      
     <event>
      <id>4977</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>During Quick Mode negotiation, IPsec received an invalid negotiation packet.</description>       
      </event>
      
     <event>
      <id>4978</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>During Extended Mode negotiation, IPsec received an invalid negotiation packet.</description>       
      </event>
      
@@ -3264,11 +3380,13 @@
      
     <event>
      <id>4983</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>An IPsec Extended Mode negotiation failed</description>       
      </event>
      
     <event>
      <id>4984</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>An IPsec Extended Mode negotiation failed</description>       
      </event>
      
@@ -3289,21 +3407,25 @@
      
     <event>
      <id>5027</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Windows Firewall Service was unable to retrieve the security policy from the local storage</description>       
      </event>
      
     <event>
      <id>5028</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Windows Firewall Service was unable to parse the new security policy.</description>       
      </event>
      
     <event>
      <id>5029</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Windows Firewall Service failed to initialize the driver</description>       
      </event>
      
     <event>
      <id>5030</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Windows Firewall Service failed to start</description>       
      </event>
      
@@ -3329,16 +3451,19 @@
      
     <event>
      <id>5035</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Windows Firewall Driver failed to start</description>       
      </event>
      
     <event>
      <id>5037</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>The Windows Firewall Driver detected critical runtime error. Terminating</description>       
      </event>
      
     <event>
      <id>5038</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Code integrity determined that the image hash of a file is not valid</description>       
      </event>
      
@@ -3489,21 +3614,25 @@
      
     <event>
      <id>5120</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>OCSP Responder Service Started</description>       
      </event>
      
     <event>
      <id>5121</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>OCSP Responder Service Stopped</description>       
      </event>
      
     <event>
      <id>5122</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>A Configuration entry changed in the OCSP Responder Service</description>       
      </event>
      
     <event>
      <id>5123</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>A configuration entry changed in the OCSP Responder Service</description>       
      </event>
      
@@ -3664,11 +3793,13 @@
      
     <event>
      <id>5376</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Credential Manager credentials were backed up</description>       
      </event>
      
     <event>
      <id>5377</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Credential Manager credentials were restored from a backup</description>       
      </event>
      
@@ -3759,6 +3890,7 @@
      
     <event>
      <id>5453</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>An IPsec negotiation with a remote computer failed because the IKE and AuthIP IPsec Keying Modules (IKEEXT) service is not started</description>       
      </event>
      
@@ -3864,21 +3996,25 @@
      
     <event>
      <id>5480</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec Services failed to get the complete list of network interfaces on the computer</description>       
      </event>
      
     <event>
      <id>5483</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec Services failed to initialize RPC server. IPsec Services could not be started</description>       
      </event>
      
     <event>
      <id>5484</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec Services has experienced a critical failure and has been shut down</description>       
      </event>
      
     <event>
      <id>5485</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>IPsec Services failed to process some IPsec filters on a plug-and-play event for network interfaces</description>       
      </event>
      
@@ -3919,6 +4055,7 @@
      
     <event>
      <id>6145</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>One or more errors occured while processing security policy in the group policy objects</description>       
      </event>
      
@@ -3929,41 +4066,49 @@
      
     <event>
      <id>6273</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server denied access to a user</description>       
      </event>
      
     <event>
      <id>6274</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server discarded the request for a user</description>       
      </event>
      
     <event>
      <id>6275</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server discarded the accounting request for a user</description>       
      </event>
      
     <event>
      <id>6276</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server quarantined a user</description>       
      </event>
      
     <event>
      <id>6277</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server granted access to a user but put it on probation because the host did not meet the defined health policy</description>       
      </event>
      
     <event>
      <id>6278</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server granted full access to a user because the host met the defined health policy</description>       
      </event>
      
     <event>
      <id>6279</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server locked the user account due to repeated failed authentication attempts</description>       
      </event>
      
     <event>
      <id>6280</id>      
+     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
       <description>Network Policy Server unlocked the user account</description>       
      </event>
      
@@ -4138,7 +4283,7 @@
      </event>
 
     <event>
-     <id>N/A</id>      
+     <id>550</id>      
       <description>Possible denial-of-service (DoS) attack.</description>       
      </event>
 
