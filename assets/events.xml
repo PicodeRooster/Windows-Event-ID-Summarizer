@@ -2271,7 +2271,8 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4651</id>      
+     <id>4651</id> 
+     <knowledge>An IPsec Main Mode security association was established. Extended Mode was not enabled.  A certificate was used for authentication.</knowledge>     
       <description>An IPsec Main Mode security association was established</description>       
      </event>
      
@@ -2296,27 +2297,62 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4656</id>      
+     <id>4656</id>  
+     <knowledge>
+     
+     This event is logged by multiple subcategories as indicated above.
+
+     When you enable auditing on an object (e.g. file or folder), this is the first event recorded when an application attempts to access the object in such a way that matches the audit policy defined for that object in terms of who is requesting the access and what type of access is being requested. (it appears that two subcategories must be enabled, Handle Manipulation and one other such as File System or Registry depending on what type of object you are auditing.)
+
+     This event will be Audit Success or Audit Failure depending on whether the user account under which the account is running has the requested permissions or not. 
+
+     This event's sub category will vary depending on type of object. In the example above notepad.exe running as Administrator successfully opened "New Text Document.txt" for Read access.
+
+     This event does not always mean any access successfully requested was actually exercised - just that it was successfully obtained (if the event is Audit Success of course).  To determine if any of the permissions requested were actually exercised look forward in the log for 4663 with the same Handle ID.</knowledge>    
       <description>A handle to an object was requested</description>       
      </event>
      
     <event>
-     <id>4657</id>      
+     <id>4657</id>     
+     <knowledge>
+     This event documents creation, modification and deletion of registry VALUES.  This event is logged between the open (4656) and close (4658) events for the registry KEY where the value resides.  See Operation Type to find out if the value was created, modified or deleted. Of course this event will only be logged if the key's audit policy is enabled for Set Value permission for the appropriate user or a group in the user is a member.
+     </knowledge> 
       <description>A registry value was modified</description>       
      </event>
      
     <event>
-     <id>4658</id>      
+     <id>4658</id> 
+     <knowledge>After successfully opening an object, a program eventually closes it which is documented by this event.  4658 helps you determine how long the object was open. For this event to be useful you must link it back to the earlier event ID 4656 with the same handle ID.</knowledge>  
       <description>The handle to an object was closed</description>       
      </event>
      
     <event>
-     <id>4659</id>      
+     <id>4659</id>  
+     <knowledge>
+      This event should be logged whenever your install a patch that requires replacement of a file that is already opened by Windows and can't be closed until shut down.
+
+      According to Microsoft it is used by file systems when the FILE_DELETE_ON_CLOSE flag is specified in Createfile(). This flag is the only way to delete files that were opened exclusively by another program.
+
+      The event is listed as a special multi-use sub-category. The sub-category would depend on the type of object being audited.
+</knowledge>
+
+
+    
       <description>A handle to an object was requested with intent to delete</description>       
      </event>
      
     <event>
      <id>4660</id>      
+      <knowledge>
+      This event is logged by multiple subcategories as indicated above.
+
+      This event is logged when an object is deleted where that object's audit policy has auditing enabled for deletions for the user who just deleted it or a group to which the user belongs.
+
+      To find out the object's name and type you will need to correlate back to to the event 4656 that has the same Handle ID.
+
+      In addition to this event you will also get event 4663 when you delete the object; Accesses: will include DELETE. 4663 identifies the object's name without requiring correlation to 4656.
+  </knowledge>
+
       <description>An object was deleted</description>       
      </event>
      
