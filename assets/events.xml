@@ -764,28 +764,60 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4612</id>      
-      <description>Internal resources allocated for the queuing of audit messages have been exhausted, leading to the loss of some audits.</description>       
+     <id>4612</id> 
+      <knowledge>
+      This event has not been observed but would indicate that an extremely high period of activity prevented Windows from logging a number of security events. I haven't been able to produce this event. Have you? If so, please start a discussion (see above) and post a sample along with any comments you may have! Don't forget to sanitize any private information.
+
+      Microsoft reports they have tested logging to over 10,000 events per second. However a bottleneck in disk I/O or other resources could also cause a problem.  If you see this event it probably means you are auditing too much.
+      </knowledge>     
+       <description>Internal resources allocated for the queuing of audit messages have been exhausted, leading to the loss of some audits.</description>       
      </event>
      
     <event>
-     <id>4614</id>      
-      <description>A notification package has been loaded by the Security Account Manager.</description>       
+     <id>4614</id>
+      <knowledge>
+      An occurrence of Event 4614 is logged for each notification package on the system.
+
+      Notification packages are DLLs that Windows calls into whenenever a user changes his/her password. The purpose of a notification package is to let you evaluate passwords against your own rules for acceptability. The notification package answers back whether or not the password is acceptable. Notification packages are also used to implement password synchronization systems.
+
+      A rogue notification package would be a devastating security breach because notification packages are supplied with the clear text of the password and are simpler to write and install than authentication packages and logon processes (see 4610, 4611, and 4622).
+
+      Standard notification packages for Windows server 2008:
+
+       - scecli
+       - RASSFM
+       - WDIGEST
+       - KDCSVC
+      </knowledge>      
+       <description>A notification package has been loaded by the Security Account Manager.</description>       
      </event>
      
     <event>
      <id>4615</id>      
+      <knowledge>LPC is used for communication between threads or processes or for communication between kernel mode and user mode components. The communication can be on the same computer between the client and server functions. In 2000 there were several LPC port spoofing vulnerabilities patched for Windows NT.<knowledge>
       <description>Invalid use of LPC port.</description>       
      </event>
      
     <event>
      <id>4616</id>      
-      <description>The system time was changed.</description>       
+      <knowledge>
+      This event indicates the old and new system time as well as who did it as specified in the Subject: section.  Process information shows the program that was used to change the time.  Changing the time manually from the taskbar uses rundll.exe as shown in the example.
+
+      It is routine to see this event where subject is "LOCAL SERVICE", process name is "svchost.exe"  and can be ignored. You will see this event logged twice in a row for whatever reason.
+
+      Events showing a change by an actual user and a process like rundll.exe indicate a time change outside the normal Windows Time Service.
+
+      The format of date/time changes from Win2008 and Win2012 as shown in the examples.
+      </knowledge>
+       <description>The system time was changed.</description>       
      </event>
      
     <event>
-     <id>4622</id>      
-      <description>A security package has been loaded by the Local Security Authority.</description>       
+     <id>4622</id>     
+      <knowledge>
+      Security packages are yet another type of plug-in that extends security functionality in Windows.  MSDN defines a security package as "The software implementation of a security protocol. Security packages are contained in security support provider DLLs or security support provider/authentication package DLLs." From http://msdn2.microsoft.com/en-us/library/aa380130.aspx: Windows operating system supports authentication using security packages that function as both security support providers and as authentication packages. Security packages provide the logon process support services of a Windows authentication package and also provide authentication services to applications by implementing a set of functions that are mapped to the Security Support Provider Interface (SSPI). The security implication of event 4622 realistically, is low. Although a rogue package could cause great harm by stealing credentials at the time of logon, the effort required in developing and installing a rogue security package is significant.
+      </knowledge> 
+       <description>A security package has been loaded by the Local Security Authority.</description>       
      </event>
      
     <event>
