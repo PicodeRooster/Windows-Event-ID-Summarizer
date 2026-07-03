@@ -1,6 +1,6 @@
 # Windows Event ID Summarizer
 
-Look up a Windows Event ID and get a plain-language summary back — offline, with no external API calls at query time.
+A look-up tool for Windows Security Event Logs where the user inputs the desired event id and receives an AI-generated summary plain English. The goal is for the tool to function completely offline, with no external API calls at query time. It uses a local database with an LLM agent that runs locally. The agent reads the desired event id and returns an unique, but accurate explanation each time.
 
 ## How it works
 
