@@ -749,17 +749,18 @@ For comprehensive logging, including relevant Event IDs, administrators should c
 
       Standard logon processes for Windows Server 2008:
       
-      - Winlogon
-      - Schannell
-      - KSecDD
-      - Secondary Logon Service (runas)
-      - IKE
-      - HTTP.SYS
-      - SspTest
-      - dsRole
-      - DS Replication CredProvConsent (user account control)
-
-       </knowledge>    
+      <ul>
+       <li>Winlogon</li>
+       <li>Schannell</li>
+       <li>KSecDD</li>
+       <li>Secondary Logon Service (runas)</li>
+       <li>IKE</li>
+       <li>HTTP.SYS</li>
+       <li>SspTest</li>
+       <li>dsRole</li>
+       <li>DS Replication CredProvConsent (user account control)</li>
+      </ul>
+    </knowledge>    
         <description>A trusted logon process has been registered with the Local Security Authority.</description>       
      </event>
      
@@ -784,10 +785,12 @@ For comprehensive logging, including relevant Event IDs, administrators should c
 
       Standard notification packages for Windows server 2008:
 
-       - scecli
-       - RASSFM
-       - WDIGEST
-       - KDCSVC
+      <ul>
+       <li>scecli</li>
+       <li>RASSFM</li>
+       <li>WDIGEST</li>
+       <li>KDCSVC</li>
+       </ul>
       </knowledge>      
        <description>A notification package has been loaded by the Security Account Manager.</description>       
      </event>
@@ -943,7 +946,10 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>4667</id>      
-      <description>An application client context was deleted.</description>       
+      <knowledge>
+      This event is logged in connection with Authorization Manager access checks. See <a href="https://learn.microsoft.com/en-us/windows/win32/secauthz/establishing-a-client-context-with-authorization-manager-in-c--?redirectedfrom=MSDN">Establishing a Client Context with Authorization Manager in C++</a> for more details.
+  </knowledge>
+       <description>An application client context was deleted.</description>       
      </event>
      
     <event>
@@ -952,47 +958,112 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4670</id>      
-      <description>Permissions on an object were changed.</description>       
+     <id>4670</id>   
+      <knowledge>
+      Windows logs this event when someone changes the access control list on an object.  The event identifies the object, who changed the permissions and the old an new permissions.
+
+      Of course the object's audit policy must have auditing enabled for "Write DAC"/"Change Permissions" or "Take Ownership" permissions for the user who just modified this object's access control list or a group to which the user belongs.
+
+      Also, this event is logged based on the status of the Object Access subcategory - not the status of "Authorization Policy Change" subcategory. For instance to log this event for file permission changes, the "File System" subcategory must be enabled for success.
+
+      Note the following problem is fixed in more recent versions of Windows. Definitely in Windows 8/2012. Not sure about Win7 and Win2008R2: This event has been observed as above after deleting an access control entry from the file's ACL.  However the event was not logged after simply blocking permission inheritance and copying existing ACEs.  Evidently this event is only logged when the effective permissions are changed not inheritance settings.
+
+      This event is NOT logged when Active Directory object permissions are changed.
+  </knowledge>   
+       <description>Permissions on an object were changed.</description>       
      </event>
      
     <event>
-     <id>4671</id>      
+     <id>4671</id>   
+     <knowledge>TBS is a part of Trusted Platform Module.</knowledge>   
       <description>An application attempted to access a blocked ordinal through the TBS.</description>       
      </event>
      
     <event>
-     <id>4672</id>      
+     <id>4672</id>    
+      <knowledge>
+      This event lets you know whenever an account assigned any "administrator equivalent" user rights logs on.  For instance you will see event 4672 in close proximity to logon events (4624) for administrators since administrators have most of these admin-equivalent rights. 
+
+      So, this is a useful right to detecting any "super user" account logons.  Of course this right is logged for any server or applications accounts logging on as a batch job (scheduled task) or system service.  See Logon Type: on event ID 4624.  You can correlate 4672 to 4624 by Logon ID:.
+
+      Note: "User rights" and "privileges" are synonymous terms used interchangeably in Windows.
+
+      Admin-equivalent rights are powerful authorities that allow you to circumvent other security controls in Windows.  Most admin equivalent privileges are intended for services and applications that interact closely with the operating system.  With just a few exceptions, most admin equivalent privileges neither need nor should be granted to human user accounts.
+
+      Some Microsoft documentation puts this in the "Sensitive Privilege Use / Non-Sensitive Privilege Use" subcategory. However our testing finds this in the "Special Logon" Category.
+  </knowledge>  
       <description>Special privileges assigned to new logon.</description>       
      </event>
      
     <event>
      <id>4673</id>      
+      <knowledge>
+      Event 4673 indicates that the specified user exercised the user right specified in the Privileges field.
+
+      Note: "User rights" and "privileges" are synonymous terms used interchangeably in Windows.
+
+      Some user rights are logged by this event - others by 4674. Still other, ""high-volume"" rights are not logged when they are exercised unless you enable the security option "Audit: Audit the use of Backup and Restore privilege". 
+
+      Unfortunately, Microsoft has overloaded these privileges so that each privilege may govern your authority to perform many different operations and which privilege is required for which operations is not well documented.  Therefore seeing that a privilege was exercised doesn't really tell you much.  In Win2008 this has been improved with better information in the Server: and Service Name: fields.  In general though, I still classify these events as noise.  Microsoft admits: "These are high volume events, which typically do not contain sufficient information to act upon since they do not describe what operation occurred."
+
+      Note: 4673 and 4674 do not log any activity associated with Logon Rights such as the SeNetworkLogonRight. Do not confuse events 4673 and 4674 with events  4717 and 4718 which document rights assignment changes as opposed to the exercise of rights which is the purpose of events 4673 and 4674. 
+  </knowledge>
       <description>A privileged service was called.</description>       
      </event>
      
     <event>
-     <id>4674</id>      
+     <id>4674</id>  
+      <knowledge>
+       Indicates that the specified user exercised the user right specified in the Privileges field.
+
+       Note: "User rights" and "privileges" are synonymous terms used interchangeably in Windows.
+
+       Some user rights are logged by 4674 - others by 4673. Still other, "high-volume" rights are not logged when they are exercised unless you enable the security option "Audit: Audit the use of Backup and Restore privilege". 
+
+       Unfortunately, Microsoft has overloaded these privileges so that each privilege may govern your authority to perform many different operations and which privilege is required for which operations is not well documented.  Therefore seeing that a privilege was exercised doesn't really tell you much.  In Win2008 this has been improved with better information in the Server: and Service Name: fields.  In general though, I still classify these events as noise.  Microsoft admits: "These are high volume events, which typically do not contain sufficient information to act upon since they do not describe what operation occurred."
+
+       Note: 4673 and 4674 do not log any activity associated with Logon Rights such as the SeNetworkLogonRight. Do not confuse events 4673 and 4674 with events 4717 and 4718 which document rights assignment changes as opposed to the exercise of rights which is the purpose of events 4673 and 4674.
+  </knowledge>    
       <description>An operation was attempted on a privileged object.</description>       
      </event>
      
     <event>
-     <id>4688</id>      
+     <id>4688</id>  
+     <knowledge>
+     Event 4688 documents each program that is executed, who the program ran as and the process that started this process.
+
+     When you start a program you are creating a "process" that stays open until the program exits.  This process is identified by the Process ID:.  You can correlate this event to other events by Process ID to determine what the program did while it ran and when it exited (event 4689).
+    </knowledge>
       <description>A new process has been created.</description>       
      </event>
      
     <event>
-     <id>4689</id>      
-      <description>A process has exited.</description>       
+     <id>4689</id> 
+     <knowledge>
+     Event 4689 documents when a process ends. 
+
+     When you start a program you are creating a "process" that stays open until the program exits.  This process is identified by the Process ID:. 
+
+     You can use this event to tell how long the program ran by correlating it to the earlier 4688 with the same Process ID.
+    </knowledge>     
+       <description>A process has exited.</description>       
      </event>
      
     <event>
-     <id>4690</id>      
+     <id>4690</id> 
+     <knowledge>
+     When a program opens an object like a file, it gets a "handle" to that file which it references in subsequent operations on the object.  Windows checks permissions at the time of the open (aka handle request) but not afterwards.  Windows allows you to duplicate a handle and hand it off to another thread or process which then inherits whatever level of access the first program obtained to the object when the program opened.  Therefore a thread impersonating a different user or a process running as a different user could exploit the potentially higher level of access of the first program for that object.  And that apparently is why this event is logged.  Unfortunately this event doesn't seem to provide enough information to determine if the Handle was given to a lower security thread or process.  Consequently I classify this event as noise.
+
+     For an explanation of the fields in this event see events 4688 and 4656.
+    </knowledge>
       <description>An attempt was made to duplicate a handle to an object.</description>       
      </event>
      
     <event>
      <id>4691</id>      
+     <knowledge>
+      Indirect access to an object was requested.
+     </knowledge>
       <description>Indirect access to an object was requested.</description>       
      </event>
      
@@ -2248,11 +2319,11 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      <id>4648</id>     
      <knowledge>
       This is a useful event for tracking several different situations:
-
-     - A user connects to a server or runs a program locally using alternate credentials.  For instance a user maps a drive to a server but specifies a different user's credentials or opens a shortcut under RunAs by shift-control-right-clicking on the shortcut, selecting Run as..., and then filling in a different user's credentials in the dialog box that appears.  Or a user logs on to a web site using new specific credentials.  That is the case above in the example - Administrator was logged on to the local computer and then accessed a SharePoint server sp01.icemail.com as rsmith@mtg.com.
-     - This event is also logged when a process logs on as a different account such as when the Scheduled Tasks service starts a task as the specified user. Logged on user: specifies the original user account.
-     - With User Account Control enabled, an end user runs a program requiring admin authority.  You will get this event where the process information is consent.exe.  Unfortunately Subject does not identify the end user.
-
+      <ul>
+      <li>A user connects to a server or runs a program locally using alternate credentials.  For instance a user maps a drive to a server but specifies a different user's credentials or opens a shortcut under RunAs by shift-control-right-clicking on the shortcut, selecting Run as..., and then filling in a different user's credentials in the dialog box that appears.  Or a user logs on to a web site using new specific credentials.  That is the case above in the example - Administrator was logged on to the local computer and then accessed a SharePoint server sp01.icemail.com as rsmith@mtg.com.</li>
+      <li>This event is also logged when a process logs on as a different account such as when the Scheduled Tasks service starts a task as the specified user. Logged on user: specifies the original user account.</li>
+      <li>With User Account Control enabled, an end user runs a program requiring admin authority.  You will get this event where the process information is consent.exe.  Unfortunately Subject does not identify the end user.</li>
+      </ul>
      Unfortunately this event is also logged in situations where it doesn't seem necessary.  For instance logging on interactively to a member server (Win2008 RC1) with a domain account produces an instance of this event in addition to 2 instances of 4624.
 
       </knowledge> 
@@ -2335,9 +2406,6 @@ For comprehensive logging, including relevant Event IDs, administrators should c
 
       The event is listed as a special multi-use sub-category. The sub-category would depend on the type of object being audited.
 </knowledge>
-
-
-    
       <description>A handle to an object was requested with intent to delete</description>       
      </event>
      
@@ -2357,23 +2425,63 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4661</id>      
+     <id>4661</id>    
+      <knowledge>
+      This event is logged by multiple subcategories as indicated above.
+
+      Most objects, when opened (handle request), generate event 4656 but when you open a SAM object you get 4661 instead.
+
+      Some AD objects also double as SAM objects and some properties of those objects double as SAM attributes.  This event is logged when opening such SAM objects such as SAM_DOMAIN or SAM_USER.
+
+      When the object is closed you get event ID 4658 with the same handle ID.
+
+      I regard these events as noise and recommend disabling the SAM subcategory in your audit policy.
+  </knowledge>
       <description>A handle to an object was requested</description>       
      </event>
      
     <event>
-     <id>4662</id>      
+     <id>4662</id>     
+       <knowledge>
+       Active Directory logs this event when a user accesses an AD object. 
+
+       Of course the object's audit policy must be enabled for the permissions requested and the user requesting it or a group to which that user belongs.
+
+       For tracking property level changes to AD objects I recommend using Directory Service Change events (5136...) instead of this event because 5136, etc provide much better information. 
+
+       On the other hand this is the only event that reports accesses defined for auditing that do not qualify as property changes. 
+
+       For instance changing the permissions on an OU such as for delegating administrative authority requires the WRITE_DAC permission which would get logged by this event.
+
+       Of course I don't recommend auditing read only accesses on AD objects since the value is questionable and would typically generate many, many events.  So on the whole I regard this event as noise and recommend disabling the "Directory Service Access" subcategory in your audit policy on domain controllers.
+  </knowledge>
       <description>An operation was performed on an object</description>       
      </event>
      
     <event>
      <id>4663</id>      
-      <description>An attempt was made to access an object</description>       
+      <knowledge>
+      This event is logged by multiple subcategories as indicated above.
+
+      This event documents actual operations performed against files and other objects.  This event is logged between the open (4656) and close (4658) events for the object being opened and can be correlated to those events via Handle ID. 
+
+      While event 4656 tells you when the object is initially opened and what type of access was requested at that time; 4656 doesn't give you positive confirmation any of the access permissions were actually exercised.  That is the role of this event.  This event, 4663, is logged the first time one or more of the requested permissions are actually exercised.  If the program repeatedly exercises a permission while the object is open, Windows only logs 4663 the first time.
+
+      Note events 4656 and 4658 will not appear unless the subcategory "Handle Manipulation" is enabled along with the target sub-category. Microsoft explains that this was done to make it more difficult to enable these noisy events. They feel the event 4663 is better.
+
+      Win2012 adds Resource Attributes.
+  </knowledge>
+       <description>An attempt was made to access an object</description>       
      </event>
      
     <event>
-     <id>4664</id>      
-      <description>An attempt was made to create a hard link</description>       
+     <id>4664</id>   
+      <knowledge>
+      An attempt was made to create a hard link.
+
+      A hard link is a pointer to a file on the same system.
+  </knowledge>   
+       <description>An attempt was made to create a hard link</description>       
      </event>
      
     <event>
@@ -2387,7 +2495,10 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4667</id>      
+     <id>4667</id>  
+          <knowledge>
+          This event is logged in connection with Authorization Manager access checks. See <a href="https://learn.microsoft.com/en-us/windows/win32/secauthz/establishing-a-client-context-with-authorization-manager-in-c--?redirectedfrom=MSDN">Establishing a Client Context with Authorization Manager in C++</a> for more details.
+  </knowledge>
       <description>An application client context was deleted</description>       
      </event>
      
@@ -2447,7 +2558,10 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4692</id>      
+     <id>4692</id> 
+      <knowledge>
+      Microsoft documentation indicates this is a routine event that can be filtered out of events to review.  At this time I classify this as a "noise" event.
+  </knowledge>   
       <description>Backup of data protection master key was attempted</description>       
      </event>
      
@@ -2462,107 +2576,310 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4695</id>      
+     <id>4695</id>   
+     <knowledge>
+     This event has to do with the Data Protection API. 
+
+     Per Microsoft: "The Data Protection API (DPAPI) helps to protect data in Windows 2000 and later operating systems. DPAPI is used to help protect private keys, stored credentials (in Windows XP and later), and other confidential information that the operating system or a program wants to keep confidential. "
+
+     Apparently a program running under the account documented in Subject: tried to decrypt a blob with the CryptUnprotectData function and failed.  Status code 0x8009000b is pretty general.  Most often it means 
+
+    <ul>
+      <li>The user password has changed and the automatic reprocessing of keys based on user password failed</li>
+      <li>The blob was encrypted by a different user than the one now trying to decrypt it.</li>
+      </ul>
+
+     So it's possible that that this event could indicate malicious behavior but I've seen it logged during the course of normal operation on a clean, isolated test system too.
+     </knowledge>
       <description>Unprotection of auditable protected data was attempted</description>       
      </event>
      
     <event>
-     <id>4696</id>      
-      <description>A primary token was assigned to process</description>       
+     <id>4696</id>  
+      <knowledge>
+     This often happens when a service starts or a scheduled task starts under the authority of a different user. You will see events 4624 and 4648 as well as 4776 or 4768 earlier in the log.
+
+     The Assigning process fields identify the process that started the child (new) process. Process ID allows you to link this event to the corresponding event 4688 (process start of the parent process) but there is little need since this event gives you the program name (Process Name) and the user under which the process was running (Subject). 
+
+     Target Process: information identifies the new child process that was started under the account and logon session in New Token Information. 
+
+     You can use the Target Process ID to link back to the earlier 4688 for the new child process ID but again there is little need to do this since you have the Target Process Name: right here in this event.
+     </knowledge>    
+       <description>A primary token was assigned to process</description>       
      </event>
      
     <event>
-     <id>4697</id>      
+     <id>4697</id>    
+     <knowledge>
+     A new service was installed by the user indicated in the subject.  Subject often identifies the local system (SYSTEM) for services installed as part of native Windows components and therefore you can't determine who actually initiated the installation.
+
+     This is a key change control event as new services are significant extensions of the software running on a server and the roles it performs.
+
+     This event is no longer generated on Windows Server 2012r2 and earlier.  The minimum OS version is Server 2016 or Windows 10.
+     </knowledge>
       <description>A service was installed in the system</description>       
      </event>
      
     <event>
-     <id>4698</id>      
+     <id>4698</id>   
+     <knowledge>
+     The user indicated in Subject: just created a new scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name:.
+
+     This is an important change control event.  See related events for changes to Scheduled Tasks: 4699, 4700, 4701, 4702. 
+     </knowledge>   
       <description>A scheduled task was created</description>       
      </event>
      
     <event>
-     <id>4699</id>      
+     <id>4699</id>     
+     <knowledge>
+     The user indicated in Subject: just deleted the scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name:.
+
+     This is an important change control event.  See related events for changes to Scheduled Tasks: 4698, 4700, 4701, and 4702.
+     </knowledge> 
       <description>A scheduled task was deleted</description>       
      </event>
      
     <event>
-     <id>4700</id>      
+     <id>4700</id>  
+     <knowledge>
+     The user indicated in Subject: just enabled the scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name.
+
+     A task must be enabled in order to run at its scheduled time.
+
+     This is an important change control event.  See related events for changes to Scheduled Tasks: 4698, 4699, 4601 and 4702.
+     </knowledge>    
       <description>A scheduled task was enabled</description>       
      </event>
      
     <event>
-     <id>4701</id>      
+     <id>4701</id>    
+     <knowledge>
+     The user indicated in Subject: just disabled the scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name:.
+
+     In its disabled the state the task will not run at its scheduled time until re-enabled.
+
+     This is an important change control event.  See related events for changes to Scheduled Tasks: 4698, 4699, 4700, 4702
+     </knowledge>  
       <description>A scheduled task was disabled</description>       
      </event>
      
     <event>
-     <id>4702</id>      
+     <id>4702</id>  
+     <knowledge>
+     The user indicated in Subject: just updated the scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name:.
+
+     This event logs all updates to Scheduled Tasks except for enable and disable operations which have their own events.
+
+     This is an important change control event.  See related events for changes to Scheduled Tasks: 4698, 4699, 4700 and 4701.
+     </knowledge>    
       <description>A scheduled task was updated</description>       
      </event>
      
     <event>
-     <id>4703</id>      
-      <description>A token right was adjusted</description>       
+     <id>4703</id>  
+       <description>A token right was adjusted</description>       
      </event>
      
     <event>
-     <id>4704</id>      
-      <description>A user right was assigned</description>       
+     <id>4704</id>  
+     <knowledge>
+     This event documents a change to user right assignments on this computer including the right and user or group that received the new right.
+
+     Note: "User rights" and "privileges" are synonymous terms used interchangeably in Windows.
+
+     Rights, like most other security settings, are defined in group policy objects and applied by the computer. Therefore this event will normally show the Assigned By user as the system itself. To determine who actually made the rights assignment change you must search the domain controllers' security logs for changes to groupPolicyContainer objects (logged by Directory Service auditing).
+
+     Logon ID allows you to link this event to the prior event 4624 logon event of the user who performed this action.
+
+     Note: This event, 4704, and 4705 do not log changes to logon rights such as "Access this computer from the network" or "Logon as a service". See events 4717 and 4718. 
+
+     See <b>User Rights</b> table for more information.
+     </knowledge>   
+      <description>A user right was assigned</description>      
+       <table xlink:type="simple"
+              xlink:href="images/user-rights-table.png"
+              xlink:title=" Windows Security Log Event ID - 4704 User Rights Table"
+              xlink:show="embed"
+              xlink:actuate="onLoad" />
+
      </event>
      
     <event>
-     <id>4705</id>      
+     <id>4705</id>
+     <knowledge>
+     This event documents a change to user right assignments on this computer including the right and user or group that lost the right.
+
+     Note: "User rights" and "privileges" are synonymous terms used interchangeably in Windows.
+
+     Rights, like most other security settings, are defined in group policy objects and applied by the computer. Therefore this event will normally show the Assigned By user as the system itself. To determine who actually made the rights assignment change you must search the domain controllers' security logs for changes to groupPolicyContainer objects (logged by Directory Service auditing).
+
+     Logon ID allows you to link this event to the prior event 4624 logon event of the user who performed this action.
+
+     Note: This event, 4705, and 4704 do not log changes to logon rights such as "Access this computer from the network" or "Logon as a service". See events 4714 and 4718. 
+
+     <b>Subject</b>
+     The ID and logon session of the user that revoked the right.  Unfortunately this is just the local system account - see above. 
+
+      <ul>
+      <li>Security ID:  The SID of the account.</li>
+      <li>Account Name: The account logon name.</li>
+      <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+      <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
+      </ul>
+     </knowledge>      
       <description>A user right was removed</description>       
      </event>
      
     <event>
      <id>4706</id>      
+      <knowledge>
+      This event is logged for all new trust relationships connecting to this domain.  While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information:
+
+      <b>Subject:</b>
+
+      The ID and logon session of the user that excercised created the trust. 
+
+        <ul>
+          <li>Security ID:  The SID of the account.</li>
+          <li>Account Name: The account logon name.</li>
+          <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+          <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
+        </ul>
+      </knowledge>
       <description>A new trust was created to a domain</description>       
      </event>
      
     <event>
-     <id>4707</id>      
+     <id>4707</id>    
+     <knowledge>
+     This event is logged for all deleted trust relationships that connected to this domain.  While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information:
+
+     <b>Subject:</b>
+
+     The ID and logon session of the user that excercised deleted the trust.
+     
+     <ul>
+          <li>Security ID:  The SID of the account.</li>
+          <li>Account Name: The account logon name.</li>
+          <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+          <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
+        </ul>
+     </knowledge>
       <description>A trust to a domain was removed</description>       
      </event>
      
     <event>
      <id>4709</id>      
+     <knowledge>
+     This event is not produced in the default configuration (using Windows Firewall) however event 5478 is produced..
+
+     Microsoft comments: "This service provides compatibility with Internet Protocol security (IPsec) policies used in earlier versions of Windows...This is a normal condition. No further action is required."
+     </knowledge>
       <description>IPsec Services was started</description>       
      </event>
      
     <event>
-     <id>4710</id>      
+     <id>4710</id>    
+     <knowledge>
+     In the default configuration this event is not produced when the IPsec Policy agent service is disabled or fails to start.
+
+     According to Microsoft, "This service provides compatibility with Internet Protocol security (IPsec) policies used in earlier versions of Windows. New deployments of Windows Vista and Windows Server 2008 should not use the policies supported by the IPsec Policy Agent service"
+
+     </knowledge>  
       <description>IPsec Services was disabled</description>       
      </event>
      
     <event>
      <id>4711</id>      
-      <description>PAStore Engine (1%)</description>       
+      <knowledge>
+       	May contain any one of the following: PAStore Engine applied locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine applied Active Directory storage IPsec policy on the computer. PAStore Engine applied local registry storage IPsec policy on the computer. PAStore Engine failed to apply locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply local registry storage IPsec policy on the computer. PAStore Engine failed to apply some rules of the active IPsec policy on the computer. PAStore Engine failed to load directory storage IPsec policy on the computer. PAStore Engine loaded directory storage IPsec policy on the computer. PAStore Engine failed to load local storage IPsec policy on the computer. PAStore Engine loaded local storage IPsec policy on the computer.PAStore Engine polled for changes to the active IPsec policy and detected no changes.
+
+      <ul>
+        <li>PAStore Engine applied locally cached copy of Active Directory storage IPsec policy on the computer.</li>
+        <li>PAStore Engine applied Active Directory storage IPsec policy on the computer.</li>
+        <li>PAStore Engine applied local registry storage IPsec policy on the computer.</li>
+        <li>PAStore Engine failed to apply locally cached copy of Active Directory storage IPsec policy on the computer.</li>
+        <li>PAStore Engine failed to apply Active Directory storage IPsec policy on the computer.</li>
+        <li>PAStore Engine failed to apply local registry storage IPsec policy on the computer.</li>
+        <li>PAStore Engine failed to apply some rules of the active IPsec policy on the computer.</li>
+        <li>PAStore Engine failed to load directory storage IPsec policy on the computer.</li>
+        <li>PAStore Engine loaded directory storage IPsec policy on the computer.</li>
+        <li>PAStore Engine failed to load local storage IPsec policy on the computer.</li>
+        <li>PAStore Engine loaded local storage IPsec policy on the computer.</li>
+        <li>PAStore Engine polled for changes to the active IPsec policy and detected no changes.</li>
+</ul>
+  </knowledge>
+       <description>PAStore Engine (1%)</description>       
      </event>
      
     <event>
-     <id>4712</id>      
-      <description>IPsec Services encountered a potentially serious failure</description>       
+     <id>4712</id>  
+       <knowledge>
+      IPsec Services encountered a potentially serious failure.
+
+      In theory this reports when the service cannot perform its required tasks, such as properly processing filters, or cannot protect traffic sent or received by one or more of the network adapters attached to the computer.
+
+      Microsoft suggests restarting the computer to resolve this problem.
+    </knowledge>   
+       <description>IPsec Services encountered a potentially serious failure</description>       
      </event>
      
     <event>
-     <id>4713</id>      
+     <id>4713</id> 
+     <knowledge>
+     Windows logs 4713 when it detects a change to the the domain's Kerberos policy. Kerberos policy is defined in GPOs linked to the root of the domain under Computer Configuration\Windows Settings\Security Settings\Account Policy\Kerberos Policy.
+
+     Unfortunately the Subject fields don't identify who actually changed the policy because Kerberos policy isn't directly configured by administrators. Instead it is edited in a group policy object which then gets applied to the computer. Therefore this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs. 
+
+     <b>Subject:</b>
+     
+     The ID and logon session of the user that changed the policy - always the local system - see note above.
+
+    <ul>
+      <li>Security ID: The SID of the account.</li>
+      <li>Account Name: The account logon name.</li>
+      <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+      <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
+    </ul>
+    </knowledge>
       <description>Kerberos policy was changed</description>       
      </event>
      
     <event>
-     <id>4714</id>      
+     <id>4714</id> 
+     <knowledge>
+     This computer's Security Settings\Public Key Policies\Encrypting File System data recovery agent policy was modified - either via Local Security Policy or Group Policy in Active Directory.
+
+     Unfortunately the Subject fields don't identify who actually changed the policy because this policy isn't directly configured by administrators. Instead it is edited in a group policy object which then gets applied to the computer. Therefore this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs. Subject:
+
+     The ID and logon session of the user that changed the policy - always the local system - see note above.
+
+     <ul>
+      <li>Security ID: The SID of the account.</li>
+      <li>Account Name: The account logon name.</li>
+      <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+      <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
+        </ul>
+     </knowledge>     
       <description>Encrypted data recovery policy was changed</description>       
      </event>
      
     <event>
-     <id>4715</id>      
+     <id>4715</id>   
+     <knowledge>
+     The description is poorly worded but this event is logged whenever you set the security descriptor used to delegate access to the audit policy. You can delegate authority to the system's audit policy using "auditpol /sd:".
+
+     According to Microsoft, this event is always logged when an audit policy is disabled, regardless of the "Audit Policy Change" sub-category setting. This and several other events can help identify when someone attempts to disable auditing to cover their tracks. 
+     </knowledge>   
       <description>The audit policy (SACL) on an object was changed</description>       
      </event>
      
     <event>
-     <id>4716</id>      
+     <id>4716</id>  
+     <knowledge>
+     This event is logged for modifications to trust relationships connecting to this domain. While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information.
+     </knowledge>    
       <description>Trusted domain information was modified</description>       
      </event>
      
