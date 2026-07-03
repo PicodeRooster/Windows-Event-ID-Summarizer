@@ -118,34 +118,50 @@
      </event>
 
     <event>
-     <id>1100</id>      
-      <description>The event logging service has shut down</description>       
+     <id>1100</id>
+      <knowledge>This is a normal event logged at time of shutdown</knowledge>    
+       <description>The event logging service has shut down</description>       
      </event>
      
     <event>
-     <id>1101</id>      
-      <description>Audit events have been dropped by the transport.</description>       
+     <id>1101</id>   
+      <knowledge>We have observed this event being logged upon restarting Windows after a dirty shutdown.</knowledge>
+       <description>Audit events have been dropped by the transport.</description>       
      </event>
      
     <event>
      <id>1102</id> 
-      <knowledge>Criticality: Medium/High — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
+      <knowledge>
+      Criticality: Medium/High — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+      Event 1102 is logged whenever the Security log is cleared, REGARDLESS of the status of the Audit System Events audit policy. The Account Name and Domain Name fields identify the user who cleared the log.
+      Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.
+       </knowledge>
        <description>The audit log was cleared</description>       
      </event>
      
     <event>
-     <id>1104</id>      
+     <id>1104</id>
+     <knowledge>
+     No more events will be logged until the log is expanded, cleared or configured to overwrite events.
+
+     This event indicates a "hole" in your audit trail and should be avoided with the implementation of an effective log management solution that collects events before they can be overwritten or before the log fills up.
+
+     "Do not overwrite events (clear log manually)" should only be used in conjunction with the security option "Audit: Shutdown system immediately if unable to log security audits".  Of course these 2 settings together will cause the system outages if the log is allowed to fill up and would only be appropriate for systems with the highest integrity requirements on audit trails.
+     </knowledge>      
       <description>The security Log is now full</description>       
      </event>
      
     <event>
-     <id>1105</id>      
+     <id>1105</id>  
+     <knowledge>
+     This event is only logged when "When maximum log size is reached:" is set to "Archive the log when full, do not overwrite events". When the log reaches maximum size Windows saves it to %systemroot%\System32\Winevt\Logs\ with the file name Archive-Security-YYYY-MM-DD-HH-MM-SS-NNN.evtx.
+     </knowledge>    
       <description>Event log automatic backup</description>       
      </event>
      
     <event>
-     <id>1108</id>      
-      <description>The event logging service encountered an error</description>       
+     <id>1108</id>    
+       <description>The event logging service encountered an error</description>       
      </event>
      
     <event>
@@ -695,23 +711,56 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4608</id>      
-      <description>Windows is starting up.</description>       
+     <id>4608</id>
+      <knowledge>4608 is an important security event: Any operating system is essentially defenseless when the operating system is down.</knowledge>      
+       <description>Windows is starting up.</description>       
      </event>
      
     <event>
-     <id>4609</id>      
+     <id>4609</id>
+     <knowledge>
+     Despite the documentation, as of Release candidate 1 this event is not found. Perhaps this is because the event logging service stops first (event 1100). This is funny since the same problem used to happen in NT.  MS fixed it in 2000 and looks like they broke it again at least as of RC1. I haven't been able to produce this event. Have you? If so, please start a discussion (see above) and post a sample along with any comments you may have! Don't forget to sanitize any private information.
+     </knowledge>      
       <description>Windows is shutting down.</description>       
      </event>
      
     <event>
      <id>4610</id>      
-      <description>An authentication package has been loaded by the Local Security Authority.</description>       
+      <knowledge>
+      Event 4610 is logged once at startup for each authentication package on the system.
+
+      An authentication package is a DLL that encapsulates a given form of authentication, such as NTLM or Kerberos. The Local Security Authority calls into the appropriate authentication package during the logon process to find out if the user is authentic.
+
+      Although a third party can develop an authentication package, few do so, except for smart card and token manufacturers. The only authentication package logged by Windows Server 2008 is C:\Windows\system32\msv1_0.dll : MICROSOFT_AUTHENTICATION_PACKAGE_V1_0 which is just one of the authentication options supported by Windows (See 514 for a list of standard authentication packages on Windows Server 2003). The other authentication options supported by Windows Server 2008 appear to now be part of a larger package called a security package. See 4622.  From MSDN: "A security package that functions as an authentication package and implements the functionality required by SSPI is called a security support provider/authentication package (SSP/AP)."
+
+      The security implication of event 4610, realistically, is low. Although a rogue package could cause great harm by stealing credentials at the time of logon, the effort required in developing and installing a rogue authentication package is significant.
+      </knowledge>
+       <description>An authentication package has been loaded by the Local Security Authority.</description>       
      </event>
      
     <event>
-     <id>4611</id>      
-      <description>A trusted logon process has been registered with the Local Security Authority.</description>       
+     <id>4611</id>  
+      <knowledge>
+      An occurrence of event 4611 is logged at startup and occasionally afterwards for each logon process on the system.
+
+      A logon process is a trusted part of the operating system and handles the overall logon function for different logon methods including incoming RAS connections, RunAs, interactive logons initiated by CtrlAltDel, and network logons (as in drive mappings).
+
+      Because logon processes are such trusted functions, a rogue logon process would be a devastating security breach--but an improbable one, given the effort and skill required.
+
+      Standard logon processes for Windows Server 2008:
+      
+      - Winlogon
+      - Schannell
+      - KSecDD
+      - Secondary Logon Service (runas)
+      - IKE
+      - HTTP.SYS
+      - SspTest
+      - dsRole
+      - DS Replication CredProvConsent (user account control)
+
+       </knowledge>    
+        <description>A trusted logon process has been registered with the Local Security Authority.</description>       
      </event>
      
     <event>
