@@ -821,13 +821,19 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4624</id>      
+     <id>4624</id>    
+      <knowledge>
+      This is a highly valuable event since it documents each and every successful attempt to logon to the local computer regardless of logon type, location of the user or type of account.  You can tie this event to logoff events 4634 and 4647 using Logon ID.
+
+      Win2012 adds the Impersonation Level field as shown in the example.
+      </knowledge>    
       <description>An account was successfully logged on.</description>       
      </event>
      
     <event>
-     <id>4625</id>      
-      <description>An account failed to log on.</description>       
+     <id>4625</id>
+      <knowledge>This is a useful event because it documents each and every failed attempt to logon to the local computer regardless of logon type, location of the user or type of account.</knowledge>
+       <description>An account failed to log on.</description>       
      </event>
      
     <event>
@@ -2222,21 +2228,34 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>4634</id>      
+     <knowledge>Marks the end of a logon session, correlating back to a 4624 (logon) event via the Logon ID. Note: for network connections, users can appear to log on/off many times a day just from idle session termination, and a system shutdown may delay logging this event until the next restart.</knowledge>
       <description>An account was logged off</description>       
      </event>
      
     <event>
-     <id>4646</id>      
+     <id>4646</id>    
+      <knowledge>Related to IPsec Main Mode. This one's rarely seen in practice — even the site notes they haven't been able to produce a real-world example of it.</knowledge>  
       <description>IKE DoS-prevention mode started</description>       
      </event>
      
     <event>
      <id>4647</id>      
-      <description>User initiated logoff</description>       
+      <knowledge>Logged instead of 4634 for interactive and remote desktop (RDP) logons when a user actively logs off. It's useful because it lets you distinguish a deliberate user logoff from a session just timing out from inactivity.</knowledge>
+       <description>User initiated logoff</description>       
      </event>
      
     <event>
-     <id>4648</id>      
+     <id>4648</id>     
+     <knowledge>
+      This is a useful event for tracking several different situations:
+
+     - A user connects to a server or runs a program locally using alternate credentials.  For instance a user maps a drive to a server but specifies a different user's credentials or opens a shortcut under RunAs by shift-control-right-clicking on the shortcut, selecting Run as..., and then filling in a different user's credentials in the dialog box that appears.  Or a user logs on to a web site using new specific credentials.  That is the case above in the example - Administrator was logged on to the local computer and then accessed a SharePoint server sp01.icemail.com as rsmith@mtg.com.
+     - This event is also logged when a process logs on as a different account such as when the Scheduled Tasks service starts a task as the specified user. Logged on user: specifies the original user account.
+     - With User Account Control enabled, an end user runs a program requiring admin authority.  You will get this event where the process information is consent.exe.  Unfortunately Subject does not identify the end user.
+
+     Unfortunately this event is also logged in situations where it doesn't seem necessary.  For instance logging on interactively to a member server (Win2008 RC1) with a domain account produces an instance of this event in addition to 2 instances of 4624.
+
+      </knowledge> 
       <description>A logon was attempted using explicit credentials</description>       
      </event>
      
@@ -2246,7 +2265,8 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4650</id>      
+     <id>4650</id>  
+     <knowledge>An IPsec Main Mode security association was established. Extended Mode was not enabled.  Certificate authentication was not used.</knowledge>    
       <description>An IPsec Main Mode security association was established</description>       
      </event>
      
