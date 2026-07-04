@@ -2879,107 +2879,510 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      <id>4716</id>  
      <knowledge>
      This event is logged for modifications to trust relationships connecting to this domain. While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information.
+
+     <h3>Subject</h3>
+<p>The ID and logon session of the user that exercised modified the trust.</p>
+<ul>
+  <li>Security ID: The SID of the account.</li>
+  <li>Account Name: The account logon name.</li>
+  <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+  <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
+</ul>
+
+<h3>Trusted Domain</h3>
+<p>The other domain in this trust relationship which despite the word "Trusted" may be a trusting or trusted domain or both. See Trust Information.</p>
+<ul>
+  <li>Domain Name: the DNS name of the domain</li>
+  <li>Domain ID: the pre-Win2k (NetBIOS) name of the domain</li>
+</ul>
+
+<h3>New Trust Information</h3>
+<p>All the information that defines the type of trust after this change, whether it is one way or mutual, transitivity, etc.</p>
+
+<h4>Trust Type</h4>
+<table border="1" cellpadding="4" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>TRUST_TYPE_DOWNLEVEL</td>
+      <td>The other domain is pre-Win2k (NTLM only supported)</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>TRUST_TYPE_UPLEVEL</td>
+      <td>The other domain is Win2k or later (Windows Kerberos supported)</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>TRUST_TYPE_MIT</td>
+      <td>Other domain is actually an MIT Kerberos Realm (probably UNIX)</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>TRUST_TYPE_DCE</td>
+      <td>The trusted domain is a DCE realm</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Trust Direction</h4>
+<table border="1" cellpadding="4" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Direction</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Disabled</td>
+      <td>0x0</td>
+    </tr>
+    <tr>
+      <td>Inbound</td>
+      <td>0x1</td>
+    </tr>
+    <tr>
+      <td>Outbound</td>
+      <td>0x2</td>
+    </tr>
+    <tr>
+      <td>Bidirectional</td>
+      <td>0x3</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Trust Attributes</h4>
+<p>A bitwise value comprised of any of the following:</p>
+<ul>
+  <li>TRUST_ATTRIBUTE_NON_TRANSITIVE: 1</li>
+  <li>TRUST_ATTRIBUTE_UPLEVEL_ONLY: 2</li>
+  <li>TRUST_ATTRIBUTE_FILTER_SIDS: 4</li>
+  <li>TRUST_ATTRIBUTE_FOREST_TRANSITIVE: 8</li>
+</ul>
+
+<h4>SID Filtering</h4>
+<p>Enabled (always enabled for domains within the same forest). See <a href="http://technet2.microsoft.com/windowsserver/en/library/01e5cf71-b317-4967-82a2-75b7b632b7461033.mspx?mfr=true">Microsoft TechNet</a> for more information.</p>
      </knowledge>    
       <description>Trusted domain information was modified</description>       
      </event>
      
     <event>
-     <id>4717</id>      
-      <description>System security access was granted to an account</description>       
+     <id>4717</id>  
+     <knowledge>
+     This event documents the grant of logon rights such as "Access this computer from the network" or "Logon as a service".
+
+     Rights, like most other security settings, are defined in group policy objects and applied by the computer. Therefore this event will normally show the Assigned By user as the system itself. To determine who actually made the rights assignment change you must search the domain controllers' security logs for changes to groupPolicyContainer objects (logged by Directory Service auditing). Logon ID allows you to link this event to the prior event 4624 logon event of the user who performed this action.
+
+     This event, 4717, documents the system name for each logon right as opposed to the more familiar description.
+
+     Note: This event and 4718 log changes to strictly logon rights such as "Access this computer from the network" or "Logon as a service" - not to other rights such as "Change the system time" or "Take ownership of files and other objects". See events 4704 and 4705. 
+
+     See image for more details.
+     </knowledge>    
+      <image xlink:type="simple"
+           xlink:href="images/Windows Security Log Event ID 4717 - Logon-Rights.png"
+           xlink:title="Windows Security Log Event ID 4717 Logon Rights"
+           xlink:show="embed"
+           xlink:actuate="onLoad" />
+        <description>System security access was granted to an account</description>       
      </event>
      
     <event>
-     <id>4718</id>      
+     <id>4718</id>
+     <knowledge>
+     This event documents the revokation of logon rights such as "Access this computer from the network" or "Logon as a service".
+
+     Rights, like most other security settings, are defined in group policy objects and applied by the computer. Therefore this event will normally show the Assigned By user as the system itself. To determine who actually made the rights assignment change you must search the domain controllers' security logs for changes to groupPolicyContainer objects (logged by Directory Service auditing). Logon ID allows you to link this event to the prior event 4624 logon event of the user who performed this action.
+
+     This event, 4718 documents the system name for each logon right as opposed to the more familiar description. Click here for a cross reference.
+
+     Note: This event and 4717 log changes to strictly logon rights such as "Access this computer from the network" or "Logon as a service" - not to other rights such as "Change the system time" or "Take ownership of files and other objects". See events 4704 and 4705.
+     </knowledge>      
       <description>System security access was removed from an account</description>       
      </event>
      
     <event>
-     <id>4719</id>      
+     <id>4719</id>    
+     <knowledge>
+      This computer's system level audit policy was modified - either via Local Security Policy, Group Policy in Active Directory or the audipol command.
+
+      According to Microsoft, this event is always logged when an audit policy is disabled, regardless of the "Audit Policy Change" sub-category setting. This and several other events can help identify when someone attempts to disable auditing to cover their tracks.
+
+      If group policy was used to configure audit policy unfortunately the Subject fields don't identify who actually changed the policy.  In such cases this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs.
+
+      If auditpol was used to configure audit policy will properly reflect the user in Subject:
+
+      <b>Subject:</b>
+
+      The ID and logon session of the user that changed the policy - always the local system - see note above. 
+
+      <ul>
+        <li>Security ID: The SID of the account.</li>
+        <li>Account Name: The account logon name.</li>
+        <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+        <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
+      </ul>
+
+      <h3>Audit Policy Change</h3>
+
+<h4>Category</h4>
+<ul>
+  <li>Account Logon</li>
+  <li>Account Management</li>
+  <li>Detailed Tracking</li>
+  <li>Directory Service</li>
+  <li>Logon/Logoff</li>
+  <li>Object Access</li>
+  <li>Policy Change</li>
+  <li>Privilege Use</li>
+  <li>System Events</li>
+</ul>
+
+<h4>Subcategory</h4>
+<ul>
+  <li>Security State Change</li>
+  <li>Security System Extension</li>
+  <li>System Integrity</li>
+  <li>IPsec Driver</li>
+  <li>Other System Events</li>
+  <li>Logon</li>
+  <li>Logoff</li>
+  <li>Account Lockout</li>
+  <li>IPsec Main Mode</li>
+  <li>Special Logon</li>
+  <li>IPsec Quick Mode</li>
+  <li>IPsec Extended Mode</li>
+  <li>Other Logon/Logoff Events</li>
+  <li>Network Policy Server</li>
+  <li>File System</li>
+  <li>Registry</li>
+  <li>Kernel Object</li>
+  <li>SAM</li>
+  <li>Other Object Access Events</li>
+  <li>Certification Services</li>
+  <li>Application Generated</li>
+  <li>Handle Manipulation</li>
+  <li>File Share</li>
+  <li>Filtering Platform Packet Drop</li>
+  <li>Filtering Platform Connection</li>
+  <li>Sensitive Privilege Use</li>
+  <li>Non Sensitive Privilege Use</li>
+  <li>Other Privilege Use Events</li>
+  <li>Process Creation</li>
+  <li>Process Termination</li>
+  <li>DPAPI Activity</li>
+  <li>RPC Events</li>
+  <li>Audit Policy Change</li>
+  <li>Authentication Policy Change</li>
+  <li>Authorization Policy Change</li>
+  <li>MPSSVC Rule-Level Policy Change</li>
+  <li>Filtering Platform Policy Change</li>
+  <li>Other Policy Change Events</li>
+  <li>User Account Management</li>
+  <li>Computer Account Management</li>
+  <li>Security Group Management</li>
+  <li>Distribution Group Management</li>
+  <li>Application Group Management</li>
+  <li>Other Account Management Events</li>
+  <li>Directory Service Access</li>
+  <li>Directory Service Changes</li>
+  <li>Directory Service Replication</li>
+  <li>Detailed Directory Service Replication</li>
+  <li>Credential Validation</li>
+  <li>Kerberos Service Ticket Operations</li>
+  <li>Other Account Logon Events</li>
+  <li>Kerberos Authentication Service</li>
+  <li>Subcategory GUID: the globally unique identifier of the subcategory</li>
+</ul>
+
+<h4>Changes</h4>
+<ul>
+  <li>Failure added</li>
+  <li>Failure moved</li>
+  <li>Success added</li>
+  <li>Success removed</li>
+</ul>
+
+     </knowledge>  
       <description>System audit policy was changed</description>       
      </event>
      
     <event>
-     <id>4720</id>      
+     <id>4720</id>    
+     <knowledge>
+     The user identified by Subject: created the user identified by New Account:. 
+
+    Attributes show some of the properties that were set at the time the account was created.  Notice account is initially disabled.
+
+    This event is logged both for local SAM accounts and domain accounts.
+
+    You will see a series of other User Account Management events after this event as the remaining properties are punched down, password set and account finally enabled.
+     </knowledge>  
       <description>A user account was created</description>       
      </event>
      
     <event>
      <id>4722</id>      
+     <knowledge>
+     The user identified by Subject: enabed the user identified by Target Account:. 
+
+    This event is logged both for local SAM accounts and domain accounts.
+
+    This event is always logged after event 4720 - user account creation.
+
+    You will also see event ID 4738 informing you of the same information.
+     </knowledge>
       <description>A user account was enabled</description>       
      </event>
      
     <event>
-     <id>4723</id>      
+     <id>4723</id>  
+     <knowledge>
+      The user attempted to change his/her own password.  Subject and Target should always match.  Don't confuse this event with 4724.
+
+      This event is logged as a failure if his new password fails to meet the password policy.
+
+      If the user fails to correctly enter his old password this event is not logged.  Instead, for domain accounts, a 4771 is logged with kadmin/changepw as the service name.
+
+      This event is logged both for local SAM accounts and domain accounts.
+
+      You will also see event ID 4738 informing you of the same information.
+     </knowledge>    
       <description>An attempt was made to change an account's password</description>       
      </event>
      
     <event>
-     <id>4724</id>      
+     <id>4724</id>   
+     <knowledge>
+     The Subject attempted to reset the password of the Target:  
+
+      Don't confuse this event with 4723.
+
+      This event is logged as a failure if the new password fails to meet the password policy.
+
+      This event is logged both for local SAM accounts and domain accounts.
+
+      You will also see one or more event ID 4738s informing you of the same information.
+     </knowledge>   
       <description>An attempt was made to reset an accounts password</description>       
      </event>
      
     <event>
-     <id>4725</id>      
+     <id>4725</id>    
+     <knowledge>
+      The user identified by Subject: disabled the user identified by Target Account:. 
+
+      This event is logged both for local SAM accounts and domain accounts.
+
+      You will also see event ID4738 informing you of the same information.
+     </knowledge>  
       <description>A user account was disabled</description>       
      </event>
      
     <event>
-     <id>4726</id>      
+     <id>4726</id> 
+     <knowledge>
+      The user identified by Subject: deleted the user identified by Target Account:. 
+
+      This event is logged both for local SAM accounts and domain accounts.
+
+      You will also see event ID 4738 informing you of the same information.
+     </knowledge>     
       <description>A user account was deleted</description>       
      </event>
      
     <event>
      <id>4727</id>      
-      <description>A security-enabled global group was created</description>       
+      <description>A security-enabled global group was created</description>     
+      <knowledge>
+        The user in Subject: just created a Security Global group identified in New Group.
+
+        In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+        Global means the group can be granted access in any trusting domain but may only have members from its own domain.
+
+        This event is only logged on domain controllers.
+      </knowledge>  
      </event>
      
     <event>
      <id>4728</id>      
+     <knowledge>
+      The user in Subject: added the user/group/computer in Member: to the Security Global group in Group:.
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Global means the group can be granted access in any trusting domain but may only have members from its own domain. 
+
+      This event is only logged on domain controllers.
+
+      Server 2016 adds the "Expiration time" field in version 2 of this event. 
+     </knowledge>
       <description>A member was added to a security-enabled global group</description>       
      </event>
      
     <event>
-     <id>4729</id>      
+     <id>4729</id>  
+     <knowledge>
+      The user in Subject: removed the user/group/computer in Member: from the Security Global group in Group:.
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Global means the group can be granted access in any trusting domain but may only have members from its own domain. 
+
+      This event is only logged on domain controllers.
+     </knowledge>    
       <description>A member was removed from a security-enabled global group</description>       
      </event>
      
     <event>
-     <id>4730</id>      
+     <id>4730</id> 
+     <knowledge>
+      The user in Subject: deleted the Security Global group identified in Deleted Group.
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Global means the group can be granted access in any trusting domain but may only have members from its own domain.
+
+      This event is only logged on domain controllers.
+     </knowledge>    
       <description>A security-enabled global group was deleted</description>       
      </event>
      
     <event>
-     <id>4731</id>      
+     <id>4731</id>     
+     <knowledge>
+      The user in Subject: created a Security Local group identified in New Group.
+
+      This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
+
+    <h3>Active Directory</h3>
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
+
+    <h3>Local SAM</h3>
+
+      All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.
+     </knowledge> 
       <description>A security-enabled local group was created</description>       
      </event>
      
     <event>
-     <id>4732</id>      
+     <id>4732</id>    
+     <knowledge>
+      The user in Subject: added the user/group/computer in Member: to the Security Local group in Group:.
+
+      This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
+
+      <h3>Active Directory</h3>
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists. A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
+
+      <h3>Local SAM</h3>
+
+      All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.
+ 
+      Server 2016 adds the "Expiration time" field in version 2 of this event. 
+     </knowledge> 
       <description>A member was added to a security-enabled local group</description>       
      </event>
      
     <event>
      <id>4733</id>      
+     <knowledge>
+        The user in Subject: removed the user/group/computer in Member: to the Security Local group in Group:.
+
+        This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
+
+        <h3>Active Directory</h3>
+
+        In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+        A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
+
+        <h3>Local SAM</h3>
+
+        All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.
+     </knowledge> 
       <description>A member was removed from a security-enabled local group</description>       
      </event>
      
     <event>
-     <id>4734</id>      
+     <id>4734</id>   
+       <knowledge>
+          The user in Subject: deleted the Security Local group identified in Deleted Group.
+
+          This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
+
+        <h3>Active Directory</h3>
+
+          In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+          A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
+
+        <h3>Local SAM</h3>
+        
+          All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.
+     </knowledge>    
       <description>A security-enabled local group was deleted</description>       
      </event>
      
     <event>
-     <id>4735</id>      
+     <id>4735</id>    
+            <knowledge>
+          The user in Subject: deleted the Security Local group identified in Deleted Group.
+
+          This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
+
+        <h3>Active Directory</h3>
+
+          In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+          A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
+
+        <h3>Local SAM</h3>
+        
+          All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.
+     </knowledge>    
       <description>A security-enabled local group was changed</description>       
      </event>
      
     <event>
-     <id>4737</id>      
+     <id>4737</id>     
+     <knowledge>
+      The user in Subject: changed the Security Global group identified in Group:.
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Global means the group can be granted access in any trusting domain but may only have members from its own domain.
+
+      This event is only logged on domain controllers.
+     </knowledge> 
       <description>A security-enabled global group was changed</description>       
      </event>
      
     <event>
-     <id>4738</id>      
+     <id>4738</id>
+     <knowledge>
+      The user identified by Subject: changed the user identified by Target Account:. 
+
+      Attributes show some of the properties that were set at the time the account was changed. 
+
+      This event is logged both for local SAM accounts and domain accounts.
+
+      Depending on what was changed you may see other User Account Management events specific to certain operations like password resets.
+     </knowledge>      
       <description>A user account was changed</description>       
      </event>
      
