@@ -71,6 +71,15 @@ assets/archive/         earlier scraping attempts, kept for reference
 
 `events.html` is just a dumping ground for raw `<tr>`/`<td>` fragments pulled straight out of the source pages — it was never valid HTML and isn't meant to be. It's questionable whether it needs to exist at all, malformed or not; `write_out()` currently parses it as an intermediate step on the way to `events.xml`, but the pipeline could plausibly skip straight to XML.
 
+## Ollama
+
+1. Log into Ollama and generate a new API key
+2. Install Ollama to machine
+```
+curl -fsSL https://ollama.com/install.sh | sh
+```
+3. Call `Ollama` on terminal to ensure it is working and install desired model.He
+
 ## Notes
 
 - UWS's terms of service don't prohibit scraping; this project scrapes at a low, one-time build rate rather than per-query.
