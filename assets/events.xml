@@ -1,5 +1,5 @@
-<?xml version"1.0" encoding="UTF-8"?>
-    <eventIdListings title="Windows Security Events">
+<?xml version="1.0" encoding="UTF-8"?>
+    <eventIdListings title="Windows Security Events" xmlns:xlink="http://www.w3.org/1999/xlink">
     <event>
      <id>1</id> 
       <source>Kernel-EventTracing</source>         
@@ -212,7 +212,9 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>4692</id>
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>      
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     Microsoft documentation indicates this is a routine event that can be filtered out of events to review.  At this time I classify this as a "noise" event.</knowledge>      
        <description>Backup of data protection master key was attempted.</description>       
      </event>
      
@@ -224,61 +226,339 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>4706</id>      
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     This event is logged for all new trust relationships connecting to this domain.  While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information:
+
+      <b>Subject:</b>
+
+      The ID and logon session of the user that excercised created the trust. 
+
+        <ul>
+          <li>Security ID:  The SID of the account.</li>
+          <li>Account Name: The account logon name.</li>
+          <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+          <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
+        </ul></knowledge>
        <description>A new trust was created to a domain.</description>       
      </event>
      
     <event>
      <id>4713</id>
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>      
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     Windows logs 4713 when it detects a change to the the domain's Kerberos policy. Kerberos policy is defined in GPOs linked to the root of the domain under Computer Configuration\Windows Settings\Security Settings\Account Policy\Kerberos Policy.
+
+     Unfortunately the Subject fields don't identify who actually changed the policy because Kerberos policy isn't directly configured by administrators. Instead it is edited in a group policy object which then gets applied to the computer. Therefore this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs. 
+
+     <b>Subject:</b>
+     
+     The ID and logon session of the user that changed the policy - always the local system - see note above.
+
+    <ul>
+      <li>Security ID: The SID of the account.</li>
+      <li>Account Name: The account logon name.</li>
+      <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+      <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
+    </ul></knowledge>      
        <description>Kerberos policy was changed.</description>       
      </event>
      
     <event>
      <id>4714</id>   
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>   
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     This computer's Security Settings\Public Key Policies\Encrypting File System data recovery agent policy was modified - either via Local Security Policy or Group Policy in Active Directory.
+
+     Unfortunately the Subject fields don't identify who actually changed the policy because this policy isn't directly configured by administrators. Instead it is edited in a group policy object which then gets applied to the computer. Therefore this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs. Subject:
+
+     The ID and logon session of the user that changed the policy - always the local system - see note above.
+
+     <ul>
+      <li>Security ID: The SID of the account.</li>
+      <li>Account Name: The account logon name.</li>
+      <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+      <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
+        </ul></knowledge>   
        <description>Encrypted data recovery policy was changed.</description>       
      </event>
      
     <event>
      <id>4715</id>
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>      
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     The description is poorly worded but this event is logged whenever you set the security descriptor used to delegate access to the audit policy. You can delegate authority to the system's audit policy using "auditpol /sd:".
+
+     According to Microsoft, this event is always logged when an audit policy is disabled, regardless of the "Audit Policy Change" sub-category setting. This and several other events can help identify when someone attempts to disable auditing to cover their tracks.</knowledge>      
        <description>The audit policy (SACL) on an object was changed.</description>       
      </event>
      
     <event>
      <id>4716</id>  
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>    
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     This event is logged for modifications to trust relationships connecting to this domain. While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information.
+
+     <h3>Subject</h3>
+<p>The ID and logon session of the user that exercised modified the trust.</p>
+<ul>
+  <li>Security ID: The SID of the account.</li>
+  <li>Account Name: The account logon name.</li>
+  <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+  <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
+</ul>
+
+<h3>Trusted Domain</h3>
+<p>The other domain in this trust relationship which despite the word "Trusted" may be a trusting or trusted domain or both. See Trust Information.</p>
+<ul>
+  <li>Domain Name: the DNS name of the domain</li>
+  <li>Domain ID: the pre-Win2k (NetBIOS) name of the domain</li>
+</ul>
+
+<h3>New Trust Information</h3>
+<p>All the information that defines the type of trust after this change, whether it is one way or mutual, transitivity, etc.</p>
+
+<h4>Trust Type</h4>
+<table border="1" cellpadding="4" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>TRUST_TYPE_DOWNLEVEL</td>
+      <td>The other domain is pre-Win2k (NTLM only supported)</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>TRUST_TYPE_UPLEVEL</td>
+      <td>The other domain is Win2k or later (Windows Kerberos supported)</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>TRUST_TYPE_MIT</td>
+      <td>Other domain is actually an MIT Kerberos Realm (probably UNIX)</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>TRUST_TYPE_DCE</td>
+      <td>The trusted domain is a DCE realm</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Trust Direction</h4>
+<table border="1" cellpadding="4" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Direction</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Disabled</td>
+      <td>0x0</td>
+    </tr>
+    <tr>
+      <td>Inbound</td>
+      <td>0x1</td>
+    </tr>
+    <tr>
+      <td>Outbound</td>
+      <td>0x2</td>
+    </tr>
+    <tr>
+      <td>Bidirectional</td>
+      <td>0x3</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Trust Attributes</h4>
+<p>A bitwise value comprised of any of the following:</p>
+<ul>
+  <li>TRUST_ATTRIBUTE_NON_TRANSITIVE: 1</li>
+  <li>TRUST_ATTRIBUTE_UPLEVEL_ONLY: 2</li>
+  <li>TRUST_ATTRIBUTE_FILTER_SIDS: 4</li>
+  <li>TRUST_ATTRIBUTE_FOREST_TRANSITIVE: 8</li>
+</ul>
+
+<h4>SID Filtering</h4>
+<p>Enabled (always enabled for domains within the same forest). See <a href="http://technet2.microsoft.com/windowsserver/en/library/01e5cf71-b317-4967-82a2-75b7b632b7461033.mspx?mfr=true">Microsoft TechNet</a> for more information.</p></knowledge>    
        <description>Trusted domain information was modified.</description>       
      </event>
           
     <event>
      <id>4719</id> 
-     <knowledge>Potentially high criticality — investigate on first occurrence.</knowledge>     
+     <knowledge>Potentially high criticality — investigate on first occurrence.
+
+     This computer's system level audit policy was modified - either via Local Security Policy, Group Policy in Active Directory or the audipol command.
+
+      According to Microsoft, this event is always logged when an audit policy is disabled, regardless of the "Audit Policy Change" sub-category setting. This and several other events can help identify when someone attempts to disable auditing to cover their tracks.
+
+      If group policy was used to configure audit policy unfortunately the Subject fields don't identify who actually changed the policy.  In such cases this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs.
+
+      If auditpol was used to configure audit policy will properly reflect the user in Subject:
+
+      <b>Subject:</b>
+
+      The ID and logon session of the user that changed the policy - always the local system - see note above. 
+
+      <ul>
+        <li>Security ID: The SID of the account.</li>
+        <li>Account Name: The account logon name.</li>
+        <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+        <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
+      </ul>
+
+      <h3>Audit Policy Change</h3>
+
+<h4>Category</h4>
+<ul>
+  <li>Account Logon</li>
+  <li>Account Management</li>
+  <li>Detailed Tracking</li>
+  <li>Directory Service</li>
+  <li>Logon/Logoff</li>
+  <li>Object Access</li>
+  <li>Policy Change</li>
+  <li>Privilege Use</li>
+  <li>System Events</li>
+</ul>
+
+<h4>Subcategory</h4>
+<ul>
+  <li>Security State Change</li>
+  <li>Security System Extension</li>
+  <li>System Integrity</li>
+  <li>IPsec Driver</li>
+  <li>Other System Events</li>
+  <li>Logon</li>
+  <li>Logoff</li>
+  <li>Account Lockout</li>
+  <li>IPsec Main Mode</li>
+  <li>Special Logon</li>
+  <li>IPsec Quick Mode</li>
+  <li>IPsec Extended Mode</li>
+  <li>Other Logon/Logoff Events</li>
+  <li>Network Policy Server</li>
+  <li>File System</li>
+  <li>Registry</li>
+  <li>Kernel Object</li>
+  <li>SAM</li>
+  <li>Other Object Access Events</li>
+  <li>Certification Services</li>
+  <li>Application Generated</li>
+  <li>Handle Manipulation</li>
+  <li>File Share</li>
+  <li>Filtering Platform Packet Drop</li>
+  <li>Filtering Platform Connection</li>
+  <li>Sensitive Privilege Use</li>
+  <li>Non Sensitive Privilege Use</li>
+  <li>Other Privilege Use Events</li>
+  <li>Process Creation</li>
+  <li>Process Termination</li>
+  <li>DPAPI Activity</li>
+  <li>RPC Events</li>
+  <li>Audit Policy Change</li>
+  <li>Authentication Policy Change</li>
+  <li>Authorization Policy Change</li>
+  <li>MPSSVC Rule-Level Policy Change</li>
+  <li>Filtering Platform Policy Change</li>
+  <li>Other Policy Change Events</li>
+  <li>User Account Management</li>
+  <li>Computer Account Management</li>
+  <li>Security Group Management</li>
+  <li>Distribution Group Management</li>
+  <li>Application Group Management</li>
+  <li>Other Account Management Events</li>
+  <li>Directory Service Access</li>
+  <li>Directory Service Changes</li>
+  <li>Directory Service Replication</li>
+  <li>Detailed Directory Service Replication</li>
+  <li>Credential Validation</li>
+  <li>Kerberos Service Ticket Operations</li>
+  <li>Other Account Logon Events</li>
+  <li>Kerberos Authentication Service</li>
+  <li>Subcategory GUID: the globally unique identifier of the subcategory</li>
+</ul>
+
+<h4>Changes</h4>
+<ul>
+  <li>Failure added</li>
+  <li>Failure moved</li>
+  <li>Success added</li>
+  <li>Success removed</li>
+</ul></knowledge>     
       <description>System audit policy was changed.</description>       
      </event>
      
     <event>
      <id>4724</id>  
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>    
-        <description>An attempt was made to reset an account's password.</description>       
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     The Subject attempted to reset the password of the Target:  
+
+      Don't confuse this event with 4723.
+
+      This event is logged as a failure if the new password fails to meet the password policy.
+
+      This event is logged both for local SAM accounts and domain accounts.
+
+      You will also see one or more event ID 4738s informing you of the same information.</knowledge>    
+        <description>An attempt was made to reset an account's password. An attempt was made to reset an accounts password</description>       
      </event>
      
     <event>
      <id>4727</id>   
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>   
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     The user in Subject: just created a Security Global group identified in New Group.
+
+        In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+        Global means the group can be granted access in any trusting domain but may only have members from its own domain.
+
+        This event is only logged on domain controllers.</knowledge>   
        <description>A security-enabled global group was created.</description>       
      </event>
      
     <event>
      <id>4735</id>
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>      
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     The user in Subject: deleted the Security Local group identified in Deleted Group.
+
+          This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
+
+        <h3>Active Directory</h3>
+
+          In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+          A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
+
+        <h3>Local SAM</h3>
+        
+          All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.</knowledge>      
        <description>A security-enabled local group was changed.</description>       
      </event>
      
     <event>
      <id>4737</id>      
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     The user in Subject: changed the Security Global group identified in Group:.
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Global means the group can be granted access in any trusting domain but may only have members from its own domain.
+
+      This event is only logged on domain controllers.</knowledge>
        <description>A security-enabled global group was changed.</description>       
      </event>
      
@@ -303,15 +583,9 @@ For comprehensive logging, including relevant Event IDs, administrators should c
     <event>
      <id>4764</id> 
       <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>     
-       <description>A security-disabled group was deleted.</description>       
+       <description>A security-disabled group was deleted. A group's type was changed. A groups type was changed</description>       
      </event>
      
-    <event>
-     <id>4764</id>
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>      
-       <description>A group's type was changed.</description>       
-     </event>
- 
     <event>
      <id>4765</id>
      <knowledge>Potentially high criticality — investigate on first occurrence.</knowledge>
@@ -332,7 +606,7 @@ For comprehensive logging, including relevant Event IDs, administrators should c
     <event>
      <id>4794</id>
      <knowledge>Potentially high criticality — investigate on first occurrence.</knowledge>
-      <description>An attempt was made to set the Directory Services Restore Mode.</description>       
+      <description>An attempt was made to set the Directory Services Restore Mode. An attempt was made to set the Directory Services Restore Mode administrator password</description>       
      </event>
         
     <event>
@@ -554,19 +828,19 @@ For comprehensive logging, including relevant Event IDs, administrators should c
     <event>
      <id>5122</id>      
      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>A configuration entry changed in OCSP Responder Service.</description>       
+      <description>A configuration entry changed in OCSP Responder Service. A Configuration entry changed in the OCSP Responder Service</description>       
      </event>
      
     <event>
      <id>5123</id>      
      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>A configuration entry changed in OCSP Responder Service.</description>       
+      <description>A configuration entry changed in OCSP Responder Service. A configuration entry changed in the OCSP Responder Service</description>       
      </event>
      
     <event>
      <id>5124</id>      
      <knowledge>Potentially high criticality — investigate on first occurrence.</knowledge>
-      <description>A security setting was updated on the OCSP Responder Service.</description>       
+      <description>A security setting was updated on the OCSP Responder Service. A security setting was updated on OCSP Responder Service</description>       
      </event>
 
     <event>
@@ -626,7 +900,7 @@ For comprehensive logging, including relevant Event IDs, administrators should c
     <event>
      <id>6145</id>      
      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>One or more errors occurred while processing security policy in the Group Policy objects.</description>       
+      <description>One or more errors occurred while processing security policy in the Group Policy objects. One or more errors occured while processing security policy in the group policy objects</description>       
      </event>
      
     <event>
@@ -842,31 +1116,43 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>4634</id>      
+      <knowledge>Marks the end of a logon session, correlating back to a 4624 (logon) event via the Logon ID. Note: for network connections, users can appear to log on/off many times a day just from idle session termination, and a system shutdown may delay logging this event until the next restart.</knowledge>
       <description>An account was logged off.</description>       
      </event>
      
     <event>
      <id>4646</id>      
+      <knowledge>Related to IPsec Main Mode. This one's rarely seen in practice — even the site notes they haven't been able to produce a real-world example of it.</knowledge>
       <description>IKE DoS-prevention mode started.</description>       
      </event>
      
     <event>
      <id>4647</id>      
+      <knowledge>Logged instead of 4634 for interactive and remote desktop (RDP) logons when a user actively logs off. It's useful because it lets you distinguish a deliberate user logoff from a session just timing out from inactivity.</knowledge>
       <description>User initiated logoff.</description>       
      </event>
      
     <event>
      <id>4648</id>      
+      <knowledge>This is a useful event for tracking several different situations:
+      <ul>
+      <li>A user connects to a server or runs a program locally using alternate credentials.  For instance a user maps a drive to a server but specifies a different user's credentials or opens a shortcut under RunAs by shift-control-right-clicking on the shortcut, selecting Run as..., and then filling in a different user's credentials in the dialog box that appears.  Or a user logs on to a web site using new specific credentials.  That is the case above in the example - Administrator was logged on to the local computer and then accessed a SharePoint server sp01.icemail.com as rsmith@mtg.com.</li>
+      <li>This event is also logged when a process logs on as a different account such as when the Scheduled Tasks service starts a task as the specified user. Logged on user: specifies the original user account.</li>
+      <li>With User Account Control enabled, an end user runs a program requiring admin authority.  You will get this event where the process information is consent.exe.  Unfortunately Subject does not identify the end user.</li>
+      </ul>
+     Unfortunately this event is also logged in situations where it doesn't seem necessary.  For instance logging on interactively to a member server (Win2008 RC1) with a domain account produces an instance of this event in addition to 2 instances of 4624.</knowledge>
       <description>A logon was attempted using explicit credentials.</description>       
      </event>
      
     <event>
      <id>4650</id>      
+      <knowledge>An IPsec Main Mode security association was established. Extended Mode was not enabled.  Certificate authentication was not used.</knowledge>
       <description>An IPsec Main Mode security association was established. Extended Mode was not enabled. Certificate authentication was not used.</description>       
      </event>
      
     <event>
      <id>4651</id>      
+      <knowledge>An IPsec Main Mode security association was established. Extended Mode was not enabled.  A certificate was used for authentication.</knowledge>
       <description>An IPsec Main Mode security association was established. Extended Mode was not enabled. A certificate was used for authentication.</description>       
      </event>
      
@@ -892,46 +1178,101 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>4656</id>      
+      <knowledge>This event is logged by multiple subcategories as indicated above.
+
+     When you enable auditing on an object (e.g. file or folder), this is the first event recorded when an application attempts to access the object in such a way that matches the audit policy defined for that object in terms of who is requesting the access and what type of access is being requested. (it appears that two subcategories must be enabled, Handle Manipulation and one other such as File System or Registry depending on what type of object you are auditing.)
+
+     This event will be Audit Success or Audit Failure depending on whether the user account under which the account is running has the requested permissions or not. 
+
+     This event's sub category will vary depending on type of object. In the example above notepad.exe running as Administrator successfully opened "New Text Document.txt" for Read access.
+
+     This event does not always mean any access successfully requested was actually exercised - just that it was successfully obtained (if the event is Audit Success of course).  To determine if any of the permissions requested were actually exercised look forward in the log for 4663 with the same Handle ID.</knowledge>
       <description>A handle to an object was requested.</description>       
      </event>
      
     <event>
      <id>4657</id>      
+      <knowledge>This event documents creation, modification and deletion of registry VALUES.  This event is logged between the open (4656) and close (4658) events for the registry KEY where the value resides.  See Operation Type to find out if the value was created, modified or deleted. Of course this event will only be logged if the key's audit policy is enabled for Set Value permission for the appropriate user or a group in the user is a member.</knowledge>
       <description>A registry value was modified.</description>       
      </event>
      
     <event>
      <id>4658</id>      
+      <knowledge>After successfully opening an object, a program eventually closes it which is documented by this event.  4658 helps you determine how long the object was open. For this event to be useful you must link it back to the earlier event ID 4656 with the same handle ID.</knowledge>
       <description>The handle to an object was closed.</description>       
      </event>
      
     <event>
      <id>4659</id>      
+      <knowledge>This event should be logged whenever your install a patch that requires replacement of a file that is already opened by Windows and can't be closed until shut down.
+
+      According to Microsoft it is used by file systems when the FILE_DELETE_ON_CLOSE flag is specified in Createfile(). This flag is the only way to delete files that were opened exclusively by another program.
+
+      The event is listed as a special multi-use sub-category. The sub-category would depend on the type of object being audited.</knowledge>
       <description>A handle to an object was requested with intent to delete.</description>       
      </event>
      
     <event>
      <id>4660</id>      
+      <knowledge>This event is logged by multiple subcategories as indicated above.
+
+      This event is logged when an object is deleted where that object's audit policy has auditing enabled for deletions for the user who just deleted it or a group to which the user belongs.
+
+      To find out the object's name and type you will need to correlate back to to the event 4656 that has the same Handle ID.
+
+      In addition to this event you will also get event 4663 when you delete the object; Accesses: will include DELETE. 4663 identifies the object's name without requiring correlation to 4656.</knowledge>
       <description>An object was deleted.</description>       
      </event>
      
     <event>
      <id>4661</id>      
+      <knowledge>This event is logged by multiple subcategories as indicated above.
+
+      Most objects, when opened (handle request), generate event 4656 but when you open a SAM object you get 4661 instead.
+
+      Some AD objects also double as SAM objects and some properties of those objects double as SAM attributes.  This event is logged when opening such SAM objects such as SAM_DOMAIN or SAM_USER.
+
+      When the object is closed you get event ID 4658 with the same handle ID.
+
+      I regard these events as noise and recommend disabling the SAM subcategory in your audit policy.</knowledge>
       <description>A handle to an object was requested.</description>       
      </event>
      
     <event>
      <id>4662</id>      
+      <knowledge>Active Directory logs this event when a user accesses an AD object. 
+
+       Of course the object's audit policy must be enabled for the permissions requested and the user requesting it or a group to which that user belongs.
+
+       For tracking property level changes to AD objects I recommend using Directory Service Change events (5136...) instead of this event because 5136, etc provide much better information. 
+
+       On the other hand this is the only event that reports accesses defined for auditing that do not qualify as property changes. 
+
+       For instance changing the permissions on an OU such as for delegating administrative authority requires the WRITE_DAC permission which would get logged by this event.
+
+       Of course I don't recommend auditing read only accesses on AD objects since the value is questionable and would typically generate many, many events.  So on the whole I regard this event as noise and recommend disabling the "Directory Service Access" subcategory in your audit policy on domain controllers.</knowledge>
       <description>An operation was performed on an object.</description>       
      </event>
      
     <event>
      <id>4663</id>      
+      <knowledge>This event is logged by multiple subcategories as indicated above.
+
+      This event documents actual operations performed against files and other objects.  This event is logged between the open (4656) and close (4658) events for the object being opened and can be correlated to those events via Handle ID. 
+
+      While event 4656 tells you when the object is initially opened and what type of access was requested at that time; 4656 doesn't give you positive confirmation any of the access permissions were actually exercised.  That is the role of this event.  This event, 4663, is logged the first time one or more of the requested permissions are actually exercised.  If the program repeatedly exercises a permission while the object is open, Windows only logs 4663 the first time.
+
+      Note events 4656 and 4658 will not appear unless the subcategory "Handle Manipulation" is enabled along with the target sub-category. Microsoft explains that this was done to make it more difficult to enable these noisy events. They feel the event 4663 is better.
+
+      Win2012 adds Resource Attributes.</knowledge>
       <description>An attempt was made to access an object.</description>       
      </event>
      
     <event>
      <id>4664</id>      
+      <knowledge>An attempt was made to create a hard link.
+
+      A hard link is a pointer to a file on the same system.</knowledge>
       <description>An attempt was made to create a hard link.</description>       
      </event>
      
@@ -1075,151 +1416,396 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>4695</id>      
+      <knowledge>This event has to do with the Data Protection API. 
+
+     Per Microsoft: "The Data Protection API (DPAPI) helps to protect data in Windows 2000 and later operating systems. DPAPI is used to help protect private keys, stored credentials (in Windows XP and later), and other confidential information that the operating system or a program wants to keep confidential. "
+
+     Apparently a program running under the account documented in Subject: tried to decrypt a blob with the CryptUnprotectData function and failed.  Status code 0x8009000b is pretty general.  Most often it means 
+
+    <ul>
+      <li>The user password has changed and the automatic reprocessing of keys based on user password failed</li>
+      <li>The blob was encrypted by a different user than the one now trying to decrypt it.</li>
+      </ul>
+
+     So it's possible that that this event could indicate malicious behavior but I've seen it logged during the course of normal operation on a clean, isolated test system too.</knowledge>
       <description>Unprotection of auditable protected data was attempted.</description>       
      </event>
      
     <event>
      <id>4696</id>      
+      <knowledge>This often happens when a service starts or a scheduled task starts under the authority of a different user. You will see events 4624 and 4648 as well as 4776 or 4768 earlier in the log.
+
+     The Assigning process fields identify the process that started the child (new) process. Process ID allows you to link this event to the corresponding event 4688 (process start of the parent process) but there is little need since this event gives you the program name (Process Name) and the user under which the process was running (Subject). 
+
+     Target Process: information identifies the new child process that was started under the account and logon session in New Token Information. 
+
+     You can use the Target Process ID to link back to the earlier 4688 for the new child process ID but again there is little need to do this since you have the Target Process Name: right here in this event.</knowledge>
       <description>A primary token was assigned to process.</description>       
      </event>
      
     <event>
      <id>4697</id>      
-      <description>Attempt to install a service.</description>       
+      <knowledge>A new service was installed by the user indicated in the subject.  Subject often identifies the local system (SYSTEM) for services installed as part of native Windows components and therefore you can't determine who actually initiated the installation.
+
+     This is a key change control event as new services are significant extensions of the software running on a server and the roles it performs.
+
+     This event is no longer generated on Windows Server 2012r2 and earlier.  The minimum OS version is Server 2016 or Windows 10.</knowledge>
+      <description>Attempt to install a service. A service was installed in the system</description>       
      </event>
      
     <event>
      <id>4698</id>      
+      <knowledge>The user indicated in Subject: just created a new scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name:.
+
+     This is an important change control event.  See related events for changes to Scheduled Tasks: 4699, 4700, 4701, 4702.</knowledge>
       <description>A scheduled task was created.</description>       
      </event>
      
     <event>
      <id>4699</id>      
+      <knowledge>The user indicated in Subject: just deleted the scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name:.
+
+     This is an important change control event.  See related events for changes to Scheduled Tasks: 4698, 4700, 4701, and 4702.</knowledge>
       <description>A scheduled task was deleted.</description>       
      </event>
      
     <event>
      <id>4700</id>      
+      <knowledge>The user indicated in Subject: just enabled the scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name.
+
+     A task must be enabled in order to run at its scheduled time.
+
+     This is an important change control event.  See related events for changes to Scheduled Tasks: 4698, 4699, 4601 and 4702.</knowledge>
       <description>A scheduled task was enabled.</description>       
      </event>
      
     <event>
      <id>4701</id>      
+      <knowledge>The user indicated in Subject: just disabled the scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name:.
+
+     In its disabled the state the task will not run at its scheduled time until re-enabled.
+
+     This is an important change control event.  See related events for changes to Scheduled Tasks: 4698, 4699, 4700, 4702</knowledge>
       <description>A scheduled task was disabled.</description>       
      </event>
      
     <event>
      <id>4702</id>      
+      <knowledge>The user indicated in Subject: just updated the scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name:.
+
+     This event logs all updates to Scheduled Tasks except for enable and disable operations which have their own events.
+
+     This is an important change control event.  See related events for changes to Scheduled Tasks: 4698, 4699, 4700 and 4701.</knowledge>
       <description>A scheduled task was updated.</description>       
      </event>
      
     <event>
      <id>4704</id>      
+      <knowledge>This event documents a change to user right assignments on this computer including the right and user or group that received the new right.
+
+     Note: "User rights" and "privileges" are synonymous terms used interchangeably in Windows.
+
+     Rights, like most other security settings, are defined in group policy objects and applied by the computer. Therefore this event will normally show the Assigned By user as the system itself. To determine who actually made the rights assignment change you must search the domain controllers' security logs for changes to groupPolicyContainer objects (logged by Directory Service auditing).
+
+     Logon ID allows you to link this event to the prior event 4624 logon event of the user who performed this action.
+
+     Note: This event, 4704, and 4705 do not log changes to logon rights such as "Access this computer from the network" or "Logon as a service". See events 4717 and 4718. 
+
+     See <b>User Rights</b> table for more information.</knowledge>
       <description>A user right was assigned.</description>       
      </event>
      
     <event>
      <id>4705</id>      
+      <knowledge>This event documents a change to user right assignments on this computer including the right and user or group that lost the right.
+
+     Note: "User rights" and "privileges" are synonymous terms used interchangeably in Windows.
+
+     Rights, like most other security settings, are defined in group policy objects and applied by the computer. Therefore this event will normally show the Assigned By user as the system itself. To determine who actually made the rights assignment change you must search the domain controllers' security logs for changes to groupPolicyContainer objects (logged by Directory Service auditing).
+
+     Logon ID allows you to link this event to the prior event 4624 logon event of the user who performed this action.
+
+     Note: This event, 4705, and 4704 do not log changes to logon rights such as "Access this computer from the network" or "Logon as a service". See events 4714 and 4718. 
+
+     <b>Subject</b>
+     The ID and logon session of the user that revoked the right.  Unfortunately this is just the local system account - see above. 
+
+      <ul>
+      <li>Security ID:  The SID of the account.</li>
+      <li>Account Name: The account logon name.</li>
+      <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+      <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
+      </ul></knowledge>
       <description>A user right was removed.</description>       
      </event>
      
     <event>
      <id>4707</id>      
+      <knowledge>This event is logged for all deleted trust relationships that connected to this domain.  While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information:
+
+     <b>Subject:</b>
+
+     The ID and logon session of the user that excercised deleted the trust.
+     
+     <ul>
+          <li>Security ID:  The SID of the account.</li>
+          <li>Account Name: The account logon name.</li>
+          <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+          <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
+        </ul></knowledge>
       <description>A trust to a domain was removed.</description>       
      </event>
      
     <event>
      <id>4709</id>      
+      <knowledge>This event is not produced in the default configuration (using Windows Firewall) however event 5478 is produced..
+
+     Microsoft comments: "This service provides compatibility with Internet Protocol security (IPsec) policies used in earlier versions of Windows...This is a normal condition. No further action is required."</knowledge>
       <description>IPsec Services was started.</description>       
      </event>
      
     <event>
      <id>4710</id>      
+      <knowledge>In the default configuration this event is not produced when the IPsec Policy agent service is disabled or fails to start.
+
+     According to Microsoft, "This service provides compatibility with Internet Protocol security (IPsec) policies used in earlier versions of Windows. New deployments of Windows Vista and Windows Server 2008 should not use the policies supported by the IPsec Policy Agent service"</knowledge>
       <description>IPsec Services was disabled.</description>       
      </event>
      
     <event>
      <id>4711</id>      
-      <description>May contain any one of the following: PAStore Engine applied locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine applied Active Directory storage IPsec policy on the computer. PAStore Engine applied local registry storage IPsec policy on the computer. PAStore Engine failed to apply locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply local registry storage IPsec policy on the computer. PAStore Engine failed to apply some rules of the active IPsec policy on the computer. PAStore Engine failed to load directory storage IPsec policy on the computer. PAStore Engine loaded directory storage IPsec policy on the computer. PAStore Engine failed to load local storage IPsec policy on the computer. PAStore Engine loaded local storage IPsec policy on the computer.PAStore Engine polled for changes to the active IPsec policy and detected no changes.</description>       
+      <knowledge>May contain any one of the following: PAStore Engine applied locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine applied Active Directory storage IPsec policy on the computer. PAStore Engine applied local registry storage IPsec policy on the computer. PAStore Engine failed to apply locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply local registry storage IPsec policy on the computer. PAStore Engine failed to apply some rules of the active IPsec policy on the computer. PAStore Engine failed to load directory storage IPsec policy on the computer. PAStore Engine loaded directory storage IPsec policy on the computer. PAStore Engine failed to load local storage IPsec policy on the computer. PAStore Engine loaded local storage IPsec policy on the computer.PAStore Engine polled for changes to the active IPsec policy and detected no changes.
+
+      <ul>
+        <li>PAStore Engine applied locally cached copy of Active Directory storage IPsec policy on the computer.</li>
+        <li>PAStore Engine applied Active Directory storage IPsec policy on the computer.</li>
+        <li>PAStore Engine applied local registry storage IPsec policy on the computer.</li>
+        <li>PAStore Engine failed to apply locally cached copy of Active Directory storage IPsec policy on the computer.</li>
+        <li>PAStore Engine failed to apply Active Directory storage IPsec policy on the computer.</li>
+        <li>PAStore Engine failed to apply local registry storage IPsec policy on the computer.</li>
+        <li>PAStore Engine failed to apply some rules of the active IPsec policy on the computer.</li>
+        <li>PAStore Engine failed to load directory storage IPsec policy on the computer.</li>
+        <li>PAStore Engine loaded directory storage IPsec policy on the computer.</li>
+        <li>PAStore Engine failed to load local storage IPsec policy on the computer.</li>
+        <li>PAStore Engine loaded local storage IPsec policy on the computer.</li>
+        <li>PAStore Engine polled for changes to the active IPsec policy and detected no changes.</li>
+</ul></knowledge>
+      <description>May contain any one of the following: PAStore Engine applied locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine applied Active Directory storage IPsec policy on the computer. PAStore Engine applied local registry storage IPsec policy on the computer. PAStore Engine failed to apply locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply local registry storage IPsec policy on the computer. PAStore Engine failed to apply some rules of the active IPsec policy on the computer. PAStore Engine failed to load directory storage IPsec policy on the computer. PAStore Engine loaded directory storage IPsec policy on the computer. PAStore Engine failed to load local storage IPsec policy on the computer. PAStore Engine loaded local storage IPsec policy on the computer.PAStore Engine polled for changes to the active IPsec policy and detected no changes. PAStore Engine (1%)</description>       
      </event>
      
     <event>
      <id>4712</id>      
+      <knowledge>IPsec Services encountered a potentially serious failure.
+
+      In theory this reports when the service cannot perform its required tasks, such as properly processing filters, or cannot protect traffic sent or received by one or more of the network adapters attached to the computer.
+
+      Microsoft suggests restarting the computer to resolve this problem.</knowledge>
       <description>IPsec Services encountered a potentially serious failure.</description>       
      </event>
      
     <event>
      <id>4717</id>      
+      <knowledge>This event documents the grant of logon rights such as "Access this computer from the network" or "Logon as a service".
+
+     Rights, like most other security settings, are defined in group policy objects and applied by the computer. Therefore this event will normally show the Assigned By user as the system itself. To determine who actually made the rights assignment change you must search the domain controllers' security logs for changes to groupPolicyContainer objects (logged by Directory Service auditing). Logon ID allows you to link this event to the prior event 4624 logon event of the user who performed this action.
+
+     This event, 4717, documents the system name for each logon right as opposed to the more familiar description.
+
+     Note: This event and 4718 log changes to strictly logon rights such as "Access this computer from the network" or "Logon as a service" - not to other rights such as "Change the system time" or "Take ownership of files and other objects". See events 4704 and 4705. 
+
+     See image for more details.</knowledge>
       <description>System security access was granted to an account.</description>       
      </event>
      
     <event>
      <id>4718</id>      
+      <knowledge>This event documents the revokation of logon rights such as "Access this computer from the network" or "Logon as a service".
+
+     Rights, like most other security settings, are defined in group policy objects and applied by the computer. Therefore this event will normally show the Assigned By user as the system itself. To determine who actually made the rights assignment change you must search the domain controllers' security logs for changes to groupPolicyContainer objects (logged by Directory Service auditing). Logon ID allows you to link this event to the prior event 4624 logon event of the user who performed this action.
+
+     This event, 4718 documents the system name for each logon right as opposed to the more familiar description. Click here for a cross reference.
+
+     Note: This event and 4717 log changes to strictly logon rights such as "Access this computer from the network" or "Logon as a service" - not to other rights such as "Change the system time" or "Take ownership of files and other objects". See events 4704 and 4705.</knowledge>
       <description>System security access was removed from an account.</description>       
      </event>
      
     <event>
      <id>4720</id>      
+      <knowledge>The user identified by Subject: created the user identified by New Account:. 
+
+    Attributes show some of the properties that were set at the time the account was created.  Notice account is initially disabled.
+
+    This event is logged both for local SAM accounts and domain accounts.
+
+    You will see a series of other User Account Management events after this event as the remaining properties are punched down, password set and account finally enabled.</knowledge>
       <description>A user account was created.</description>       
      </event>
      
     <event>
      <id>4722</id>      
+      <knowledge>The user identified by Subject: enabed the user identified by Target Account:. 
+
+    This event is logged both for local SAM accounts and domain accounts.
+
+    This event is always logged after event 4720 - user account creation.
+
+    You will also see event ID 4738 informing you of the same information.</knowledge>
       <description>A user account was enabled.</description>       
      </event>
      
     <event>
      <id>4723</id>      
+      <knowledge>The user attempted to change his/her own password.  Subject and Target should always match.  Don't confuse this event with 4724.
+
+      This event is logged as a failure if his new password fails to meet the password policy.
+
+      If the user fails to correctly enter his old password this event is not logged.  Instead, for domain accounts, a 4771 is logged with kadmin/changepw as the service name.
+
+      This event is logged both for local SAM accounts and domain accounts.
+
+      You will also see event ID 4738 informing you of the same information.</knowledge>
       <description>An attempt was made to change an account's password.</description>       
      </event>
      
     <event>
      <id>4725</id>      
+      <knowledge>The user identified by Subject: disabled the user identified by Target Account:. 
+
+      This event is logged both for local SAM accounts and domain accounts.
+
+      You will also see event ID4738 informing you of the same information.</knowledge>
       <description>A user account was disabled.</description>       
      </event>
      
     <event>
      <id>4726</id>      
+      <knowledge>The user identified by Subject: deleted the user identified by Target Account:. 
+
+      This event is logged both for local SAM accounts and domain accounts.
+
+      You will also see event ID 4738 informing you of the same information.</knowledge>
       <description>A user account was deleted.</description>       
      </event>
      
     <event>
      <id>4728</id>      
+      <knowledge>The user in Subject: added the user/group/computer in Member: to the Security Global group in Group:.
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Global means the group can be granted access in any trusting domain but may only have members from its own domain. 
+
+      This event is only logged on domain controllers.
+
+      Server 2016 adds the "Expiration time" field in version 2 of this event.</knowledge>
       <description>A member was added to a security-enabled global group.</description>       
      </event>
      
     <event>
      <id>4729</id>      
+      <knowledge>The user in Subject: removed the user/group/computer in Member: from the Security Global group in Group:.
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Global means the group can be granted access in any trusting domain but may only have members from its own domain. 
+
+      This event is only logged on domain controllers.</knowledge>
       <description>A member was removed from a security-enabled global group.</description>       
      </event>
      
     <event>
      <id>4730</id>      
+      <knowledge>The user in Subject: deleted the Security Global group identified in Deleted Group.
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Global means the group can be granted access in any trusting domain but may only have members from its own domain.
+
+      This event is only logged on domain controllers.</knowledge>
       <description>A security-enabled global group was deleted.</description>       
      </event>
      
     <event>
      <id>4731</id>      
+      <knowledge>The user in Subject: created a Security Local group identified in New Group.
+
+      This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
+
+    <h3>Active Directory</h3>
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
+
+    <h3>Local SAM</h3>
+
+      All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.</knowledge>
       <description>A security-enabled local group was created.</description>       
      </event>
      
     <event>
      <id>4732</id>      
+      <knowledge>The user in Subject: added the user/group/computer in Member: to the Security Local group in Group:.
+
+      This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
+
+      <h3>Active Directory</h3>
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists. A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
+
+      <h3>Local SAM</h3>
+
+      All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.
+ 
+      Server 2016 adds the "Expiration time" field in version 2 of this event.</knowledge>
       <description>A member was added to a security-enabled local group.</description>       
      </event>
      
     <event>
      <id>4733</id>      
+      <knowledge>The user in Subject: removed the user/group/computer in Member: to the Security Local group in Group:.
+
+        This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
+
+        <h3>Active Directory</h3>
+
+        In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+        A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
+
+        <h3>Local SAM</h3>
+
+        All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.</knowledge>
       <description>A member was removed from a security-enabled local group.</description>       
      </event>
      
     <event>
      <id>4734</id>      
+      <knowledge>The user in Subject: deleted the Security Local group identified in Deleted Group.
+
+          This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
+
+        <h3>Active Directory</h3>
+
+          In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+          A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
+
+        <h3>Local SAM</h3>
+        
+          All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.</knowledge>
       <description>A security-enabled local group was deleted.</description>       
      </event>
      
     <event>
      <id>4738</id>      
+      <knowledge>The user identified by Subject: changed the user identified by Target Account:. 
+
+      Attributes show some of the properties that were set at the time the account was changed. 
+
+      This event is logged both for local SAM accounts and domain accounts.
+
+      Depending on what was changed you may see other User Account Management events specific to certain operations like password resets.</knowledge>
       <description>A user account was changed.</description>       
      </event>
      
@@ -1230,7 +1816,7 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>4741</id>      
-      <description>A computer account was changed.</description>       
+      <description>A computer account was changed. A computer account was created</description>       
      </event>
      
     <event>
@@ -1420,12 +2006,12 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>4787</id>      
-      <description>A nonmember was added to a basic application group.</description>       
+      <description>A nonmember was added to a basic application group. A non-member was added to a basic application group</description>       
      </event>
      
     <event>
      <id>4788</id>      
-      <description>A nonmember was removed from a basic application group.</description>       
+      <description>A nonmember was removed from a basic application group. A non-member was removed from a basic application group..</description>       
      </event>
      
     <event>
@@ -1710,7 +2296,7 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>4954</id>      
-      <description>Windows Firewall Group Policy settings have changed. The new settings have been applied.</description>       
+      <description>Windows Firewall Group Policy settings have changed. The new settings have been applied. Windows Firewall Group Policy settings has changed. The new settings have been applied</description>       
      </event>
      
     <event>
@@ -1915,12 +2501,12 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>5070</id>      
-      <description>A cryptographic function property modification was attempted.</description>       
+      <description>A cryptographic function property modification was attempted. A cryptographic function property operation was attempted</description>       
      </event>
      
     <event>
      <id>5125</id>      
-      <description>A request was submitted to the OCSP Responder Service.</description>       
+      <description>A request was submitted to the OCSP Responder Service. A request was submitted to OCSP Responder Service</description>       
      </event>
      
     <event>
@@ -2030,7 +2616,7 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>5444</id>      
-      <description>The following sublayer was present when the Windows Filtering Platform Base Filtering Engine started.</description>       
+      <description>The following sublayer was present when the Windows Filtering Platform Base Filtering Engine started. The following sub-layer was present when the Windows Filtering Platform Base Filtering Engine started</description>       
      </event>
      
     <event>
@@ -2055,7 +2641,7 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>5450</id>      
-      <description>A Windows Filtering Platform sublayer has been changed.</description>       
+      <description>A Windows Filtering Platform sublayer has been changed. A Windows Filtering Platform sub-layer has been changed</description>       
      </event>
      
     <event>
@@ -2224,71 +2810,6 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
      
     <event>
-     <id>4608</id>      
-      <description>Windows is starting up</description>       
-     </event>
-     
-    <event>
-     <id>4609</id>      
-      <description>Windows is shutting down</description>       
-     </event>
-     
-    <event>
-     <id>4610</id>      
-      <description>An authentication package has been loaded by the Local Security Authority</description>       
-     </event>
-     
-    <event>
-     <id>4611</id>      
-      <description>A trusted logon process has been registered with the Local Security Authority</description>       
-     </event>
-     
-    <event>
-     <id>4612</id>      
-      <description>Internal resources allocated for the queuing of audit messages have been exhausted, leading to the loss of some audits.</description>       
-     </event>
-     
-    <event>
-     <id>4614</id>      
-      <description>A notification package has been loaded by the Security Account Manager.</description>       
-     </event>
-     
-    <event>
-     <id>4615</id>      
-      <description>Invalid use of LPC port</description>       
-     </event>
-     
-    <event>
-     <id>4616</id>      
-      <description>The system time was changed.</description>       
-     </event>
-     
-    <event>
-     <id>4618</id>      
-      <description>A monitored security event pattern has occurred</description>       
-     </event>
-     
-    <event>
-     <id>4621</id>      
-      <description>Administrator recovered system from CrashOnAuditFail</description>       
-     </event>
-     
-    <event>
-     <id>4622</id>      
-      <description>A security package has been loaded by the Local Security Authority.</description>       
-     </event>
-     
-    <event>
-     <id>4624</id>      
-      <description>An account was successfully logged on</description>       
-     </event>
-     
-    <event>
-     <id>4625</id>      
-      <description>An account failed to log on</description>       
-     </event>
-     
-    <event>
      <id>4626</id>      
       <description>User/Device claims information</description>       
      </event>
@@ -2299,1212 +2820,8 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4634</id>      
-     <knowledge>Marks the end of a logon session, correlating back to a 4624 (logon) event via the Logon ID. Note: for network connections, users can appear to log on/off many times a day just from idle session termination, and a system shutdown may delay logging this event until the next restart.</knowledge>
-      <description>An account was logged off</description>       
-     </event>
-     
-    <event>
-     <id>4646</id>    
-      <knowledge>Related to IPsec Main Mode. This one's rarely seen in practice — even the site notes they haven't been able to produce a real-world example of it.</knowledge>  
-      <description>IKE DoS-prevention mode started</description>       
-     </event>
-     
-    <event>
-     <id>4647</id>      
-      <knowledge>Logged instead of 4634 for interactive and remote desktop (RDP) logons when a user actively logs off. It's useful because it lets you distinguish a deliberate user logoff from a session just timing out from inactivity.</knowledge>
-       <description>User initiated logoff</description>       
-     </event>
-     
-    <event>
-     <id>4648</id>     
-     <knowledge>
-      This is a useful event for tracking several different situations:
-      <ul>
-      <li>A user connects to a server or runs a program locally using alternate credentials.  For instance a user maps a drive to a server but specifies a different user's credentials or opens a shortcut under RunAs by shift-control-right-clicking on the shortcut, selecting Run as..., and then filling in a different user's credentials in the dialog box that appears.  Or a user logs on to a web site using new specific credentials.  That is the case above in the example - Administrator was logged on to the local computer and then accessed a SharePoint server sp01.icemail.com as rsmith@mtg.com.</li>
-      <li>This event is also logged when a process logs on as a different account such as when the Scheduled Tasks service starts a task as the specified user. Logged on user: specifies the original user account.</li>
-      <li>With User Account Control enabled, an end user runs a program requiring admin authority.  You will get this event where the process information is consent.exe.  Unfortunately Subject does not identify the end user.</li>
-      </ul>
-     Unfortunately this event is also logged in situations where it doesn't seem necessary.  For instance logging on interactively to a member server (Win2008 RC1) with a domain account produces an instance of this event in addition to 2 instances of 4624.
-
-      </knowledge> 
-      <description>A logon was attempted using explicit credentials</description>       
-     </event>
-     
-    <event>
-     <id>4649</id>      
-      <description>A replay attack was detected</description>       
-     </event>
-     
-    <event>
-     <id>4650</id>  
-     <knowledge>An IPsec Main Mode security association was established. Extended Mode was not enabled.  Certificate authentication was not used.</knowledge>    
-      <description>An IPsec Main Mode security association was established</description>       
-     </event>
-     
-    <event>
-     <id>4651</id> 
-     <knowledge>An IPsec Main Mode security association was established. Extended Mode was not enabled.  A certificate was used for authentication.</knowledge>     
-      <description>An IPsec Main Mode security association was established</description>       
-     </event>
-     
-    <event>
-     <id>4652</id>      
-      <description>An IPsec Main Mode negotiation failed</description>       
-     </event>
-     
-    <event>
-     <id>4653</id>      
-      <description>An IPsec Main Mode negotiation failed</description>       
-     </event>
-     
-    <event>
-     <id>4654</id>      
-      <description>An IPsec Quick Mode negotiation failed</description>       
-     </event>
-     
-    <event>
-     <id>4655</id>      
-      <description>An IPsec Main Mode security association ended</description>       
-     </event>
-     
-    <event>
-     <id>4656</id>  
-     <knowledge>
-     
-     This event is logged by multiple subcategories as indicated above.
-
-     When you enable auditing on an object (e.g. file or folder), this is the first event recorded when an application attempts to access the object in such a way that matches the audit policy defined for that object in terms of who is requesting the access and what type of access is being requested. (it appears that two subcategories must be enabled, Handle Manipulation and one other such as File System or Registry depending on what type of object you are auditing.)
-
-     This event will be Audit Success or Audit Failure depending on whether the user account under which the account is running has the requested permissions or not. 
-
-     This event's sub category will vary depending on type of object. In the example above notepad.exe running as Administrator successfully opened "New Text Document.txt" for Read access.
-
-     This event does not always mean any access successfully requested was actually exercised - just that it was successfully obtained (if the event is Audit Success of course).  To determine if any of the permissions requested were actually exercised look forward in the log for 4663 with the same Handle ID.</knowledge>    
-      <description>A handle to an object was requested</description>       
-     </event>
-     
-    <event>
-     <id>4657</id>     
-     <knowledge>
-     This event documents creation, modification and deletion of registry VALUES.  This event is logged between the open (4656) and close (4658) events for the registry KEY where the value resides.  See Operation Type to find out if the value was created, modified or deleted. Of course this event will only be logged if the key's audit policy is enabled for Set Value permission for the appropriate user or a group in the user is a member.
-     </knowledge> 
-      <description>A registry value was modified</description>       
-     </event>
-     
-    <event>
-     <id>4658</id> 
-     <knowledge>After successfully opening an object, a program eventually closes it which is documented by this event.  4658 helps you determine how long the object was open. For this event to be useful you must link it back to the earlier event ID 4656 with the same handle ID.</knowledge>  
-      <description>The handle to an object was closed</description>       
-     </event>
-     
-    <event>
-     <id>4659</id>  
-     <knowledge>
-      This event should be logged whenever your install a patch that requires replacement of a file that is already opened by Windows and can't be closed until shut down.
-
-      According to Microsoft it is used by file systems when the FILE_DELETE_ON_CLOSE flag is specified in Createfile(). This flag is the only way to delete files that were opened exclusively by another program.
-
-      The event is listed as a special multi-use sub-category. The sub-category would depend on the type of object being audited.
-</knowledge>
-      <description>A handle to an object was requested with intent to delete</description>       
-     </event>
-     
-    <event>
-     <id>4660</id>      
-      <knowledge>
-      This event is logged by multiple subcategories as indicated above.
-
-      This event is logged when an object is deleted where that object's audit policy has auditing enabled for deletions for the user who just deleted it or a group to which the user belongs.
-
-      To find out the object's name and type you will need to correlate back to to the event 4656 that has the same Handle ID.
-
-      In addition to this event you will also get event 4663 when you delete the object; Accesses: will include DELETE. 4663 identifies the object's name without requiring correlation to 4656.
-  </knowledge>
-
-      <description>An object was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4661</id>    
-      <knowledge>
-      This event is logged by multiple subcategories as indicated above.
-
-      Most objects, when opened (handle request), generate event 4656 but when you open a SAM object you get 4661 instead.
-
-      Some AD objects also double as SAM objects and some properties of those objects double as SAM attributes.  This event is logged when opening such SAM objects such as SAM_DOMAIN or SAM_USER.
-
-      When the object is closed you get event ID 4658 with the same handle ID.
-
-      I regard these events as noise and recommend disabling the SAM subcategory in your audit policy.
-  </knowledge>
-      <description>A handle to an object was requested</description>       
-     </event>
-     
-    <event>
-     <id>4662</id>     
-       <knowledge>
-       Active Directory logs this event when a user accesses an AD object. 
-
-       Of course the object's audit policy must be enabled for the permissions requested and the user requesting it or a group to which that user belongs.
-
-       For tracking property level changes to AD objects I recommend using Directory Service Change events (5136...) instead of this event because 5136, etc provide much better information. 
-
-       On the other hand this is the only event that reports accesses defined for auditing that do not qualify as property changes. 
-
-       For instance changing the permissions on an OU such as for delegating administrative authority requires the WRITE_DAC permission which would get logged by this event.
-
-       Of course I don't recommend auditing read only accesses on AD objects since the value is questionable and would typically generate many, many events.  So on the whole I regard this event as noise and recommend disabling the "Directory Service Access" subcategory in your audit policy on domain controllers.
-  </knowledge>
-      <description>An operation was performed on an object</description>       
-     </event>
-     
-    <event>
-     <id>4663</id>      
-      <knowledge>
-      This event is logged by multiple subcategories as indicated above.
-
-      This event documents actual operations performed against files and other objects.  This event is logged between the open (4656) and close (4658) events for the object being opened and can be correlated to those events via Handle ID. 
-
-      While event 4656 tells you when the object is initially opened and what type of access was requested at that time; 4656 doesn't give you positive confirmation any of the access permissions were actually exercised.  That is the role of this event.  This event, 4663, is logged the first time one or more of the requested permissions are actually exercised.  If the program repeatedly exercises a permission while the object is open, Windows only logs 4663 the first time.
-
-      Note events 4656 and 4658 will not appear unless the subcategory "Handle Manipulation" is enabled along with the target sub-category. Microsoft explains that this was done to make it more difficult to enable these noisy events. They feel the event 4663 is better.
-
-      Win2012 adds Resource Attributes.
-  </knowledge>
-       <description>An attempt was made to access an object</description>       
-     </event>
-     
-    <event>
-     <id>4664</id>   
-      <knowledge>
-      An attempt was made to create a hard link.
-
-      A hard link is a pointer to a file on the same system.
-  </knowledge>   
-       <description>An attempt was made to create a hard link</description>       
-     </event>
-     
-    <event>
-     <id>4665</id>      
-      <description>An attempt was made to create an application client context.</description>       
-     </event>
-     
-    <event>
-     <id>4666</id>      
-      <description>An application attempted an operation</description>       
-     </event>
-     
-    <event>
-     <id>4667</id>  
-          <knowledge>
-          This event is logged in connection with Authorization Manager access checks. See <a href="https://learn.microsoft.com/en-us/windows/win32/secauthz/establishing-a-client-context-with-authorization-manager-in-c--?redirectedfrom=MSDN">Establishing a Client Context with Authorization Manager in C++</a> for more details.
-  </knowledge>
-      <description>An application client context was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4668</id>      
-      <description>An application was initialized</description>       
-     </event>
-     
-    <event>
-     <id>4670</id>      
-      <description>Permissions on an object were changed</description>       
-     </event>
-     
-    <event>
-     <id>4671</id>      
-      <description>An application attempted to access a blocked ordinal through the TBS</description>       
-     </event>
-     
-    <event>
-     <id>4672</id>      
-      <description>Special privileges assigned to new logon</description>       
-     </event>
-     
-    <event>
-     <id>4673</id>      
-      <description>A privileged service was called</description>       
-     </event>
-     
-    <event>
-     <id>4674</id>      
-      <description>An operation was attempted on a privileged object</description>       
-     </event>
-     
-    <event>
-     <id>4675</id>      
-      <description>SIDs were filtered</description>       
-     </event>
-     
-    <event>
-     <id>4688</id>      
-      <description>A new process has been created</description>       
-     </event>
-     
-    <event>
-     <id>4689</id>      
-      <description>A process has exited</description>       
-     </event>
-     
-    <event>
-     <id>4690</id>      
-      <description>An attempt was made to duplicate a handle to an object</description>       
-     </event>
-     
-    <event>
-     <id>4691</id>      
-      <description>Indirect access to an object was requested</description>       
-     </event>
-     
-    <event>
-     <id>4692</id> 
-      <knowledge>
-      Microsoft documentation indicates this is a routine event that can be filtered out of events to review.  At this time I classify this as a "noise" event.
-  </knowledge>   
-      <description>Backup of data protection master key was attempted</description>       
-     </event>
-     
-    <event>
-     <id>4693</id>      
-      <description>Recovery of data protection master key was attempted</description>       
-     </event>
-     
-    <event>
-     <id>4694</id>      
-      <description>Protection of auditable protected data was attempted</description>       
-     </event>
-     
-    <event>
-     <id>4695</id>   
-     <knowledge>
-     This event has to do with the Data Protection API. 
-
-     Per Microsoft: "The Data Protection API (DPAPI) helps to protect data in Windows 2000 and later operating systems. DPAPI is used to help protect private keys, stored credentials (in Windows XP and later), and other confidential information that the operating system or a program wants to keep confidential. "
-
-     Apparently a program running under the account documented in Subject: tried to decrypt a blob with the CryptUnprotectData function and failed.  Status code 0x8009000b is pretty general.  Most often it means 
-
-    <ul>
-      <li>The user password has changed and the automatic reprocessing of keys based on user password failed</li>
-      <li>The blob was encrypted by a different user than the one now trying to decrypt it.</li>
-      </ul>
-
-     So it's possible that that this event could indicate malicious behavior but I've seen it logged during the course of normal operation on a clean, isolated test system too.
-     </knowledge>
-      <description>Unprotection of auditable protected data was attempted</description>       
-     </event>
-     
-    <event>
-     <id>4696</id>  
-      <knowledge>
-     This often happens when a service starts or a scheduled task starts under the authority of a different user. You will see events 4624 and 4648 as well as 4776 or 4768 earlier in the log.
-
-     The Assigning process fields identify the process that started the child (new) process. Process ID allows you to link this event to the corresponding event 4688 (process start of the parent process) but there is little need since this event gives you the program name (Process Name) and the user under which the process was running (Subject). 
-
-     Target Process: information identifies the new child process that was started under the account and logon session in New Token Information. 
-
-     You can use the Target Process ID to link back to the earlier 4688 for the new child process ID but again there is little need to do this since you have the Target Process Name: right here in this event.
-     </knowledge>    
-       <description>A primary token was assigned to process</description>       
-     </event>
-     
-    <event>
-     <id>4697</id>    
-     <knowledge>
-     A new service was installed by the user indicated in the subject.  Subject often identifies the local system (SYSTEM) for services installed as part of native Windows components and therefore you can't determine who actually initiated the installation.
-
-     This is a key change control event as new services are significant extensions of the software running on a server and the roles it performs.
-
-     This event is no longer generated on Windows Server 2012r2 and earlier.  The minimum OS version is Server 2016 or Windows 10.
-     </knowledge>
-      <description>A service was installed in the system</description>       
-     </event>
-     
-    <event>
-     <id>4698</id>   
-     <knowledge>
-     The user indicated in Subject: just created a new scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name:.
-
-     This is an important change control event.  See related events for changes to Scheduled Tasks: 4699, 4700, 4701, 4702. 
-     </knowledge>   
-      <description>A scheduled task was created</description>       
-     </event>
-     
-    <event>
-     <id>4699</id>     
-     <knowledge>
-     The user indicated in Subject: just deleted the scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name:.
-
-     This is an important change control event.  See related events for changes to Scheduled Tasks: 4698, 4700, 4701, and 4702.
-     </knowledge> 
-      <description>A scheduled task was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4700</id>  
-     <knowledge>
-     The user indicated in Subject: just enabled the scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name.
-
-     A task must be enabled in order to run at its scheduled time.
-
-     This is an important change control event.  See related events for changes to Scheduled Tasks: 4698, 4699, 4601 and 4702.
-     </knowledge>    
-      <description>A scheduled task was enabled</description>       
-     </event>
-     
-    <event>
-     <id>4701</id>    
-     <knowledge>
-     The user indicated in Subject: just disabled the scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name:.
-
-     In its disabled the state the task will not run at its scheduled time until re-enabled.
-
-     This is an important change control event.  See related events for changes to Scheduled Tasks: 4698, 4699, 4700, 4702
-     </knowledge>  
-      <description>A scheduled task was disabled</description>       
-     </event>
-     
-    <event>
-     <id>4702</id>  
-     <knowledge>
-     The user indicated in Subject: just updated the scheduled task (Start menu\Accessories\System Tools\Task Scheduler) identified by Task Name:.
-
-     This event logs all updates to Scheduled Tasks except for enable and disable operations which have their own events.
-
-     This is an important change control event.  See related events for changes to Scheduled Tasks: 4698, 4699, 4700 and 4701.
-     </knowledge>    
-      <description>A scheduled task was updated</description>       
-     </event>
-     
-    <event>
      <id>4703</id>  
        <description>A token right was adjusted</description>       
-     </event>
-     
-    <event>
-     <id>4704</id>  
-     <knowledge>
-     This event documents a change to user right assignments on this computer including the right and user or group that received the new right.
-
-     Note: "User rights" and "privileges" are synonymous terms used interchangeably in Windows.
-
-     Rights, like most other security settings, are defined in group policy objects and applied by the computer. Therefore this event will normally show the Assigned By user as the system itself. To determine who actually made the rights assignment change you must search the domain controllers' security logs for changes to groupPolicyContainer objects (logged by Directory Service auditing).
-
-     Logon ID allows you to link this event to the prior event 4624 logon event of the user who performed this action.
-
-     Note: This event, 4704, and 4705 do not log changes to logon rights such as "Access this computer from the network" or "Logon as a service". See events 4717 and 4718. 
-
-     See <b>User Rights</b> table for more information.
-     </knowledge>   
-      <description>A user right was assigned</description>      
-       <table xlink:type="simple"
-              xlink:href="images/user-rights-table.png"
-              xlink:title=" Windows Security Log Event ID - 4704 User Rights Table"
-              xlink:show="embed"
-              xlink:actuate="onLoad" />
-
-     </event>
-     
-    <event>
-     <id>4705</id>
-     <knowledge>
-     This event documents a change to user right assignments on this computer including the right and user or group that lost the right.
-
-     Note: "User rights" and "privileges" are synonymous terms used interchangeably in Windows.
-
-     Rights, like most other security settings, are defined in group policy objects and applied by the computer. Therefore this event will normally show the Assigned By user as the system itself. To determine who actually made the rights assignment change you must search the domain controllers' security logs for changes to groupPolicyContainer objects (logged by Directory Service auditing).
-
-     Logon ID allows you to link this event to the prior event 4624 logon event of the user who performed this action.
-
-     Note: This event, 4705, and 4704 do not log changes to logon rights such as "Access this computer from the network" or "Logon as a service". See events 4714 and 4718. 
-
-     <b>Subject</b>
-     The ID and logon session of the user that revoked the right.  Unfortunately this is just the local system account - see above. 
-
-      <ul>
-      <li>Security ID:  The SID of the account.</li>
-      <li>Account Name: The account logon name.</li>
-      <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
-      <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
-      </ul>
-     </knowledge>      
-      <description>A user right was removed</description>       
-     </event>
-     
-    <event>
-     <id>4706</id>      
-      <knowledge>
-      This event is logged for all new trust relationships connecting to this domain.  While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information:
-
-      <b>Subject:</b>
-
-      The ID and logon session of the user that excercised created the trust. 
-
-        <ul>
-          <li>Security ID:  The SID of the account.</li>
-          <li>Account Name: The account logon name.</li>
-          <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
-          <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
-        </ul>
-      </knowledge>
-      <description>A new trust was created to a domain</description>       
-     </event>
-     
-    <event>
-     <id>4707</id>    
-     <knowledge>
-     This event is logged for all deleted trust relationships that connected to this domain.  While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information:
-
-     <b>Subject:</b>
-
-     The ID and logon session of the user that excercised deleted the trust.
-     
-     <ul>
-          <li>Security ID:  The SID of the account.</li>
-          <li>Account Name: The account logon name.</li>
-          <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
-          <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
-        </ul>
-     </knowledge>
-      <description>A trust to a domain was removed</description>       
-     </event>
-     
-    <event>
-     <id>4709</id>      
-     <knowledge>
-     This event is not produced in the default configuration (using Windows Firewall) however event 5478 is produced..
-
-     Microsoft comments: "This service provides compatibility with Internet Protocol security (IPsec) policies used in earlier versions of Windows...This is a normal condition. No further action is required."
-     </knowledge>
-      <description>IPsec Services was started</description>       
-     </event>
-     
-    <event>
-     <id>4710</id>    
-     <knowledge>
-     In the default configuration this event is not produced when the IPsec Policy agent service is disabled or fails to start.
-
-     According to Microsoft, "This service provides compatibility with Internet Protocol security (IPsec) policies used in earlier versions of Windows. New deployments of Windows Vista and Windows Server 2008 should not use the policies supported by the IPsec Policy Agent service"
-
-     </knowledge>  
-      <description>IPsec Services was disabled</description>       
-     </event>
-     
-    <event>
-     <id>4711</id>      
-      <knowledge>
-       	May contain any one of the following: PAStore Engine applied locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine applied Active Directory storage IPsec policy on the computer. PAStore Engine applied local registry storage IPsec policy on the computer. PAStore Engine failed to apply locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply local registry storage IPsec policy on the computer. PAStore Engine failed to apply some rules of the active IPsec policy on the computer. PAStore Engine failed to load directory storage IPsec policy on the computer. PAStore Engine loaded directory storage IPsec policy on the computer. PAStore Engine failed to load local storage IPsec policy on the computer. PAStore Engine loaded local storage IPsec policy on the computer.PAStore Engine polled for changes to the active IPsec policy and detected no changes.
-
-      <ul>
-        <li>PAStore Engine applied locally cached copy of Active Directory storage IPsec policy on the computer.</li>
-        <li>PAStore Engine applied Active Directory storage IPsec policy on the computer.</li>
-        <li>PAStore Engine applied local registry storage IPsec policy on the computer.</li>
-        <li>PAStore Engine failed to apply locally cached copy of Active Directory storage IPsec policy on the computer.</li>
-        <li>PAStore Engine failed to apply Active Directory storage IPsec policy on the computer.</li>
-        <li>PAStore Engine failed to apply local registry storage IPsec policy on the computer.</li>
-        <li>PAStore Engine failed to apply some rules of the active IPsec policy on the computer.</li>
-        <li>PAStore Engine failed to load directory storage IPsec policy on the computer.</li>
-        <li>PAStore Engine loaded directory storage IPsec policy on the computer.</li>
-        <li>PAStore Engine failed to load local storage IPsec policy on the computer.</li>
-        <li>PAStore Engine loaded local storage IPsec policy on the computer.</li>
-        <li>PAStore Engine polled for changes to the active IPsec policy and detected no changes.</li>
-</ul>
-  </knowledge>
-       <description>PAStore Engine (1%)</description>       
-     </event>
-     
-    <event>
-     <id>4712</id>  
-       <knowledge>
-      IPsec Services encountered a potentially serious failure.
-
-      In theory this reports when the service cannot perform its required tasks, such as properly processing filters, or cannot protect traffic sent or received by one or more of the network adapters attached to the computer.
-
-      Microsoft suggests restarting the computer to resolve this problem.
-    </knowledge>   
-       <description>IPsec Services encountered a potentially serious failure</description>       
-     </event>
-     
-    <event>
-     <id>4713</id> 
-     <knowledge>
-     Windows logs 4713 when it detects a change to the the domain's Kerberos policy. Kerberos policy is defined in GPOs linked to the root of the domain under Computer Configuration\Windows Settings\Security Settings\Account Policy\Kerberos Policy.
-
-     Unfortunately the Subject fields don't identify who actually changed the policy because Kerberos policy isn't directly configured by administrators. Instead it is edited in a group policy object which then gets applied to the computer. Therefore this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs. 
-
-     <b>Subject:</b>
-     
-     The ID and logon session of the user that changed the policy - always the local system - see note above.
-
-    <ul>
-      <li>Security ID: The SID of the account.</li>
-      <li>Account Name: The account logon name.</li>
-      <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
-      <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
-    </ul>
-    </knowledge>
-      <description>Kerberos policy was changed</description>       
-     </event>
-     
-    <event>
-     <id>4714</id> 
-     <knowledge>
-     This computer's Security Settings\Public Key Policies\Encrypting File System data recovery agent policy was modified - either via Local Security Policy or Group Policy in Active Directory.
-
-     Unfortunately the Subject fields don't identify who actually changed the policy because this policy isn't directly configured by administrators. Instead it is edited in a group policy object which then gets applied to the computer. Therefore this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs. Subject:
-
-     The ID and logon session of the user that changed the policy - always the local system - see note above.
-
-     <ul>
-      <li>Security ID: The SID of the account.</li>
-      <li>Account Name: The account logon name.</li>
-      <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
-      <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
-        </ul>
-     </knowledge>     
-      <description>Encrypted data recovery policy was changed</description>       
-     </event>
-     
-    <event>
-     <id>4715</id>   
-     <knowledge>
-     The description is poorly worded but this event is logged whenever you set the security descriptor used to delegate access to the audit policy. You can delegate authority to the system's audit policy using "auditpol /sd:".
-
-     According to Microsoft, this event is always logged when an audit policy is disabled, regardless of the "Audit Policy Change" sub-category setting. This and several other events can help identify when someone attempts to disable auditing to cover their tracks. 
-     </knowledge>   
-      <description>The audit policy (SACL) on an object was changed</description>       
-     </event>
-     
-    <event>
-     <id>4716</id>  
-     <knowledge>
-     This event is logged for modifications to trust relationships connecting to this domain. While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information.
-
-     <h3>Subject</h3>
-<p>The ID and logon session of the user that exercised modified the trust.</p>
-<ul>
-  <li>Security ID: The SID of the account.</li>
-  <li>Account Name: The account logon name.</li>
-  <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
-  <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
-</ul>
-
-<h3>Trusted Domain</h3>
-<p>The other domain in this trust relationship which despite the word "Trusted" may be a trusting or trusted domain or both. See Trust Information.</p>
-<ul>
-  <li>Domain Name: the DNS name of the domain</li>
-  <li>Domain ID: the pre-Win2k (NetBIOS) name of the domain</li>
-</ul>
-
-<h3>New Trust Information</h3>
-<p>All the information that defines the type of trust after this change, whether it is one way or mutual, transitivity, etc.</p>
-
-<h4>Trust Type</h4>
-<table border="1" cellpadding="4" cellspacing="0">
-  <thead>
-    <tr>
-      <th>Value</th>
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1</td>
-      <td>TRUST_TYPE_DOWNLEVEL</td>
-      <td>The other domain is pre-Win2k (NTLM only supported)</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>TRUST_TYPE_UPLEVEL</td>
-      <td>The other domain is Win2k or later (Windows Kerberos supported)</td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>TRUST_TYPE_MIT</td>
-      <td>Other domain is actually an MIT Kerberos Realm (probably UNIX)</td>
-    </tr>
-    <tr>
-      <td>4</td>
-      <td>TRUST_TYPE_DCE</td>
-      <td>The trusted domain is a DCE realm</td>
-    </tr>
-  </tbody>
-</table>
-
-<h4>Trust Direction</h4>
-<table border="1" cellpadding="4" cellspacing="0">
-  <thead>
-    <tr>
-      <th>Direction</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Disabled</td>
-      <td>0x0</td>
-    </tr>
-    <tr>
-      <td>Inbound</td>
-      <td>0x1</td>
-    </tr>
-    <tr>
-      <td>Outbound</td>
-      <td>0x2</td>
-    </tr>
-    <tr>
-      <td>Bidirectional</td>
-      <td>0x3</td>
-    </tr>
-  </tbody>
-</table>
-
-<h4>Trust Attributes</h4>
-<p>A bitwise value comprised of any of the following:</p>
-<ul>
-  <li>TRUST_ATTRIBUTE_NON_TRANSITIVE: 1</li>
-  <li>TRUST_ATTRIBUTE_UPLEVEL_ONLY: 2</li>
-  <li>TRUST_ATTRIBUTE_FILTER_SIDS: 4</li>
-  <li>TRUST_ATTRIBUTE_FOREST_TRANSITIVE: 8</li>
-</ul>
-
-<h4>SID Filtering</h4>
-<p>Enabled (always enabled for domains within the same forest). See <a href="http://technet2.microsoft.com/windowsserver/en/library/01e5cf71-b317-4967-82a2-75b7b632b7461033.mspx?mfr=true">Microsoft TechNet</a> for more information.</p>
-     </knowledge>    
-      <description>Trusted domain information was modified</description>       
-     </event>
-     
-    <event>
-     <id>4717</id>  
-     <knowledge>
-     This event documents the grant of logon rights such as "Access this computer from the network" or "Logon as a service".
-
-     Rights, like most other security settings, are defined in group policy objects and applied by the computer. Therefore this event will normally show the Assigned By user as the system itself. To determine who actually made the rights assignment change you must search the domain controllers' security logs for changes to groupPolicyContainer objects (logged by Directory Service auditing). Logon ID allows you to link this event to the prior event 4624 logon event of the user who performed this action.
-
-     This event, 4717, documents the system name for each logon right as opposed to the more familiar description.
-
-     Note: This event and 4718 log changes to strictly logon rights such as "Access this computer from the network" or "Logon as a service" - not to other rights such as "Change the system time" or "Take ownership of files and other objects". See events 4704 and 4705. 
-
-     See image for more details.
-     </knowledge>    
-      <image xlink:type="simple"
-           xlink:href="images/Windows Security Log Event ID 4717 - Logon-Rights.png"
-           xlink:title="Windows Security Log Event ID 4717 Logon Rights"
-           xlink:show="embed"
-           xlink:actuate="onLoad" />
-        <description>System security access was granted to an account</description>       
-     </event>
-     
-    <event>
-     <id>4718</id>
-     <knowledge>
-     This event documents the revokation of logon rights such as "Access this computer from the network" or "Logon as a service".
-
-     Rights, like most other security settings, are defined in group policy objects and applied by the computer. Therefore this event will normally show the Assigned By user as the system itself. To determine who actually made the rights assignment change you must search the domain controllers' security logs for changes to groupPolicyContainer objects (logged by Directory Service auditing). Logon ID allows you to link this event to the prior event 4624 logon event of the user who performed this action.
-
-     This event, 4718 documents the system name for each logon right as opposed to the more familiar description. Click here for a cross reference.
-
-     Note: This event and 4717 log changes to strictly logon rights such as "Access this computer from the network" or "Logon as a service" - not to other rights such as "Change the system time" or "Take ownership of files and other objects". See events 4704 and 4705.
-     </knowledge>      
-      <description>System security access was removed from an account</description>       
-     </event>
-     
-    <event>
-     <id>4719</id>    
-     <knowledge>
-      This computer's system level audit policy was modified - either via Local Security Policy, Group Policy in Active Directory or the audipol command.
-
-      According to Microsoft, this event is always logged when an audit policy is disabled, regardless of the "Audit Policy Change" sub-category setting. This and several other events can help identify when someone attempts to disable auditing to cover their tracks.
-
-      If group policy was used to configure audit policy unfortunately the Subject fields don't identify who actually changed the policy.  In such cases this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs.
-
-      If auditpol was used to configure audit policy will properly reflect the user in Subject:
-
-      <b>Subject:</b>
-
-      The ID and logon session of the user that changed the policy - always the local system - see note above. 
-
-      <ul>
-        <li>Security ID: The SID of the account.</li>
-        <li>Account Name: The account logon name.</li>
-        <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
-        <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
-      </ul>
-
-      <h3>Audit Policy Change</h3>
-
-<h4>Category</h4>
-<ul>
-  <li>Account Logon</li>
-  <li>Account Management</li>
-  <li>Detailed Tracking</li>
-  <li>Directory Service</li>
-  <li>Logon/Logoff</li>
-  <li>Object Access</li>
-  <li>Policy Change</li>
-  <li>Privilege Use</li>
-  <li>System Events</li>
-</ul>
-
-<h4>Subcategory</h4>
-<ul>
-  <li>Security State Change</li>
-  <li>Security System Extension</li>
-  <li>System Integrity</li>
-  <li>IPsec Driver</li>
-  <li>Other System Events</li>
-  <li>Logon</li>
-  <li>Logoff</li>
-  <li>Account Lockout</li>
-  <li>IPsec Main Mode</li>
-  <li>Special Logon</li>
-  <li>IPsec Quick Mode</li>
-  <li>IPsec Extended Mode</li>
-  <li>Other Logon/Logoff Events</li>
-  <li>Network Policy Server</li>
-  <li>File System</li>
-  <li>Registry</li>
-  <li>Kernel Object</li>
-  <li>SAM</li>
-  <li>Other Object Access Events</li>
-  <li>Certification Services</li>
-  <li>Application Generated</li>
-  <li>Handle Manipulation</li>
-  <li>File Share</li>
-  <li>Filtering Platform Packet Drop</li>
-  <li>Filtering Platform Connection</li>
-  <li>Sensitive Privilege Use</li>
-  <li>Non Sensitive Privilege Use</li>
-  <li>Other Privilege Use Events</li>
-  <li>Process Creation</li>
-  <li>Process Termination</li>
-  <li>DPAPI Activity</li>
-  <li>RPC Events</li>
-  <li>Audit Policy Change</li>
-  <li>Authentication Policy Change</li>
-  <li>Authorization Policy Change</li>
-  <li>MPSSVC Rule-Level Policy Change</li>
-  <li>Filtering Platform Policy Change</li>
-  <li>Other Policy Change Events</li>
-  <li>User Account Management</li>
-  <li>Computer Account Management</li>
-  <li>Security Group Management</li>
-  <li>Distribution Group Management</li>
-  <li>Application Group Management</li>
-  <li>Other Account Management Events</li>
-  <li>Directory Service Access</li>
-  <li>Directory Service Changes</li>
-  <li>Directory Service Replication</li>
-  <li>Detailed Directory Service Replication</li>
-  <li>Credential Validation</li>
-  <li>Kerberos Service Ticket Operations</li>
-  <li>Other Account Logon Events</li>
-  <li>Kerberos Authentication Service</li>
-  <li>Subcategory GUID: the globally unique identifier of the subcategory</li>
-</ul>
-
-<h4>Changes</h4>
-<ul>
-  <li>Failure added</li>
-  <li>Failure moved</li>
-  <li>Success added</li>
-  <li>Success removed</li>
-</ul>
-
-     </knowledge>  
-      <description>System audit policy was changed</description>       
-     </event>
-     
-    <event>
-     <id>4720</id>    
-     <knowledge>
-     The user identified by Subject: created the user identified by New Account:. 
-
-    Attributes show some of the properties that were set at the time the account was created.  Notice account is initially disabled.
-
-    This event is logged both for local SAM accounts and domain accounts.
-
-    You will see a series of other User Account Management events after this event as the remaining properties are punched down, password set and account finally enabled.
-     </knowledge>  
-      <description>A user account was created</description>       
-     </event>
-     
-    <event>
-     <id>4722</id>      
-     <knowledge>
-     The user identified by Subject: enabed the user identified by Target Account:. 
-
-    This event is logged both for local SAM accounts and domain accounts.
-
-    This event is always logged after event 4720 - user account creation.
-
-    You will also see event ID 4738 informing you of the same information.
-     </knowledge>
-      <description>A user account was enabled</description>       
-     </event>
-     
-    <event>
-     <id>4723</id>  
-     <knowledge>
-      The user attempted to change his/her own password.  Subject and Target should always match.  Don't confuse this event with 4724.
-
-      This event is logged as a failure if his new password fails to meet the password policy.
-
-      If the user fails to correctly enter his old password this event is not logged.  Instead, for domain accounts, a 4771 is logged with kadmin/changepw as the service name.
-
-      This event is logged both for local SAM accounts and domain accounts.
-
-      You will also see event ID 4738 informing you of the same information.
-     </knowledge>    
-      <description>An attempt was made to change an account's password</description>       
-     </event>
-     
-    <event>
-     <id>4724</id>   
-     <knowledge>
-     The Subject attempted to reset the password of the Target:  
-
-      Don't confuse this event with 4723.
-
-      This event is logged as a failure if the new password fails to meet the password policy.
-
-      This event is logged both for local SAM accounts and domain accounts.
-
-      You will also see one or more event ID 4738s informing you of the same information.
-     </knowledge>   
-      <description>An attempt was made to reset an accounts password</description>       
-     </event>
-     
-    <event>
-     <id>4725</id>    
-     <knowledge>
-      The user identified by Subject: disabled the user identified by Target Account:. 
-
-      This event is logged both for local SAM accounts and domain accounts.
-
-      You will also see event ID4738 informing you of the same information.
-     </knowledge>  
-      <description>A user account was disabled</description>       
-     </event>
-     
-    <event>
-     <id>4726</id> 
-     <knowledge>
-      The user identified by Subject: deleted the user identified by Target Account:. 
-
-      This event is logged both for local SAM accounts and domain accounts.
-
-      You will also see event ID 4738 informing you of the same information.
-     </knowledge>     
-      <description>A user account was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4727</id>      
-      <description>A security-enabled global group was created</description>     
-      <knowledge>
-        The user in Subject: just created a Security Global group identified in New Group.
-
-        In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
-
-        Global means the group can be granted access in any trusting domain but may only have members from its own domain.
-
-        This event is only logged on domain controllers.
-      </knowledge>  
-     </event>
-     
-    <event>
-     <id>4728</id>      
-     <knowledge>
-      The user in Subject: added the user/group/computer in Member: to the Security Global group in Group:.
-
-      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
-
-      Global means the group can be granted access in any trusting domain but may only have members from its own domain. 
-
-      This event is only logged on domain controllers.
-
-      Server 2016 adds the "Expiration time" field in version 2 of this event. 
-     </knowledge>
-      <description>A member was added to a security-enabled global group</description>       
-     </event>
-     
-    <event>
-     <id>4729</id>  
-     <knowledge>
-      The user in Subject: removed the user/group/computer in Member: from the Security Global group in Group:.
-
-      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
-
-      Global means the group can be granted access in any trusting domain but may only have members from its own domain. 
-
-      This event is only logged on domain controllers.
-     </knowledge>    
-      <description>A member was removed from a security-enabled global group</description>       
-     </event>
-     
-    <event>
-     <id>4730</id> 
-     <knowledge>
-      The user in Subject: deleted the Security Global group identified in Deleted Group.
-
-      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
-
-      Global means the group can be granted access in any trusting domain but may only have members from its own domain.
-
-      This event is only logged on domain controllers.
-     </knowledge>    
-      <description>A security-enabled global group was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4731</id>     
-     <knowledge>
-      The user in Subject: created a Security Local group identified in New Group.
-
-      This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
-
-    <h3>Active Directory</h3>
-
-      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
-
-      A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
-
-    <h3>Local SAM</h3>
-
-      All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.
-     </knowledge> 
-      <description>A security-enabled local group was created</description>       
-     </event>
-     
-    <event>
-     <id>4732</id>    
-     <knowledge>
-      The user in Subject: added the user/group/computer in Member: to the Security Local group in Group:.
-
-      This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
-
-      <h3>Active Directory</h3>
-
-      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists. A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
-
-      <h3>Local SAM</h3>
-
-      All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.
- 
-      Server 2016 adds the "Expiration time" field in version 2 of this event. 
-     </knowledge> 
-      <description>A member was added to a security-enabled local group</description>       
-     </event>
-     
-    <event>
-     <id>4733</id>      
-     <knowledge>
-        The user in Subject: removed the user/group/computer in Member: to the Security Local group in Group:.
-
-        This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
-
-        <h3>Active Directory</h3>
-
-        In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
-
-        A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
-
-        <h3>Local SAM</h3>
-
-        All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.
-     </knowledge> 
-      <description>A member was removed from a security-enabled local group</description>       
-     </event>
-     
-    <event>
-     <id>4734</id>   
-       <knowledge>
-          The user in Subject: deleted the Security Local group identified in Deleted Group.
-
-          This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
-
-        <h3>Active Directory</h3>
-
-          In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
-
-          A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
-
-        <h3>Local SAM</h3>
-        
-          All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.
-     </knowledge>    
-      <description>A security-enabled local group was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4735</id>    
-            <knowledge>
-          The user in Subject: deleted the Security Local group identified in Deleted Group.
-
-          This event is logged on domain controllers for Active Directory domain local groups and member computer for local SAM groups.  You can determine if the group is a domain or SAM group by comparing Group Domain: to the Computer: name.  If they match you have a SAM group, if they differ you have a domain group.
-
-        <h3>Active Directory</h3>
-
-          In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
-
-          A domain local group means the group can only be granted access to objects within its domain but can have members from any trusted domain.
-
-        <h3>Local SAM</h3>
-        
-          All groups are security groups in the computer's SAM.  Local SAM groups can be granted access to objects on the local computer only but may have members from the local SAM and any trusted domain.
-     </knowledge>    
-      <description>A security-enabled local group was changed</description>       
-     </event>
-     
-    <event>
-     <id>4737</id>     
-     <knowledge>
-      The user in Subject: changed the Security Global group identified in Group:.
-
-      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
-
-      Global means the group can be granted access in any trusting domain but may only have members from its own domain.
-
-      This event is only logged on domain controllers.
-     </knowledge> 
-      <description>A security-enabled global group was changed</description>       
-     </event>
-     
-    <event>
-     <id>4738</id>
-     <knowledge>
-      The user identified by Subject: changed the user identified by Target Account:. 
-
-      Attributes show some of the properties that were set at the time the account was changed. 
-
-      This event is logged both for local SAM accounts and domain accounts.
-
-      Depending on what was changed you may see other User Account Management events specific to certain operations like password resets.
-     </knowledge>      
-      <description>A user account was changed</description>       
-     </event>
-     
-    <event>
-     <id>4739</id>      
-      <description>Domain Policy was changed</description>       
-     </event>
-     
-    <event>
-     <id>4740</id>      
-      <description>A user account was locked out</description>       
-     </event>
-     
-    <event>
-     <id>4741</id>      
-      <description>A computer account was created</description>       
-     </event>
-     
-    <event>
-     <id>4742</id>      
-      <description>A computer account was changed</description>       
-     </event>
-     
-    <event>
-     <id>4743</id>      
-      <description>A computer account was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4744</id>      
-      <description>A security-disabled local group was created</description>       
-     </event>
-     
-    <event>
-     <id>4745</id>      
-      <description>A security-disabled local group was changed</description>       
-     </event>
-     
-    <event>
-     <id>4746</id>      
-      <description>A member was added to a security-disabled local group</description>       
-     </event>
-     
-    <event>
-     <id>4747</id>      
-      <description>A member was removed from a security-disabled local group</description>       
-     </event>
-     
-    <event>
-     <id>4748</id>      
-      <description>A security-disabled local group was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4749</id>      
-      <description>A security-disabled global group was created</description>       
-     </event>
-     
-    <event>
-     <id>4750</id>      
-      <description>A security-disabled global group was changed</description>       
-     </event>
-     
-    <event>
-     <id>4751</id>      
-      <description>A member was added to a security-disabled global group</description>       
-     </event>
-     
-    <event>
-     <id>4752</id>      
-      <description>A member was removed from a security-disabled global group</description>       
-     </event>
-     
-    <event>
-     <id>4753</id>      
-      <description>A security-disabled global group was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4754</id>      
-      <description>A security-enabled universal group was created</description>       
-     </event>
-     
-    <event>
-     <id>4755</id>      
-      <description>A security-enabled universal group was changed</description>       
-     </event>
-     
-    <event>
-     <id>4756</id>      
-      <description>A member was added to a security-enabled universal group</description>       
-     </event>
-     
-    <event>
-     <id>4757</id>      
-      <description>A member was removed from a security-enabled universal group</description>       
-     </event>
-     
-    <event>
-     <id>4758</id>      
-      <description>A security-enabled universal group was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4759</id>      
-      <description>A security-disabled universal group was created</description>       
-     </event>
-     
-    <event>
-     <id>4760</id>      
-      <description>A security-disabled universal group was changed</description>       
-     </event>
-     
-    <event>
-     <id>4761</id>      
-      <description>A member was added to a security-disabled universal group</description>       
-     </event>
-     
-    <event>
-     <id>4762</id>      
-      <description>A member was removed from a security-disabled universal group</description>       
      </event>
      
     <event>
@@ -3513,138 +2830,8 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4764</id>      
-      <description>A groups type was changed</description>       
-     </event>
-     
-    <event>
-     <id>4765</id>      
-      <description>SID History was added to an account</description>       
-     </event>
-     
-    <event>
-     <id>4766</id>      
-      <description>An attempt to add SID History to an account failed</description>       
-     </event>
-     
-    <event>
-     <id>4767</id>      
-      <description>A user account was unlocked</description>       
-     </event>
-     
-    <event>
-     <id>4768</id>      
-      <description>A Kerberos authentication ticket (TGT) was requested</description>       
-     </event>
-     
-    <event>
-     <id>4769</id>      
-      <description>A Kerberos service ticket was requested</description>       
-     </event>
-     
-    <event>
-     <id>4770</id>      
-      <description>A Kerberos service ticket was renewed</description>       
-     </event>
-     
-    <event>
-     <id>4771</id>      
-      <description>Kerberos pre-authentication failed</description>       
-     </event>
-     
-    <event>
-     <id>4772</id>      
-      <description>A Kerberos authentication ticket request failed</description>       
-     </event>
-     
-    <event>
      <id>4773</id>      
       <description>A Kerberos service ticket request failed</description>       
-     </event>
-     
-    <event>
-     <id>4774</id>      
-      <description>An account was mapped for logon</description>       
-     </event>
-     
-    <event>
-     <id>4775</id>      
-      <description>An account could not be mapped for logon</description>       
-     </event>
-     
-    <event>
-     <id>4776</id>      
-      <description>The domain controller attempted to validate the credentials for an account</description>       
-     </event>
-     
-    <event>
-     <id>4777</id>      
-      <description>The domain controller failed to validate the credentials for an account</description>       
-     </event>
-     
-    <event>
-     <id>4778</id>      
-      <description>A session was reconnected to a Window Station</description>       
-     </event>
-     
-    <event>
-     <id>4779</id>      
-      <description>A session was disconnected from a Window Station</description>       
-     </event>
-     
-    <event>
-     <id>4780</id>      
-      <description>The ACL was set on accounts which are members of administrators groups</description>       
-     </event>
-     
-    <event>
-     <id>4781</id>      
-      <description>The name of an account was changed</description>       
-     </event>
-     
-    <event>
-     <id>4782</id>      
-      <description>The password hash an account was accessed</description>       
-     </event>
-     
-    <event>
-     <id>4783</id>      
-      <description>A basic application group was created</description>       
-     </event>
-     
-    <event>
-     <id>4784</id>      
-      <description>A basic application group was changed</description>       
-     </event>
-     
-    <event>
-     <id>4785</id>      
-      <description>A member was added to a basic application group</description>       
-     </event>
-     
-    <event>
-     <id>4786</id>      
-      <description>A member was removed from a basic application group</description>       
-     </event>
-     
-    <event>
-     <id>4787</id>      
-      <description>A non-member was added to a basic application group</description>       
-     </event>
-     
-    <event>
-     <id>4788</id>      
-      <description>A non-member was removed from a basic application group..</description>       
-     </event>
-     
-    <event>
-     <id>4789</id>      
-      <description>A basic application group was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4790</id>      
-      <description>An LDAP query group was created</description>       
      </event>
      
     <event>
@@ -3655,16 +2842,6 @@ For comprehensive logging, including relevant Event IDs, administrators should c
     <event>
      <id>4792</id>      
       <description>An LDAP query group was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4793</id>      
-      <description>The Password Policy Checking API was called</description>       
-     </event>
-     
-    <event>
-     <id>4794</id>      
-      <description>An attempt was made to set the Directory Services Restore Mode administrator password</description>       
      </event>
      
     <event>
@@ -3680,32 +2857,6 @@ For comprehensive logging, including relevant Event IDs, administrators should c
     <event>
      <id>4799</id>      
       <description>A security-enabled local group membership was enumerated</description>       
-     </event>
-     
-    <event>
-     <id>4800</id>      
-      <description>The workstation was locked</description>       
-     </event>
-     
-    <event>
-     <id>4801</id>      
-      <description>The workstation was unlocked</description>       
-     </event>
-     
-    <event>
-     <id>4802</id>      
-      <description>The screen saver was invoked</description>       
-     </event>
-     
-    <event>
-     <id>4803</id>      
-      <description>The screen saver was dismissed</description>       
-     </event>
-     
-    <event>
-     <id>4816</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>RPC detected an integrity violation while decrypting an incoming message</description>       
      </event>
      
     <event>
@@ -3764,191 +2915,6 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4864</id>      
-      <description>A namespace collision was detected</description>       
-     </event>
-     
-    <event>
-     <id>4865</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>A trusted forest information entry was added</description>       
-     </event>
-     
-    <event>
-     <id>4866</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>A trusted forest information entry was removed</description>       
-     </event>
-     
-    <event>
-     <id>4867</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>A trusted forest information entry was modified</description>       
-     </event>
-     
-    <event>
-     <id>4868</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>The certificate manager denied a pending certificate request</description>       
-     </event>
-     
-    <event>
-     <id>4869</id>      
-      <description>Certificate Services received a resubmitted certificate request</description>       
-     </event>
-     
-    <event>
-     <id>4870</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Certificate Services revoked a certificate</description>       
-     </event>
-     
-    <event>
-     <id>4871</id>      
-      <description>Certificate Services received a request to publish the certificate revocation list (CRL)</description>       
-     </event>
-     
-    <event>
-     <id>4872</id>      
-      <description>Certificate Services published the certificate revocation list (CRL)</description>       
-     </event>
-     
-    <event>
-     <id>4873</id>      
-      <description>A certificate request extension changed</description>       
-     </event>
-     
-    <event>
-     <id>4874</id>      
-      <description>One or more certificate request attributes changed.</description>       
-     </event>
-     
-    <event>
-     <id>4875</id>      
-      <description>Certificate Services received a request to shut down</description>       
-     </event>
-     
-    <event>
-     <id>4876</id>      
-      <description>Certificate Services backup started</description>       
-     </event>
-     
-    <event>
-     <id>4877</id>      
-      <description>Certificate Services backup completed</description>       
-     </event>
-     
-    <event>
-     <id>4878</id>      
-      <description>Certificate Services restore started</description>       
-     </event>
-     
-    <event>
-     <id>4879</id>      
-      <description>Certificate Services restore completed</description>       
-     </event>
-     
-    <event>
-     <id>4880</id>      
-      <description>Certificate Services started</description>       
-     </event>
-     
-    <event>
-     <id>4881</id>      
-      <description>Certificate Services stopped</description>       
-     </event>
-     
-    <event>
-     <id>4882</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>The security permissions for Certificate Services changed</description>       
-     </event>
-     
-    <event>
-     <id>4883</id>      
-      <description>Certificate Services retrieved an archived key</description>       
-     </event>
-     
-    <event>
-     <id>4884</id>      
-      <description>Certificate Services imported a certificate into its database</description>       
-     </event>
-     
-    <event>
-     <id>4885</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>The audit filter for Certificate Services changed</description>       
-     </event>
-     
-    <event>
-     <id>4886</id>      
-      <description>Certificate Services received a certificate request</description>       
-     </event>
-     
-    <event>
-     <id>4887</id>      
-      <description>Certificate Services approved a certificate request and issued a certificate</description>       
-     </event>
-     
-    <event>
-     <id>4888</id>      
-      <description>Certificate Services denied a certificate request</description>       
-     </event>
-     
-    <event>
-     <id>4889</id>      
-      <description>Certificate Services set the status of a certificate request to pending</description>       
-     </event>
-     
-    <event>
-     <id>4890</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>The certificate manager settings for Certificate Services changed.</description>       
-     </event>
-     
-    <event>
-     <id>4891</id>      
-      <description>A configuration entry changed in Certificate Services</description>       
-     </event>
-     
-    <event>
-     <id>4892</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>A property of Certificate Services changed</description>       
-     </event>
-     
-    <event>
-     <id>4893</id>      
-      <description>Certificate Services archived a key</description>       
-     </event>
-     
-    <event>
-     <id>4894</id>      
-      <description>Certificate Services imported and archived a key</description>       
-     </event>
-     
-    <event>
-     <id>4895</id>      
-      <description>Certificate Services published the CA certificate to Active Directory Domain Services</description>       
-     </event>
-     
-    <event>
-     <id>4896</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>One or more rows have been deleted from the certificate database</description>       
-     </event>
-     
-    <event>
-     <id>4897</id>      
-      <description>Role separation enabled</description>       
-     </event>
-     
-    <event>
-     <id>4898</id>      
-      <description>Certificate Services loaded a template</description>       
-     </event>
-     
-    <event>
      <id>4899</id>      
       <description>A Certificate Services template was updated</description>       
      </event>
@@ -3959,57 +2925,8 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4902</id>      
-      <description>The Per-user audit policy table was created</description>       
-     </event>
-     
-    <event>
-     <id>4904</id>      
-      <description>An attempt was made to register a security event source</description>       
-     </event>
-     
-    <event>
-     <id>4905</id>      
-      <description>An attempt was made to unregister a security event source</description>       
-     </event>
-     
-    <event>
-     <id>4906</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>The CrashOnAuditFail value has changed</description>       
-     </event>
-     
-    <event>
-     <id>4907</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Auditing settings on object were changed</description>       
-     </event>
-     
-    <event>
-     <id>4908</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Special Groups Logon table modified</description>       
-     </event>
-     
-    <event>
-     <id>4909</id>      
-      <description>The local policy settings for the TBS were changed</description>       
-     </event>
-     
-    <event>
-     <id>4910</id>      
-      <description>The group policy settings for the TBS were changed</description>       
-     </event>
-     
-    <event>
      <id>4911</id>      
       <description>Resource attributes of the object were changed</description>       
-     </event>
-     
-    <event>
-     <id>4912</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Per User Audit Policy was changed</description>       
      </event>
      
     <event>
@@ -4018,504 +2935,8 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4928</id>      
-      <description>An Active Directory replica source naming context was established</description>       
-     </event>
-     
-    <event>
-     <id>4929</id>      
-      <description>An Active Directory replica source naming context was removed</description>       
-     </event>
-     
-    <event>
-     <id>4930</id>      
-      <description>An Active Directory replica source naming context was modified</description>       
-     </event>
-     
-    <event>
-     <id>4931</id>      
-      <description>An Active Directory replica destination naming context was modified</description>       
-     </event>
-     
-    <event>
-     <id>4932</id>      
-      <description>Synchronization of a replica of an Active Directory naming context has begun</description>       
-     </event>
-     
-    <event>
-     <id>4933</id>      
-      <description>Synchronization of a replica of an Active Directory naming context has ended</description>       
-     </event>
-     
-    <event>
-     <id>4934</id>      
-      <description>Attributes of an Active Directory object were replicated</description>       
-     </event>
-     
-    <event>
-     <id>4935</id>      
-      <description>Replication failure begins</description>       
-     </event>
-     
-    <event>
-     <id>4936</id>      
-      <description>Replication failure ends</description>       
-     </event>
-     
-    <event>
-     <id>4937</id>      
-      <description>A lingering object was removed from a replica</description>       
-     </event>
-     
-    <event>
-     <id>4944</id>      
-      <description>The following policy was active when the Windows Firewall started</description>       
-     </event>
-     
-    <event>
-     <id>4945</id>      
-      <description>A rule was listed when the Windows Firewall started</description>       
-     </event>
-     
-    <event>
-     <id>4946</id>      
-      <description>A change has been made to Windows Firewall exception list. A rule was added</description>       
-     </event>
-     
-    <event>
-     <id>4947</id>      
-      <description>A change has been made to Windows Firewall exception list. A rule was modified</description>       
-     </event>
-     
-    <event>
-     <id>4948</id>      
-      <description>A change has been made to Windows Firewall exception list. A rule was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4949</id>      
-      <description>Windows Firewall settings were restored to the default values</description>       
-     </event>
-     
-    <event>
-     <id>4950</id>      
-      <description>A Windows Firewall setting has changed</description>       
-     </event>
-     
-    <event>
-     <id>4951</id>      
-      <description>A rule has been ignored because its major version number was not recognized by Windows Firewall</description>       
-     </event>
-     
-    <event>
-     <id>4952</id>      
-      <description>Parts of a rule have been ignored because its minor version number was not recognized by Windows Firewall</description>       
-     </event>
-     
-    <event>
-     <id>4953</id>      
-      <description>A rule has been ignored by Windows Firewall because it could not parse the rule</description>       
-     </event>
-     
-    <event>
-     <id>4954</id>      
-      <description>Windows Firewall Group Policy settings has changed. The new settings have been applied</description>       
-     </event>
-     
-    <event>
-     <id>4956</id>      
-      <description>Windows Firewall has changed the active profile</description>       
-     </event>
-     
-    <event>
-     <id>4957</id>      
-      <description>Windows Firewall did not apply the following rule</description>       
-     </event>
-     
-    <event>
-     <id>4958</id>      
-      <description>Windows Firewall did not apply the following rule because the rule referred to items not configured on this computer</description>       
-     </event>
-     
-    <event>
-     <id>4960</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>IPsec dropped an inbound packet that failed an integrity check</description>       
-     </event>
-     
-    <event>
-     <id>4961</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>IPsec dropped an inbound packet that failed a replay check</description>       
-     </event>
-     
-    <event>
-     <id>4962</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>IPsec dropped an inbound packet that failed a replay check</description>       
-     </event>
-     
-    <event>
-     <id>4963</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>IPsec dropped an inbound clear text packet that should have been secured</description>       
-     </event>
-     
-    <event>
-     <id>4964</id>      
-      <description>Special groups have been assigned to a new logon</description>       
-     </event>
-     
-    <event>
-     <id>4965</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>IPsec received a packet from a remote computer with an incorrect Security Parameter Index (SPI).</description>       
-     </event>
-     
-    <event>
-     <id>4976</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>During Main Mode negotiation, IPsec received an invalid negotiation packet.</description>       
-     </event>
-     
-    <event>
-     <id>4977</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>During Quick Mode negotiation, IPsec received an invalid negotiation packet.</description>       
-     </event>
-     
-    <event>
-     <id>4978</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>During Extended Mode negotiation, IPsec received an invalid negotiation packet.</description>       
-     </event>
-     
-    <event>
-     <id>4979</id>      
-      <description>IPsec Main Mode and Extended Mode security associations were established.</description>       
-     </event>
-     
-    <event>
-     <id>4980</id>      
-      <description>IPsec Main Mode and Extended Mode security associations were established</description>       
-     </event>
-     
-    <event>
-     <id>4981</id>      
-      <description>IPsec Main Mode and Extended Mode security associations were established</description>       
-     </event>
-     
-    <event>
-     <id>4982</id>      
-      <description>IPsec Main Mode and Extended Mode security associations were established</description>       
-     </event>
-     
-    <event>
-     <id>4983</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>An IPsec Extended Mode negotiation failed</description>       
-     </event>
-     
-    <event>
-     <id>4984</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>An IPsec Extended Mode negotiation failed</description>       
-     </event>
-     
-    <event>
-     <id>4985</id>      
-      <description>The state of a transaction has changed</description>       
-     </event>
-     
-    <event>
-     <id>5024</id>      
-      <description>The Windows Firewall Service has started successfully</description>       
-     </event>
-     
-    <event>
-     <id>5025</id>      
-      <description>The Windows Firewall Service has been stopped</description>       
-     </event>
-     
-    <event>
-     <id>5027</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>The Windows Firewall Service was unable to retrieve the security policy from the local storage</description>       
-     </event>
-     
-    <event>
-     <id>5028</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>The Windows Firewall Service was unable to parse the new security policy.</description>       
-     </event>
-     
-    <event>
-     <id>5029</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>The Windows Firewall Service failed to initialize the driver</description>       
-     </event>
-     
-    <event>
-     <id>5030</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>The Windows Firewall Service failed to start</description>       
-     </event>
-     
-    <event>
-     <id>5031</id>      
-      <description>The Windows Firewall Service blocked an application from accepting incoming connections on the network.</description>       
-     </event>
-     
-    <event>
-     <id>5032</id>      
-      <description>Windows Firewall was unable to notify the user that it blocked an application from accepting incoming connections on the network</description>       
-     </event>
-     
-    <event>
-     <id>5033</id>      
-      <description>The Windows Firewall Driver has started successfully</description>       
-     </event>
-     
-    <event>
-     <id>5034</id>      
-      <description>The Windows Firewall Driver has been stopped</description>       
-     </event>
-     
-    <event>
-     <id>5035</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>The Windows Firewall Driver failed to start</description>       
-     </event>
-     
-    <event>
-     <id>5037</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>The Windows Firewall Driver detected critical runtime error. Terminating</description>       
-     </event>
-     
-    <event>
-     <id>5038</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Code integrity determined that the image hash of a file is not valid</description>       
-     </event>
-     
-    <event>
-     <id>5039</id>      
-      <description>A registry key was virtualized.</description>       
-     </event>
-     
-    <event>
-     <id>5040</id>      
-      <description>A change has been made to IPsec settings. An Authentication Set was added.</description>       
-     </event>
-     
-    <event>
-     <id>5041</id>      
-      <description>A change has been made to IPsec settings. An Authentication Set was modified</description>       
-     </event>
-     
-    <event>
-     <id>5042</id>      
-      <description>A change has been made to IPsec settings. An Authentication Set was deleted</description>       
-     </event>
-     
-    <event>
-     <id>5043</id>      
-      <description>A change has been made to IPsec settings. A Connection Security Rule was added</description>       
-     </event>
-     
-    <event>
-     <id>5044</id>      
-      <description>A change has been made to IPsec settings. A Connection Security Rule was modified</description>       
-     </event>
-     
-    <event>
-     <id>5045</id>      
-      <description>A change has been made to IPsec settings. A Connection Security Rule was deleted</description>       
-     </event>
-     
-    <event>
-     <id>5046</id>      
-      <description>A change has been made to IPsec settings. A Crypto Set was added</description>       
-     </event>
-     
-    <event>
-     <id>5047</id>      
-      <description>A change has been made to IPsec settings. A Crypto Set was modified</description>       
-     </event>
-     
-    <event>
-     <id>5048</id>      
-      <description>A change has been made to IPsec settings. A Crypto Set was deleted</description>       
-     </event>
-     
-    <event>
-     <id>5049</id>      
-      <description>An IPsec Security Association was deleted</description>       
-     </event>
-     
-    <event>
-     <id>5050</id>      
-      <description>An attempt to programmatically disable the Windows Firewall using a call to INetFwProfile.FirewallEnabled(FALSE</description>       
-     </event>
-     
-    <event>
-     <id>5051</id>      
-      <description>A file was virtualized</description>       
-     </event>
-     
-    <event>
-     <id>5056</id>      
-      <description>A cryptographic self test was performed</description>       
-     </event>
-     
-    <event>
-     <id>5057</id>      
-      <description>A cryptographic primitive operation failed</description>       
-     </event>
-     
-    <event>
-     <id>5058</id>      
-      <description>Key file operation</description>       
-     </event>
-     
-    <event>
-     <id>5059</id>      
-      <description>Key migration operation</description>       
-     </event>
-     
-    <event>
-     <id>5060</id>      
-      <description>Verification operation failed</description>       
-     </event>
-     
-    <event>
-     <id>5061</id>      
-      <description>Cryptographic operation</description>       
-     </event>
-     
-    <event>
-     <id>5062</id>      
-      <description>A kernel-mode cryptographic self test was performed</description>       
-     </event>
-     
-    <event>
-     <id>5063</id>      
-      <description>A cryptographic provider operation was attempted</description>       
-     </event>
-     
-    <event>
-     <id>5064</id>      
-      <description>A cryptographic context operation was attempted</description>       
-     </event>
-     
-    <event>
-     <id>5065</id>      
-      <description>A cryptographic context modification was attempted</description>       
-     </event>
-     
-    <event>
-     <id>5066</id>      
-      <description>A cryptographic function operation was attempted</description>       
-     </event>
-     
-    <event>
-     <id>5067</id>      
-      <description>A cryptographic function modification was attempted</description>       
-     </event>
-     
-    <event>
-     <id>5068</id>      
-      <description>A cryptographic function provider operation was attempted</description>       
-     </event>
-     
-    <event>
-     <id>5069</id>      
-      <description>A cryptographic function property operation was attempted</description>       
-     </event>
-     
-    <event>
-     <id>5070</id>      
-      <description>A cryptographic function property operation was attempted</description>       
-     </event>
-     
-    <event>
      <id>5071</id>      
       <description>Key access denied by Microsoft key distribution service</description>       
-     </event>
-     
-    <event>
-     <id>5120</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>OCSP Responder Service Started</description>       
-     </event>
-     
-    <event>
-     <id>5121</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>OCSP Responder Service Stopped</description>       
-     </event>
-     
-    <event>
-     <id>5122</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>A Configuration entry changed in the OCSP Responder Service</description>       
-     </event>
-     
-    <event>
-     <id>5123</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>A configuration entry changed in the OCSP Responder Service</description>       
-     </event>
-     
-    <event>
-     <id>5124</id>      
-      <description>A security setting was updated on OCSP Responder Service</description>       
-     </event>
-     
-    <event>
-     <id>5125</id>      
-      <description>A request was submitted to OCSP Responder Service</description>       
-     </event>
-     
-    <event>
-     <id>5126</id>      
-      <description>Signing Certificate was automatically updated by the OCSP Responder Service</description>       
-     </event>
-     
-    <event>
-     <id>5127</id>      
-      <description>The OCSP Revocation Provider successfully updated the revocation information</description>       
-     </event>
-     
-    <event>
-     <id>5136</id>      
-      <description>A directory service object was modified</description>       
-     </event>
-     
-    <event>
-     <id>5137</id>      
-      <description>A directory service object was created</description>       
-     </event>
-     
-    <event>
-     <id>5138</id>      
-      <description>A directory service object was undeleted</description>       
-     </event>
-     
-    <event>
-     <id>5139</id>      
-      <description>A directory service object was moved</description>       
-     </event>
-     
-    <event>
-     <id>5140</id>      
-      <description>A network share object was accessed</description>       
-     </event>
-     
-    <event>
-     <id>5141</id>      
-      <description>A directory service object was deleted</description>       
      </event>
      
     <event>
@@ -4569,46 +2990,6 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>5152</id>      
-      <description>The Windows Filtering Platform blocked a packet</description>       
-     </event>
-     
-    <event>
-     <id>5153</id>      
-      <description>A more restrictive Windows Filtering Platform filter has blocked a packet</description>       
-     </event>
-     
-    <event>
-     <id>5154</id>      
-      <description>The Windows Filtering Platform has permitted an application or service to listen on a port for incoming connections</description>       
-     </event>
-     
-    <event>
-     <id>5155</id>      
-      <description>The Windows Filtering Platform has blocked an application or service from listening on a port for incoming connections</description>       
-     </event>
-     
-    <event>
-     <id>5156</id>      
-      <description>The Windows Filtering Platform has allowed a connection</description>       
-     </event>
-     
-    <event>
-     <id>5157</id>      
-      <description>The Windows Filtering Platform has blocked a connection</description>       
-     </event>
-     
-    <event>
-     <id>5158</id>      
-      <description>The Windows Filtering Platform has permitted a bind to a local port</description>       
-     </event>
-     
-    <event>
-     <id>5159</id>      
-      <description>The Windows Filtering Platform has blocked a bind to a local port</description>       
-     </event>
-     
-    <event>
      <id>5168</id>      
       <description>Spn check for SMB/SMB2 fails.</description>       
      </event>
@@ -4621,23 +3002,6 @@ For comprehensive logging, including relevant Event IDs, administrators should c
     <event>
      <id>5170</id>      
       <description>A directory service object was modified during a background cleanup task</description>       
-     </event>
-     
-    <event>
-     <id>5376</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Credential Manager credentials were backed up</description>       
-     </event>
-     
-    <event>
-     <id>5377</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Credential Manager credentials were restored from a backup</description>       
-     </event>
-     
-    <event>
-     <id>5378</id>      
-      <description>The requested credentials delegation was disallowed by policy</description>       
      </event>
      
     <event>
@@ -4658,290 +3022,6 @@ For comprehensive logging, including relevant Event IDs, administrators should c
     <event>
      <id>5382</id>      
       <description>Vault credentials were read</description>       
-     </event>
-     
-    <event>
-     <id>5440</id>      
-      <description>The following callout was present when the Windows Filtering Platform Base Filtering Engine started</description>       
-     </event>
-     
-    <event>
-     <id>5441</id>      
-      <description>The following filter was present when the Windows Filtering Platform Base Filtering Engine started</description>       
-     </event>
-     
-    <event>
-     <id>5442</id>      
-      <description>The following provider was present when the Windows Filtering Platform Base Filtering Engine started</description>       
-     </event>
-     
-    <event>
-     <id>5443</id>      
-      <description>The following provider context was present when the Windows Filtering Platform Base Filtering Engine started</description>       
-     </event>
-     
-    <event>
-     <id>5444</id>      
-      <description>The following sub-layer was present when the Windows Filtering Platform Base Filtering Engine started</description>       
-     </event>
-     
-    <event>
-     <id>5446</id>      
-      <description>A Windows Filtering Platform callout has been changed</description>       
-     </event>
-     
-    <event>
-     <id>5447</id>      
-      <description>A Windows Filtering Platform filter has been changed</description>       
-     </event>
-     
-    <event>
-     <id>5448</id>      
-      <description>A Windows Filtering Platform provider has been changed</description>       
-     </event>
-     
-    <event>
-     <id>5449</id>      
-      <description>A Windows Filtering Platform provider context has been changed</description>       
-     </event>
-     
-    <event>
-     <id>5450</id>      
-      <description>A Windows Filtering Platform sub-layer has been changed</description>       
-     </event>
-     
-    <event>
-     <id>5451</id>      
-      <description>An IPsec Quick Mode security association was established</description>       
-     </event>
-     
-    <event>
-     <id>5452</id>      
-      <description>An IPsec Quick Mode security association ended</description>       
-     </event>
-     
-    <event>
-     <id>5453</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>An IPsec negotiation with a remote computer failed because the IKE and AuthIP IPsec Keying Modules (IKEEXT) service is not started</description>       
-     </event>
-     
-    <event>
-     <id>5456</id>      
-      <description>PAStore Engine applied Active Directory storage IPsec policy on the computer</description>       
-     </event>
-     
-    <event>
-     <id>5457</id>      
-      <description>PAStore Engine failed to apply Active Directory storage IPsec policy on the computer</description>       
-     </event>
-     
-    <event>
-     <id>5458</id>      
-      <description>PAStore Engine applied locally cached copy of Active Directory storage IPsec policy on the computer</description>       
-     </event>
-     
-    <event>
-     <id>5459</id>      
-      <description>PAStore Engine failed to apply locally cached copy of Active Directory storage IPsec policy on the computer</description>       
-     </event>
-     
-    <event>
-     <id>5460</id>      
-      <description>PAStore Engine applied local registry storage IPsec policy on the computer</description>       
-     </event>
-     
-    <event>
-     <id>5461</id>      
-      <description>PAStore Engine failed to apply local registry storage IPsec policy on the computer</description>       
-     </event>
-     
-    <event>
-     <id>5462</id>      
-      <description>PAStore Engine failed to apply some rules of the active IPsec policy on the computer</description>       
-     </event>
-     
-    <event>
-     <id>5463</id>      
-      <description>PAStore Engine polled for changes to the active IPsec policy and detected no changes</description>       
-     </event>
-     
-    <event>
-     <id>5464</id>      
-      <description>PAStore Engine polled for changes to the active IPsec policy, detected changes, and applied them to IPsec Services</description>       
-     </event>
-     
-    <event>
-     <id>5465</id>      
-      <description>PAStore Engine received a control for forced reloading of IPsec policy and processed the control successfully</description>       
-     </event>
-     
-    <event>
-     <id>5466</id>      
-      <description>PAStore Engine polled for changes to the Active Directory IPsec policy, determined that Active Directory cannot be reached, and will use the cached copy of the Active Directory IPsec policy instead</description>       
-     </event>
-     
-    <event>
-     <id>5467</id>      
-      <description>PAStore Engine polled for changes to the Active Directory IPsec policy, determined that Active Directory can be reached, and found no changes to the policy</description>       
-     </event>
-     
-    <event>
-     <id>5468</id>      
-      <description>PAStore Engine polled for changes to the Active Directory IPsec policy, determined that Active Directory can be reached, found changes to the policy, and applied those changes</description>       
-     </event>
-     
-    <event>
-     <id>5471</id>      
-      <description>PAStore Engine loaded local storage IPsec policy on the computer</description>       
-     </event>
-     
-    <event>
-     <id>5472</id>      
-      <description>PAStore Engine failed to load local storage IPsec policy on the computer</description>       
-     </event>
-     
-    <event>
-     <id>5473</id>      
-      <description>PAStore Engine loaded directory storage IPsec policy on the computer</description>       
-     </event>
-     
-    <event>
-     <id>5474</id>      
-      <description>PAStore Engine failed to load directory storage IPsec policy on the computer</description>       
-     </event>
-     
-    <event>
-     <id>5477</id>      
-      <description>PAStore Engine failed to add quick mode filter</description>       
-     </event>
-     
-    <event>
-     <id>5478</id>      
-      <description>IPsec Services has started successfully</description>       
-     </event>
-     
-    <event>
-     <id>5479</id>      
-      <description>IPsec Services has been shut down successfully</description>       
-     </event>
-     
-    <event>
-     <id>5480</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>IPsec Services failed to get the complete list of network interfaces on the computer</description>       
-     </event>
-     
-    <event>
-     <id>5483</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>IPsec Services failed to initialize RPC server. IPsec Services could not be started</description>       
-     </event>
-     
-    <event>
-     <id>5484</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>IPsec Services has experienced a critical failure and has been shut down</description>       
-     </event>
-     
-    <event>
-     <id>5485</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>IPsec Services failed to process some IPsec filters on a plug-and-play event for network interfaces</description>       
-     </event>
-     
-    <event>
-     <id>5632</id>      
-      <description>A request was made to authenticate to a wireless network</description>       
-     </event>
-     
-    <event>
-     <id>5633</id>      
-      <description>A request was made to authenticate to a wired network</description>       
-     </event>
-     
-    <event>
-     <id>5712</id>      
-      <description>A Remote Procedure Call (RPC) was attempted</description>       
-     </event>
-     
-    <event>
-     <id>5888</id>      
-      <description>An object in the COM+ Catalog was modified</description>       
-     </event>
-     
-    <event>
-     <id>5889</id>      
-      <description>An object was deleted from the COM+ Catalog</description>       
-     </event>
-     
-    <event>
-     <id>5890</id>      
-      <description>An object was added to the COM+ Catalog</description>       
-     </event>
-     
-    <event>
-     <id>6144</id>      
-      <description>Security policy in the group policy objects has been applied successfully</description>       
-     </event>
-     
-    <event>
-     <id>6145</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>One or more errors occured while processing security policy in the group policy objects</description>       
-     </event>
-     
-    <event>
-     <id>6272</id>      
-      <description>Network Policy Server granted access to a user</description>       
-     </event>
-     
-    <event>
-     <id>6273</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Network Policy Server denied access to a user</description>       
-     </event>
-     
-    <event>
-     <id>6274</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Network Policy Server discarded the request for a user</description>       
-     </event>
-     
-    <event>
-     <id>6275</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Network Policy Server discarded the accounting request for a user</description>       
-     </event>
-     
-    <event>
-     <id>6276</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Network Policy Server quarantined a user</description>       
-     </event>
-     
-    <event>
-     <id>6277</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Network Policy Server granted access to a user but put it on probation because the host did not meet the defined health policy</description>       
-     </event>
-     
-    <event>
-     <id>6278</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Network Policy Server granted full access to a user because the host met the defined health policy</description>       
-     </event>
-     
-    <event>
-     <id>6279</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Network Policy Server locked the user account due to repeated failed authentication attempts</description>       
-     </event>
-     
-    <event>
-     <id>6280</id>      
-     <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>
-      <description>Network Policy Server unlocked the user account</description>       
      </event>
      
     <event>
@@ -5154,4 +3234,4 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      <id>N/A</id>      
       <description>IPsec policy agent encountered a potential serious failure.</description>
      </event>
-<eventIdListings>
+</eventIdListings>
