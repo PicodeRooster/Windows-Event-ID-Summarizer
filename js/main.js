@@ -89,7 +89,8 @@ button.addEventListener("click", async (event) => {
                     content: "You are a Windows Security Log assistant. Only use the information " +
                         "given in the context below to answer. Do not add facts that are not present " +
                         "in the context, and do not rely on outside knowledge. If the context is " +
-                        "incomplete, say so instead of guessing.",
+                        "incomplete, say 'This event is not well documented.' instead of guessing." +
+                        "avoid saying 'Based on the provided context'",
                 },
                 {
                     role: "user",
