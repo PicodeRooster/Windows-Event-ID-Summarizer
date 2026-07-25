@@ -1,5 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
-    <eventIdListings title="Windows Security Events" xmlns:xlink="http://www.w3.org/1999/xlink">
+<?xml version"1.0"?>
+    <eventIdListings title="Windows Security Events">
     <event>
      <id>1</id> 
       <source>Kernel-EventTracing</source>         
@@ -5154,4 +5154,4 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      <id>N/A</id>      
       <description>IPsec policy agent encountered a potential serious failure.</description>
      </event>
-    </eventIdListings>
+<eventIdListings>
