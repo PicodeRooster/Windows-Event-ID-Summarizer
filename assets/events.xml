@@ -180,6 +180,56 @@
      </event>
 
     <event>
+     <id>4610</id>      
+      <knowledge>
+      Event 4610 is logged once at startup for each authentication package on the system.
+
+      An authentication package is a DLL that encapsulates a given form of authentication, such as NTLM or Kerberos. The Local Security Authority calls into the appropriate authentication package during the logon process to find out if the user is authentic.
+
+      Although a third party can develop an authentication package, few do so, except for smart card and token manufacturers. The only authentication package logged by Windows Server 2008 is C:\Windows\system32\msv1_0.dll : MICROSOFT_AUTHENTICATION_PACKAGE_V1_0 which is just one of the authentication options supported by Windows (See 514 for a list of standard authentication packages on Windows Server 2003). The other authentication options supported by Windows Server 2008 appear to now be part of a larger package called a security package. See 4622.  From MSDN: "A security package that functions as an authentication package and implements the functionality required by SSPI is called a security support provider/authentication package (SSP/AP)."
+
+      The security implication of event 4610, realistically, is low. Although a rogue package could cause great harm by stealing credentials at the time of logon, the effort required in developing and installing a rogue authentication package is significant.
+      </knowledge>
+       <description>An authentication package has been loaded by the Local Security Authority.</description>       
+     </event>
+     
+    <event>
+     <id>4611</id>  
+      <knowledge>
+      An occurrence of event 4611 is logged at startup and occasionally afterwards for each logon process on the system.
+
+      A logon process is a trusted part of the operating system and handles the overall logon function for different logon methods including incoming RAS connections, RunAs, interactive logons initiated by CtrlAltDel, and network logons (as in drive mappings).
+
+      Because logon processes are such trusted functions, a rogue logon process would be a devastating security breach--but an improbable one, given the effort and skill required.
+
+      Standard logon processes for Windows Server 2008:
+      
+      <ul>
+       <li>Winlogon</li>
+       <li>Schannell</li>
+       <li>KSecDD</li>
+       <li>Secondary Logon Service (runas)</li>
+       <li>IKE</li>
+       <li>HTTP.SYS</li>
+       <li>SspTest</li>
+       <li>dsRole</li>
+       <li>DS Replication CredProvConsent (user account control)</li>
+      </ul>
+    </knowledge>    
+        <description>A trusted logon process has been registered with the Local Security Authority.</description>       
+     </event>
+     
+    <event>
+     <id>4612</id> 
+      <knowledge>
+      This event has not been observed but would indicate that an extremely high period of activity prevented Windows from logging a number of security events. I haven't been able to produce this event. Have you? If so, please start a discussion (see above) and post a sample along with any comments you may have! Don't forget to sanitize any private information.
+
+      Microsoft reports they have tested logging to over 10,000 events per second. However a bottleneck in disk I/O or other resources could also cause a problem.  If you see this event it probably means you are auditing too much.
+      </knowledge>     
+       <description>Internal resources allocated for the queuing of audit messages have been exhausted, leading to the loss of some audits.</description>       
+     </event> 
+
+    <event>
      <id>4618</id>
      <knowledge>
      Potentially high criticality — investigate on first occurrence. Important note: Windows does not log Event ID 4618 by default. This event is only generated when a specific audit policy has been configured in advance to monitor for a defined pattern of security events (set via "Audit: Generate monitored security log events" or an equivalent SACL/monitoring rule in Group Policy). Because most systems leave the relevant GPOs set to Not Configured, 4618 will typically be absent from logs even on systems with otherwise healthy auditing — its absence does not indicate that no matching activity occurred, only that monitoring for it wasn't explicitly enabled. If 4618 does appear, treat it as high-signal: it means a predefined suspicious pattern was deliberately configured and then triggered.
@@ -205,193 +255,12 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>4675</id> 
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>     
-       <description>SIDs were filtered.</description>       
-     </event>
-     
-    <event>
-     <id>4692</id>
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
-
-     Microsoft documentation indicates this is a routine event that can be filtered out of events to review.  At this time I classify this as a "noise" event.</knowledge>      
-       <description>Backup of data protection master key was attempted.</description>       
-     </event>
-     
-    <event>
      <id>4693</id>
       <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>     
        <description>Recovery of data protection master key was attempted.</description>       
      </event>
      
-    <event>
-     <id>4706</id>      
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
-
-     This event is logged for all new trust relationships connecting to this domain.  While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information:
-
-      <b>Subject:</b>
-
-      The ID and logon session of the user that excercised created the trust. 
-
-        <ul>
-          <li>Security ID:  The SID of the account.</li>
-          <li>Account Name: The account logon name.</li>
-          <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
-          <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
-        </ul></knowledge>
-       <description>A new trust was created to a domain.</description>       
-     </event>
-     
-    <event>
-     <id>4713</id>
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
-
-     Windows logs 4713 when it detects a change to the the domain's Kerberos policy. Kerberos policy is defined in GPOs linked to the root of the domain under Computer Configuration\Windows Settings\Security Settings\Account Policy\Kerberos Policy.
-
-     Unfortunately the Subject fields don't identify who actually changed the policy because Kerberos policy isn't directly configured by administrators. Instead it is edited in a group policy object which then gets applied to the computer. Therefore this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs. 
-
-     <b>Subject:</b>
-     
-     The ID and logon session of the user that changed the policy - always the local system - see note above.
-
-    <ul>
-      <li>Security ID: The SID of the account.</li>
-      <li>Account Name: The account logon name.</li>
-      <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
-      <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
-    </ul></knowledge>      
-       <description>Kerberos policy was changed.</description>       
-     </event>
-     
-    <event>
-     <id>4714</id>   
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
-
-     This computer's Security Settings\Public Key Policies\Encrypting File System data recovery agent policy was modified - either via Local Security Policy or Group Policy in Active Directory.
-
-     Unfortunately the Subject fields don't identify who actually changed the policy because this policy isn't directly configured by administrators. Instead it is edited in a group policy object which then gets applied to the computer. Therefore this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs. Subject:
-
-     The ID and logon session of the user that changed the policy - always the local system - see note above.
-
-     <ul>
-      <li>Security ID: The SID of the account.</li>
-      <li>Account Name: The account logon name.</li>
-      <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
-      <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
-        </ul></knowledge>   
-       <description>Encrypted data recovery policy was changed.</description>       
-     </event>
-     
-    <event>
-     <id>4715</id>
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
-
-     The description is poorly worded but this event is logged whenever you set the security descriptor used to delegate access to the audit policy. You can delegate authority to the system's audit policy using "auditpol /sd:".
-
-     According to Microsoft, this event is always logged when an audit policy is disabled, regardless of the "Audit Policy Change" sub-category setting. This and several other events can help identify when someone attempts to disable auditing to cover their tracks.</knowledge>      
-       <description>The audit policy (SACL) on an object was changed.</description>       
-     </event>
-     
-    <event>
-     <id>4716</id>  
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
-
-     This event is logged for modifications to trust relationships connecting to this domain. While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information.
-
-     <h3>Subject</h3>
-<p>The ID and logon session of the user that exercised modified the trust.</p>
-<ul>
-  <li>Security ID: The SID of the account.</li>
-  <li>Account Name: The account logon name.</li>
-  <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
-  <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
-</ul>
-
-<h3>Trusted Domain</h3>
-<p>The other domain in this trust relationship which despite the word "Trusted" may be a trusting or trusted domain or both. See Trust Information.</p>
-<ul>
-  <li>Domain Name: the DNS name of the domain</li>
-  <li>Domain ID: the pre-Win2k (NetBIOS) name of the domain</li>
-</ul>
-
-<h3>New Trust Information</h3>
-<p>All the information that defines the type of trust after this change, whether it is one way or mutual, transitivity, etc.</p>
-
-<h4>Trust Type</h4>
-<table border="1" cellpadding="4" cellspacing="0">
-  <thead>
-    <tr>
-      <th>Value</th>
-      <th>Name</th>
-      <th>Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>1</td>
-      <td>TRUST_TYPE_DOWNLEVEL</td>
-      <td>The other domain is pre-Win2k (NTLM only supported)</td>
-    </tr>
-    <tr>
-      <td>2</td>
-      <td>TRUST_TYPE_UPLEVEL</td>
-      <td>The other domain is Win2k or later (Windows Kerberos supported)</td>
-    </tr>
-    <tr>
-      <td>3</td>
-      <td>TRUST_TYPE_MIT</td>
-      <td>Other domain is actually an MIT Kerberos Realm (probably UNIX)</td>
-    </tr>
-    <tr>
-      <td>4</td>
-      <td>TRUST_TYPE_DCE</td>
-      <td>The trusted domain is a DCE realm</td>
-    </tr>
-  </tbody>
-</table>
-
-<h4>Trust Direction</h4>
-<table border="1" cellpadding="4" cellspacing="0">
-  <thead>
-    <tr>
-      <th>Direction</th>
-      <th>Value</th>
-    </tr>
-  </thead>
-  <tbody>
-    <tr>
-      <td>Disabled</td>
-      <td>0x0</td>
-    </tr>
-    <tr>
-      <td>Inbound</td>
-      <td>0x1</td>
-    </tr>
-    <tr>
-      <td>Outbound</td>
-      <td>0x2</td>
-    </tr>
-    <tr>
-      <td>Bidirectional</td>
-      <td>0x3</td>
-    </tr>
-  </tbody>
-</table>
-
-<h4>Trust Attributes</h4>
-<p>A bitwise value comprised of any of the following:</p>
-<ul>
-  <li>TRUST_ATTRIBUTE_NON_TRANSITIVE: 1</li>
-  <li>TRUST_ATTRIBUTE_UPLEVEL_ONLY: 2</li>
-  <li>TRUST_ATTRIBUTE_FILTER_SIDS: 4</li>
-  <li>TRUST_ATTRIBUTE_FOREST_TRANSITIVE: 8</li>
-</ul>
-
-<h4>SID Filtering</h4>
-<p>Enabled (always enabled for domains within the same forest). See <a href="http://technet2.microsoft.com/windowsserver/en/library/01e5cf71-b317-4967-82a2-75b7b632b7461033.mspx?mfr=true">Microsoft TechNet</a> for more information.</p></knowledge>    
-       <description>Trusted domain information was modified.</description>       
-     </event>
+    
           
     <event>
      <id>4719</id> 
@@ -999,55 +868,6 @@ For comprehensive logging, including relevant Event IDs, administrators should c
       <description>Windows is shutting down.</description>       
      </event>
      
-    <event>
-     <id>4610</id>      
-      <knowledge>
-      Event 4610 is logged once at startup for each authentication package on the system.
-
-      An authentication package is a DLL that encapsulates a given form of authentication, such as NTLM or Kerberos. The Local Security Authority calls into the appropriate authentication package during the logon process to find out if the user is authentic.
-
-      Although a third party can develop an authentication package, few do so, except for smart card and token manufacturers. The only authentication package logged by Windows Server 2008 is C:\Windows\system32\msv1_0.dll : MICROSOFT_AUTHENTICATION_PACKAGE_V1_0 which is just one of the authentication options supported by Windows (See 514 for a list of standard authentication packages on Windows Server 2003). The other authentication options supported by Windows Server 2008 appear to now be part of a larger package called a security package. See 4622.  From MSDN: "A security package that functions as an authentication package and implements the functionality required by SSPI is called a security support provider/authentication package (SSP/AP)."
-
-      The security implication of event 4610, realistically, is low. Although a rogue package could cause great harm by stealing credentials at the time of logon, the effort required in developing and installing a rogue authentication package is significant.
-      </knowledge>
-       <description>An authentication package has been loaded by the Local Security Authority.</description>       
-     </event>
-     
-    <event>
-     <id>4611</id>  
-      <knowledge>
-      An occurrence of event 4611 is logged at startup and occasionally afterwards for each logon process on the system.
-
-      A logon process is a trusted part of the operating system and handles the overall logon function for different logon methods including incoming RAS connections, RunAs, interactive logons initiated by CtrlAltDel, and network logons (as in drive mappings).
-
-      Because logon processes are such trusted functions, a rogue logon process would be a devastating security breach--but an improbable one, given the effort and skill required.
-
-      Standard logon processes for Windows Server 2008:
-      
-      <ul>
-       <li>Winlogon</li>
-       <li>Schannell</li>
-       <li>KSecDD</li>
-       <li>Secondary Logon Service (runas)</li>
-       <li>IKE</li>
-       <li>HTTP.SYS</li>
-       <li>SspTest</li>
-       <li>dsRole</li>
-       <li>DS Replication CredProvConsent (user account control)</li>
-      </ul>
-    </knowledge>    
-        <description>A trusted logon process has been registered with the Local Security Authority.</description>       
-     </event>
-     
-    <event>
-     <id>4612</id> 
-      <knowledge>
-      This event has not been observed but would indicate that an extremely high period of activity prevented Windows from logging a number of security events. I haven't been able to produce this event. Have you? If so, please start a discussion (see above) and post a sample along with any comments you may have! Don't forget to sanitize any private information.
-
-      Microsoft reports they have tested logging to over 10,000 events per second. However a bottleneck in disk I/O or other resources could also cause a problem.  If you see this event it probably means you are auditing too much.
-      </knowledge>     
-       <description>Internal resources allocated for the queuing of audit messages have been exhausted, leading to the loss of some audits.</description>       
-     </event>
      
     <event>
      <id>4614</id>
@@ -1112,6 +932,11 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      <id>4625</id>
       <knowledge>This is a useful event because it documents each and every failed attempt to logon to the local computer regardless of logon type, location of the user or type of account.</knowledge>
        <description>An account failed to log on.</description>       
+     </event>
+
+        <event>
+     <id>4627</id>      
+      <description>Group membership information.</description>       
      </event>
      
     <event>
@@ -1368,6 +1193,12 @@ For comprehensive logging, including relevant Event IDs, administrators should c
   </knowledge>    
       <description>An operation was attempted on a privileged object.</description>       
      </event>
+
+    <event>
+     <id>4675</id> 
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>     
+       <description>SIDs were filtered.</description>       
+     </event>
      
     <event>
      <id>4688</id>  
@@ -1408,6 +1239,14 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </knowledge>
       <description>Indirect access to an object was requested.</description>       
      </event>
+
+    <event>
+     <id>4692</id>
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     Microsoft documentation indicates this is a routine event that can be filtered out of events to review.  At this time I classify this as a "noise" event.</knowledge>      
+       <description>Backup of data protection master key was attempted.</description>       
+     </event> 
      
     <event>
      <id>4694</id>      
@@ -1498,7 +1337,12 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      This is an important change control event.  See related events for changes to Scheduled Tasks: 4698, 4699, 4700 and 4701.</knowledge>
       <description>A scheduled task was updated.</description>       
      </event>
-     
+
+    <event>
+     <id>4703</id>  
+       <description>A token right was adjusted</description>       
+     </event>
+
     <event>
      <id>4704</id>      
       <knowledge>This event documents a change to user right assignments on this computer including the right and user or group that received the new right.
@@ -1515,7 +1359,7 @@ For comprehensive logging, including relevant Event IDs, administrators should c
       <description>A user right was assigned.</description>       
      </event>
      
-    <event>
+     <event>
      <id>4705</id>      
       <knowledge>This event documents a change to user right assignments on this computer including the right and user or group that lost the right.
 
@@ -1538,7 +1382,26 @@ For comprehensive logging, including relevant Event IDs, administrators should c
       </ul></knowledge>
       <description>A user right was removed.</description>       
      </event>
-     
+
+    <event>
+     <id>4706</id>      
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     This event is logged for all new trust relationships connecting to this domain.  While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information:
+
+      <b>Subject:</b>
+
+      The ID and logon session of the user that excercised created the trust. 
+
+        <ul>
+          <li>Security ID:  The SID of the account.</li>
+          <li>Account Name: The account logon name.</li>
+          <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+          <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
+        </ul></knowledge>
+       <description>A new trust was created to a domain.</description>       
+     </event>
+
     <event>
      <id>4707</id>      
       <knowledge>This event is logged for all deleted trust relationships that connected to this domain.  While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information:
@@ -1554,8 +1417,8 @@ For comprehensive logging, including relevant Event IDs, administrators should c
           <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
         </ul></knowledge>
       <description>A trust to a domain was removed.</description>       
-     </event>
-     
+     </event> 
+
     <event>
      <id>4709</id>      
       <knowledge>This event is not produced in the default configuration (using Windows Firewall) however event 5478 is produced..
@@ -1563,7 +1426,7 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      Microsoft comments: "This service provides compatibility with Internet Protocol security (IPsec) policies used in earlier versions of Windows...This is a normal condition. No further action is required."</knowledge>
       <description>IPsec Services was started.</description>       
      </event>
-     
+
     <event>
      <id>4710</id>      
       <knowledge>In the default configuration this event is not produced when the IPsec Policy agent service is disabled or fails to start.
@@ -1571,7 +1434,7 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      According to Microsoft, "This service provides compatibility with Internet Protocol security (IPsec) policies used in earlier versions of Windows. New deployments of Windows Vista and Windows Server 2008 should not use the policies supported by the IPsec Policy Agent service"</knowledge>
       <description>IPsec Services was disabled.</description>       
      </event>
-     
+
     <event>
      <id>4711</id>      
       <knowledge>May contain any one of the following: PAStore Engine applied locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine applied Active Directory storage IPsec policy on the computer. PAStore Engine applied local registry storage IPsec policy on the computer. PAStore Engine failed to apply locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply local registry storage IPsec policy on the computer. PAStore Engine failed to apply some rules of the active IPsec policy on the computer. PAStore Engine failed to load directory storage IPsec policy on the computer. PAStore Engine loaded directory storage IPsec policy on the computer. PAStore Engine failed to load local storage IPsec policy on the computer. PAStore Engine loaded local storage IPsec policy on the computer.PAStore Engine polled for changes to the active IPsec policy and detected no changes.
@@ -1591,8 +1454,8 @@ For comprehensive logging, including relevant Event IDs, administrators should c
         <li>PAStore Engine polled for changes to the active IPsec policy and detected no changes.</li>
 </ul></knowledge>
       <description>May contain any one of the following: PAStore Engine applied locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine applied Active Directory storage IPsec policy on the computer. PAStore Engine applied local registry storage IPsec policy on the computer. PAStore Engine failed to apply locally cached copy of Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply Active Directory storage IPsec policy on the computer. PAStore Engine failed to apply local registry storage IPsec policy on the computer. PAStore Engine failed to apply some rules of the active IPsec policy on the computer. PAStore Engine failed to load directory storage IPsec policy on the computer. PAStore Engine loaded directory storage IPsec policy on the computer. PAStore Engine failed to load local storage IPsec policy on the computer. PAStore Engine loaded local storage IPsec policy on the computer.PAStore Engine polled for changes to the active IPsec policy and detected no changes. PAStore Engine (1%)</description>       
-     </event>
-     
+     </event>     
+
     <event>
      <id>4712</id>      
       <knowledge>IPsec Services encountered a potentially serious failure.
@@ -1602,7 +1465,157 @@ For comprehensive logging, including relevant Event IDs, administrators should c
       Microsoft suggests restarting the computer to resolve this problem.</knowledge>
       <description>IPsec Services encountered a potentially serious failure.</description>       
      </event>
+
+    <event>
+     <id>4713</id>
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     Windows logs 4713 when it detects a change to the the domain's Kerberos policy. Kerberos policy is defined in GPOs linked to the root of the domain under Computer Configuration\Windows Settings\Security Settings\Account Policy\Kerberos Policy.
+
+     Unfortunately the Subject fields don't identify who actually changed the policy because Kerberos policy isn't directly configured by administrators. Instead it is edited in a group policy object which then gets applied to the computer. Therefore this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs. 
+
+     <b>Subject:</b>
      
+     The ID and logon session of the user that changed the policy - always the local system - see note above.
+
+    <ul>
+      <li>Security ID: The SID of the account.</li>
+      <li>Account Name: The account logon name.</li>
+      <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+      <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
+    </ul></knowledge>      
+       <description>Kerberos policy was changed.</description>       
+     </event>
+
+    <event>
+     <id>4714</id>   
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     This computer's Security Settings\Public Key Policies\Encrypting File System data recovery agent policy was modified - either via Local Security Policy or Group Policy in Active Directory.
+
+     Unfortunately the Subject fields don't identify who actually changed the policy because this policy isn't directly configured by administrators. Instead it is edited in a group policy object which then gets applied to the computer. Therefore this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs. Subject:
+
+     The ID and logon session of the user that changed the policy - always the local system - see note above.
+
+     <ul>
+      <li>Security ID: The SID of the account.</li>
+      <li>Account Name: The account logon name.</li>
+      <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+      <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
+        </ul></knowledge>   
+       <description>Encrypted data recovery policy was changed.</description>       
+     </event>
+
+    <event>
+     <id>4715</id>
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     The description is poorly worded but this event is logged whenever you set the security descriptor used to delegate access to the audit policy. You can delegate authority to the system's audit policy using "auditpol /sd:".
+
+     According to Microsoft, this event is always logged when an audit policy is disabled, regardless of the "Audit Policy Change" sub-category setting. This and several other events can help identify when someone attempts to disable auditing to cover their tracks.</knowledge>      
+       <description>The audit policy (SACL) on an object was changed.</description>       
+     </event>
+
+    <event>
+     <id>4716</id>  
+      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+     This event is logged for modifications to trust relationships connecting to this domain. While the description says "Trusted" this event applies to both trusted and trusting relationships as documented by Trust Information.
+
+     <h3>Subject</h3>
+<p>The ID and logon session of the user that exercised modified the trust.</p>
+<ul>
+  <li>Security ID: The SID of the account.</li>
+  <li>Account Name: The account logon name.</li>
+  <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+  <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session. Logon ID allows you to correlate backwards to the logon event (<a href="https://www.ultimatewindowssecurity.com/securitylog/encyclopedia/event.aspx?eventID=4624">4624</a>) as well as with other events logged during the same logon session.</li>
+</ul>
+
+<h3>Trusted Domain</h3>
+<p>The other domain in this trust relationship which despite the word "Trusted" may be a trusting or trusted domain or both. See Trust Information.</p>
+<ul>
+  <li>Domain Name: the DNS name of the domain</li>
+  <li>Domain ID: the pre-Win2k (NetBIOS) name of the domain</li>
+</ul>
+
+<h3>New Trust Information</h3>
+<p>All the information that defines the type of trust after this change, whether it is one way or mutual, transitivity, etc.</p>
+
+<h4>Trust Type</h4>
+<table border="1" cellpadding="4" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Value</th>
+      <th>Name</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>TRUST_TYPE_DOWNLEVEL</td>
+      <td>The other domain is pre-Win2k (NTLM only supported)</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>TRUST_TYPE_UPLEVEL</td>
+      <td>The other domain is Win2k or later (Windows Kerberos supported)</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>TRUST_TYPE_MIT</td>
+      <td>Other domain is actually an MIT Kerberos Realm (probably UNIX)</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>TRUST_TYPE_DCE</td>
+      <td>The trusted domain is a DCE realm</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Trust Direction</h4>
+<table border="1" cellpadding="4" cellspacing="0">
+  <thead>
+    <tr>
+      <th>Direction</th>
+      <th>Value</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Disabled</td>
+      <td>0x0</td>
+    </tr>
+    <tr>
+      <td>Inbound</td>
+      <td>0x1</td>
+    </tr>
+    <tr>
+      <td>Outbound</td>
+      <td>0x2</td>
+    </tr>
+    <tr>
+      <td>Bidirectional</td>
+      <td>0x3</td>
+    </tr>
+  </tbody>
+</table>
+
+<h4>Trust Attributes</h4>
+<p>A bitwise value comprised of any of the following:</p>
+<ul>
+  <li>TRUST_ATTRIBUTE_NON_TRANSITIVE: 1</li>
+  <li>TRUST_ATTRIBUTE_UPLEVEL_ONLY: 2</li>
+  <li>TRUST_ATTRIBUTE_FILTER_SIDS: 4</li>
+  <li>TRUST_ATTRIBUTE_FOREST_TRANSITIVE: 8</li>
+</ul>
+
+<h4>SID Filtering</h4>
+<p>Enabled (always enabled for domains within the same forest). See <a href="http://technet2.microsoft.com/windowsserver/en/library/01e5cf71-b317-4967-82a2-75b7b632b7461033.mspx?mfr=true">Microsoft TechNet</a> for more information.</p></knowledge>    
+       <description>Trusted domain information was modified.</description>       
+     </event>     
+
     <event>
      <id>4717</id>      
       <knowledge>This event documents the grant of logon rights such as "Access this computer from the network" or "Logon as a service".
@@ -1627,6 +1640,116 @@ For comprehensive logging, including relevant Event IDs, administrators should c
 
      Note: This event and 4717 log changes to strictly logon rights such as "Access this computer from the network" or "Logon as a service" - not to other rights such as "Change the system time" or "Take ownership of files and other objects". See events 4704 and 4705.</knowledge>
       <description>System security access was removed from an account.</description>       
+     </event>     
+
+    <event>
+     <id>4763</id>      
+      <description>A security-disabled universal group was deleted</description>       
+     </event>
+     
+    <event>
+     <id>4773</id>      
+      <description>A Kerberos service ticket request failed</description>       
+     </event>
+     
+    <event>
+     <id>4791</id>      
+      <description>A basic application group was changed</description>       
+     </event>
+     
+    <event>
+     <id>4792</id>      
+      <description>An LDAP query group was deleted</description>       
+     </event>
+     
+    <event>
+     <id>4797</id>      
+      <description>An attempt was made to query the existence of a blank password for an account</description>       
+     </event>
+     
+    <event>
+     <id>4798</id>      
+      <description>A user's local group membership was enumerated.</description>       
+     </event>
+     
+    <event>
+     <id>4799</id>      
+      <description>A security-enabled local group membership was enumerated</description>       
+     </event>
+     
+    <event>
+     <id>4817</id>      
+      <description>Auditing settings on object were changed.</description>       
+     </event>
+     
+    <event>
+     <id>4818</id>      
+      <description>Proposed Central Access Policy does not grant the same access permissions as the current Central Access Policy</description>       
+     </event>
+     
+    <event>
+     <id>4819</id>      
+      <description>Central Access Policies on the machine have been changed</description>       
+     </event>
+     
+    <event>
+     <id>4820</id>      
+      <description>A Kerberos Ticket-granting-ticket (TGT) was denied because the device does not meet the access control restrictions</description>       
+     </event>
+     
+    <event>
+     <id>4821</id>      
+      <description>A Kerberos service ticket was denied because the user, device, or both does not meet the access control restrictions</description>       
+     </event>
+     
+    <event>
+     <id>4822</id>      
+      <description>NTLM authentication failed because the account was a member of the Protected User group</description>       
+     </event>
+     
+    <event>
+     <id>4823</id>      
+      <description>NTLM authentication failed because access control restrictions are required</description>       
+     </event>
+     
+    <event>
+     <id>4824</id>      
+      <description>Kerberos preauthentication by using DES or RC4 failed because the account was a member of the Protected User group</description>       
+     </event>
+     
+    <event>
+     <id>4825</id>      
+      <description>A user was denied the access to Remote Desktop. By default, users are allowed to connect only if they are members of the Remote Desktop Users group or Administrators group</description>       
+     </event>
+     
+    <event>
+     <id>4826</id>
+      <description>Boot Configuration Data loaded</description>
+     </event>
+     
+    <event>
+     <id>4830</id>      
+      <description>SID History was removed from an account</description>       
+     </event>
+     
+    <event>
+     <id>4899</id>      
+      <description>A Certificate Services template was updated</description>       
+     </event>
+     
+    <event>
+     <id>4900</id>      
+      <description>Certificate Services template security was updated</description>       
+     </event>
+     
+    <event>
+     <id>4911</id>      
+      <description>Resource attributes of the object were changed</description>       
+     </event>
+     
+    <event>
+     <id>4913</id>      
+      <description>Central Access Policy on the object was changed</description>       
      </event>
      
     <event>
@@ -2780,25 +2903,6 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      </event>
      
     <event>
-     <id>6008</id>      
-      <description>The previous system shutdown was unexpected.</description>       
-     </event>
-     
-    <event>
-     <id>6144</id>      
-      <description>Security policy in the Group Policy objects has been applied successfully.</description>       
-     </event>
-     
-    <event>
-     <id>6272</id>      
-      <description>Network Policy Server granted access to a user.</description>       
-     </event>
-     
-    
-     
-
-     
-    <event>
      <id>5049</id>      
       <description>An IPsec Security Association was deleted.</description>       
      </event>
@@ -2806,134 +2910,14 @@ For comprehensive logging, including relevant Event IDs, administrators should c
     <event>
      <id>5478</id>      
       <description>IPsec Services has started successfully.</description>       
-     </event>
-     
+     </event>   
      
     <event>
      <id>4626</id>      
       <description>User/Device claims information</description>       
      </event>
      
-    <event>
-     <id>4627</id>      
-      <description>Group membership information.</description>       
-     </event>
-     
-    <event>
-     <id>4703</id>  
-       <description>A token right was adjusted</description>       
-     </event>
-     
-    <event>
-     <id>4763</id>      
-      <description>A security-disabled universal group was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4773</id>      
-      <description>A Kerberos service ticket request failed</description>       
-     </event>
-     
-    <event>
-     <id>4791</id>      
-      <description>A basic application group was changed</description>       
-     </event>
-     
-    <event>
-     <id>4792</id>      
-      <description>An LDAP query group was deleted</description>       
-     </event>
-     
-    <event>
-     <id>4797</id>      
-      <description>An attempt was made to query the existence of a blank password for an account</description>       
-     </event>
-     
-    <event>
-     <id>4798</id>      
-      <description>A user's local group membership was enumerated.</description>       
-     </event>
-     
-    <event>
-     <id>4799</id>      
-      <description>A security-enabled local group membership was enumerated</description>       
-     </event>
-     
-    <event>
-     <id>4817</id>      
-      <description>Auditing settings on object were changed.</description>       
-     </event>
-     
-    <event>
-     <id>4818</id>      
-      <description>Proposed Central Access Policy does not grant the same access permissions as the current Central Access Policy</description>       
-     </event>
-     
-    <event>
-     <id>4819</id>      
-      <description>Central Access Policies on the machine have been changed</description>       
-     </event>
-     
-    <event>
-     <id>4820</id>      
-      <description>A Kerberos Ticket-granting-ticket (TGT) was denied because the device does not meet the access control restrictions</description>       
-     </event>
-     
-    <event>
-     <id>4821</id>      
-      <description>A Kerberos service ticket was denied because the user, device, or both does not meet the access control restrictions</description>       
-     </event>
-     
-    <event>
-     <id>4822</id>      
-      <description>NTLM authentication failed because the account was a member of the Protected User group</description>       
-     </event>
-     
-    <event>
-     <id>4823</id>      
-      <description>NTLM authentication failed because access control restrictions are required</description>       
-     </event>
-     
-    <event>
-     <id>4824</id>      
-      <description>Kerberos preauthentication by using DES or RC4 failed because the account was a member of the Protected User group</description>       
-     </event>
-     
-    <event>
-     <id>4825</id>      
-      <description>A user was denied the access to Remote Desktop. By default, users are allowed to connect only if they are members of the Remote Desktop Users group or Administrators group</description>       
-     </event>
-     
-    <event>
-     <id>4826</id>
-      <description>Boot Configuration Data loaded</description>
-     </event>
-     
-    <event>
-     <id>4830</id>      
-      <description>SID History was removed from an account</description>       
-     </event>
-     
-    <event>
-     <id>4899</id>      
-      <description>A Certificate Services template was updated</description>       
-     </event>
-     
-    <event>
-     <id>4900</id>      
-      <description>Certificate Services template security was updated</description>       
-     </event>
-     
-    <event>
-     <id>4911</id>      
-      <description>Resource attributes of the object were changed</description>       
-     </event>
-     
-    <event>
-     <id>4913</id>      
-      <description>Central Access Policy on the object was changed</description>       
-     </event>
-     
+
     <event>
      <id>5071</id>      
       <description>Key access denied by Microsoft key distribution service</description>       
@@ -3022,6 +3006,21 @@ For comprehensive logging, including relevant Event IDs, administrators should c
     <event>
      <id>5382</id>      
       <description>Vault credentials were read</description>       
+     </event>
+
+    <event>
+     <id>6008</id>      
+      <description>The previous system shutdown was unexpected.</description>       
+     </event>
+  
+    <event>
+     <id>6144</id>      
+      <description>Security policy in the Group Policy objects has been applied successfully.</description>       
+     </event>
+
+    <event>
+     <id>6272</id>      
+      <description>Network Policy Server granted access to a user.</description>       
      </event>
      
     <event>
