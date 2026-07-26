@@ -259,24 +259,8 @@ For comprehensive logging, including relevant Event IDs, administrators should c
       <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>     
        <description>Recovery of data protection master key was attempted.</description>       
      </event>
-   
-    <event>
-     <id>4739</id> 
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>     
-       <description>Domain Policy was changed.</description>       
-     </event>
-     
-    <event>
-     <id>4754</id>   
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>   
-       <description>A security-enabled universal group was created.</description>       
-     </event>
-     
-    <event>
-     <id>4755</id>  
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>    
-       <description>A security-enabled universal group was changed.</description>       
-     </event>
+
+
      
     <event>
      <id>4764</id> 
@@ -1612,7 +1596,7 @@ For comprehensive logging, including relevant Event IDs, administrators should c
 
       You will also see event ID 4738 informing you of the same information.</knowledge>
       <description>An attempt was made to change an account's password.</description>       
-     </event>
+    </event>
 
     <event>
      <id>4724</id>  
@@ -1628,7 +1612,7 @@ For comprehensive logging, including relevant Event IDs, administrators should c
 
       You will also see one or more event ID 4738s informing you of the same information.</knowledge>    
         <description>An attempt was made to reset an account's password. An attempt was made to reset an accounts password</description>       
-     </event>
+    </event>
 
     <event>
      <id>4725</id>      
@@ -1636,11 +1620,11 @@ For comprehensive logging, including relevant Event IDs, administrators should c
 
       This event is logged both for local SAM accounts and domain accounts.
 
-      You will also see event ID4738 informing you of the same information.</knowledge>
+      You will also see event ID 4738 informing you of the same information.</knowledge>
       <description>A user account was disabled.</description>       
-     </event>
+    </event>
 
-    <event>
+     <event>
      <id>4726</id>      
       <knowledge>The user identified by Subject: deleted the user identified by Target Account:. 
 
@@ -1807,7 +1791,331 @@ For comprehensive logging, including relevant Event IDs, administrators should c
       This event is only logged on domain controllers.</knowledge>
        <description>A security-enabled global group was changed.</description>       
     </event>
+
+    <event>
+     <id>4738</id>      
+      <knowledge>The user identified by Subject: changed the user identified by Target Account:. 
+
+      Attributes show some of the properties that were set at the time the account was changed. 
+
+      This event is logged both for local SAM accounts and domain accounts.
+
+      Depending on what was changed you may see other User Account Management events specific to certain operations like password resets.</knowledge>
+      <description>A user account was changed.</description>       
+    </event>
+       
+    <event>
+     <id>4739</id> 
+      <knowledge>
+      Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+      This computer's Security Settings\Account Policy or Account Lockout Policy policy was modified - either via Local Security Policy or Group Policy in Active Directory.
+
+      There are few other operations that can generate this event, including:
+
+      <ul>
+        <li>Raising the domain functional level</li>
+        <li>Security option: "Network security: Force logoff when logon hours expire"</li>
+      </ul>
+
+      Unfortunately the Subject fields don't identify who actually changed the policy because this policy isn't directly configured by administrators. Instead it is edited in a group policy object which then gets applied to the computer. Therefore this event always shows the local computer as the one who changed the policy since the computer is the security principal under which gpupdate runs.
+
+      <b>Change Type:</b> usually filled in with a text explanation of the change
+
+      <b>Subject:</b>
+
+      The ID and logon session of the user that changed the policy - always the local system - see note above.
+
+      <ul>
+        <li>Security ID:  The SID of the account.</li>
+        <li>Account Name: The account logon name.</li>
+        <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+        <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
+      </ul>
+      </knowledge>     
+       <description>Domain Policy was changed.</description>       
+    </event>
+
+    <event>
+     <id>4740</id>    
+      <knowledge>
+        The indicated user account was locked out after repeated logon failures due to a bad password. 
+
+        See event ID 4767 for account unlocked.
+
+        This event is logged both for local SAM accounts and domain accounts.
+      </knowledge>  
+      <description>A user account was locked out.</description>       
+     </event>
+
+    <event>
+     <id>4741</id> 
+     <knowledge>
+      The user identified by Subject: created the computer identified by New Computer Account:. 
+
+      Note: computer accounts always end with a $.
+     </knowledge>     
+      <description>A computer account was changed. A computer account was created</description>       
+     </event>  
+
+    <event>
+     <id>4742</id>
+     <knowledge>
+      The user identified by Subject: changed the computer identified by Computer Account That Was Changed:. 
+
+      Note: computer accounts always end with a $
      
+     </knowledge>      
+      <description>A computer account was changed.</description>       
+    </event>
+
+    <event>
+     <id>4743</id>
+     <knowledge>
+      The user identified by Subject: changed the computer identified by Target Computer:. 
+
+      Note: computer accounts always end with a $.
+     </knowledge>      
+      <description>A computer account was deleted.</description>       
+    </event>
+
+    <event>
+     <id>4744</id>      
+     <knowledge>
+      The user in Subject: created a Local Distribution group identified in New Group.
+
+      This event is only logged on domain controllers.
+
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      A domain local group can have members from any trusted domain.
+     </knowledge>
+      <description>A security-disabled local group was created.</description>       
+    </event>
+
+    <event>
+     <id>4745</id>    
+     <knowledge>
+      The user in Subject: changed the Local Distribution group identified in Group:.
+
+      This event is only logged on domain controllers.
+
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      A domain local group can have members from any trusted domain.
+     </knowledge> 
+      <description>A security-disabled local group was changed.</description>       
+    </event>
+
+    <event>
+     <id>4746</id> 
+     <knowledge>
+      The user in Subject: added the user/group/computer in Member: to the Local Distribution group in Group:.
+
+      This event is only logged on domain controllers.
+
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      A domain local group can have members from any trusted domain.
+
+      Server 2016 adds the "Expiration time" field in version 2 of this event.
+     </knowledge>     
+      <description>A member was added to a security-disabled local group.</description>       
+    </event>
+
+    <event>
+     <id>4747</id> 
+     <knowledge>
+      The user in Subject: removed the user/group/computer in Member: to the Local Distribution group in Group:.
+
+      This event is only logged on domain controllers.
+
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      A domain local group can have members from any trusted domain.
+     
+     </knowledge>     
+      <description>A member was removed from a security-disabled local group.</description>       
+    </event>
+
+    <event>
+     <id>4748</id>      
+     <knowledge>
+      The user in Subject: deleted the Local Distribution group identified in Deleted Group.
+
+      This event is only logged on domain controllers.
+
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      A domain local group can have members from any trusted domain.
+     </knowledge>
+      <description>A security-disabled local group was deleted.</description>       
+    </event>
+
+    <event>
+     <id>4749</id>
+     <knowledge>
+      The user in Subject: created a Global Distribution group identified in New Group.
+
+      This event is only logged on domain controllers.
+
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      A global group can only have members from its own domain.
+     </knowledge>      
+      <description>A security-disabled global group was created.</description>       
+    </event>
+
+    <event>
+     <id>4750</id> 
+     <knowledge>
+      The user in Subject: changed the Global Distribution group identified in Group:.
+
+      This event is only logged on domain controllers.
+
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      A global group can only have members from its own domain.
+     </knowledge>     
+      <description>A security-disabled global group was changed.</description>       
+    </event>
+
+    <event>
+     <id>4751</id>  
+     <knowledge>
+      The user in Subject: added the user/group/computer in Member: to the Global Distribution group in Group:.
+
+      This event is only logged on domain controllers.
+ 
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+ 
+      A global group can only have members from its own domain.
+
+      Server 2016 adds the "Expiration time" field in version 2 of this event. 
+     </knowledge>    
+      <description>A member was added to a security-disabled global group.</description>       
+    </event>
+
+    <event>
+     <id>4752</id>    
+     <knowledge>
+      The user in Subject: removed the user/group/computer in Member: from the Global Distribution group in Group:.
+
+      This event is only logged on domain controllers.
+
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      A global group can only have members from its own domain.
+     
+     </knowledge>  
+      <description>A member was removed from a security-disabled global group.</description>       
+    </event>
+
+    <event>
+     <id>4753</id>     
+     <knowledge>
+      The user in Subject: deleted the Global Distribution group identified in Deleted Group.
+
+      This event is only logged on domain controllers.
+ 
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+ 
+      A global group can only have members from its own domain.
+     </knowledge>
+      <description>A security-disabled global group was deleted.</description>       
+    </event>
+
+    <event>
+     <id>4754</id>   
+      <knowledge>
+      Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+      
+      The user in Subject: created a Universal Security group identified in New Group.
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Universal means the group can be granted access in any trusting domain and may have members from any trusted domain.
+
+      This event is only logged on domain controllers.
+      
+      </knowledge>   
+       <description>A security-enabled universal group was created.</description>       
+    </event>
+
+    <event>
+     <id>4755</id>  
+      <knowledge>
+      Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+      
+      The user in Subject: changed the Universal Security group identified in Group:.
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Universal means the group can be granted access in any trusting domain and may have members from any trusted domain.
+
+      This event is only logged on domain controllers.
+
+      </knowledge>    
+       <description>A security-enabled universal group was changed.</description>       
+    </event>
+         
+    <event>
+     <id>4756</id>
+     <knowledge>
+      The user in Subject: added the user/group/computer in Member: to the Universal Security group in Group:.
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Universal means the group can be granted access in any trusting domain and may have members from any trusted domain.
+
+      This event is only logged on domain controllers.
+
+      Server 2016 adds the "Expiration time" field in version 2 of this event. 
+     </knowledge>      
+      <description>A member was added to a security-enabled universal group.</description>       
+     </event>
+
+    <event>
+     <id>4757</id>
+      <knowledge>
+        The user in Subject: removed the user/group/computer in Member: from the Universal Security group in Group:.
+
+        This event is only logged on domain controllers.
+
+        In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+        Universal group may have members from any trusted domain.
+      </knowledge>      
+       <description>A member was removed from a security-enabled universal group.</description>       
+     </event>
+
+    <event>
+     <id>4758</id> 
+     <knowledge>
+      The user in Subject: deleted the Universal Security group identified in Deleted Group.
+
+      In Active Directory Users and Computers "Security Enabled" groups are simply referred to as Security groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Universal means the group can be granted access in any trusting domain and may have members from any trusted domain.
+
+      This event is only logged on domain controllers.
+     </knowledge>     
+      <description>A security-enabled universal group was deleted.</description>       
+    </event> 
+         
+    <event>
+     <id>4759</id> 
+     <knowledge>
+      The user in Subject: created a Universal Distribution group identified in New Group.
+
+      This event is only logged on domain controllers.
+
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Universal group may have members from any trusted domain.
+     </knowledge>     
+      <description>A security-disabled universal group was created.</description>       
+    </event>
+
     <event>
      <id>4763</id>      
       <description>A security-disabled universal group was deleted</description>       
@@ -1916,108 +2224,6 @@ For comprehensive logging, including relevant Event IDs, administrators should c
     <event>
      <id>4913</id>      
       <description>Central Access Policy on the object was changed</description>       
-     </event>
-        
-    <event>
-     <id>4738</id>      
-      <knowledge>The user identified by Subject: changed the user identified by Target Account:. 
-
-      Attributes show some of the properties that were set at the time the account was changed. 
-
-      This event is logged both for local SAM accounts and domain accounts.
-
-      Depending on what was changed you may see other User Account Management events specific to certain operations like password resets.</knowledge>
-      <description>A user account was changed.</description>       
-     </event>
-     
-    <event>
-     <id>4740</id>      
-      <description>A user account was locked out.</description>       
-     </event>
-     
-    <event>
-     <id>4741</id>      
-      <description>A computer account was changed. A computer account was created</description>       
-     </event>
-     
-    <event>
-     <id>4742</id>      
-      <description>A computer account was changed.</description>       
-     </event>
-     
-    <event>
-     <id>4743</id>      
-      <description>A computer account was deleted.</description>       
-     </event>
-     
-    <event>
-     <id>4744</id>      
-      <description>A security-disabled local group was created.</description>       
-     </event>
-     
-    <event>
-     <id>4745</id>      
-      <description>A security-disabled local group was changed.</description>       
-     </event>
-     
-    <event>
-     <id>4746</id>      
-      <description>A member was added to a security-disabled local group.</description>       
-     </event>
-     
-    <event>
-     <id>4747</id>      
-      <description>A member was removed from a security-disabled local group.</description>       
-     </event>
-     
-    <event>
-     <id>4748</id>      
-      <description>A security-disabled local group was deleted.</description>       
-     </event>
-     
-    <event>
-     <id>4749</id>      
-      <description>A security-disabled global group was created.</description>       
-     </event>
-     
-    <event>
-     <id>4750</id>      
-      <description>A security-disabled global group was changed.</description>       
-     </event>
-     
-    <event>
-     <id>4751</id>      
-      <description>A member was added to a security-disabled global group.</description>       
-     </event>
-     
-    <event>
-     <id>4752</id>      
-      <description>A member was removed from a security-disabled global group.</description>       
-     </event>
-     
-    <event>
-     <id>4753</id>      
-      <description>A security-disabled global group was deleted.</description>       
-     </event>
-     
-    <event>
-     <id>4756</id>      
-      <description>A member was added to a security-enabled universal group.</description>       
-     </event>
-     
-    <event>
-     <id>4757</id>      
-      <description>A member was removed from a security-enabled universal group.</description>       
-     </event>
-     
-    <event>
-     <id>4758</id>      
-      <description>A security-enabled universal group was deleted.</description>       
-     </event>
-     
-    <event>
-     <id>4759</id>      
-      <description>A security-disabled universal group was created.</description>       
      </event>
      
     <event>
