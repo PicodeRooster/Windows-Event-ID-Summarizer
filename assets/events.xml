@@ -259,12 +259,34 @@ For comprehensive logging, including relevant Event IDs, administrators should c
       <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>     
        <description>Recovery of data protection master key was attempted.</description>       
      </event>
-
-
-     
+    
     <event>
      <id>4764</id> 
-      <knowledge>Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.</knowledge>     
+      <knowledge>
+        Criticality: Medium — investigate only on unexpected occurrence or significant deviation from baseline volume within a measured period.
+
+        A group's type or scope was changed by Subject:.
+
+        AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+        No matter what type the group was before or after the change this event is always logged as subcategory "Security Group Management".
+
+        Scope:
+        AD has 3 scopes of groups: Local, Global, Universal. See knowledge base article 326265. 
+
+        <b>Subject</b>
+        The ID and logon session of the user that changed the policy - always the local system - see note above.
+
+          <ul>
+            <li>Security ID:  The SID of the account.</li>
+            <li>Account Name: The account logon name.</li>
+            <li>Account Domain: The domain or - in the case of local accounts - computer name.</li>
+            <li>Logon ID is a semi-unique (unique between reboots) number that identifies the logon session.  Logon ID allows you to correlate backwards to the logon event (4624) as well as with other events logged during the same logon session.</li>
+          </ul>
+
+        Change Type: type scope Group Changed to type scope Group.
+      
+      </knowledge>     
        <description>A security-disabled group was deleted. A group's type was changed. A groups type was changed</description>       
      </event>
      
@@ -279,6 +301,18 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      <knowledge>Potentially high criticality — investigate on first occurrence.</knowledge>
       <description>An attempt to add SID History to an account failed.</description>       
      </event>
+
+    <event>
+     <id>4767</id>  
+     <knowledge>
+      The user identified by Subject: unlocked the user identified by Target Account:. 
+
+      Note:  this event is logged whenever you check the Unlock Account check box on the user's account tab - even if the account is not currently locked as a result of failed logon attempts.  See event ID 4740.
+
+      This event is logged both for local SAM accounts and domain accounts.
+     </knowledge>    
+      <description>A user account was unlocked.</description>       
+    </event>
 
     <event>
      <id>4780</id>      
@@ -2117,7 +2151,60 @@ For comprehensive logging, including relevant Event IDs, administrators should c
     </event>
 
     <event>
-     <id>4763</id>      
+     <id>4760</id>  
+     <knowledge>
+      The user in Subject: changed the Universal Distribution group identified in Group:.
+
+      This event is only logged on domain controllers.
+
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Universal group may have members from any trusted domain.
+     </knowledge>    
+      <description>A security-disabled universal group was changed.</description>       
+    </event>
+
+    <event>
+     <id>4761</id> 
+      <knowledge>
+        The user in Subject: added the user/group/computer in Member: to the Universal Distribution group in Group:.
+
+        This event is only logged on domain controllers.
+ 
+        In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists. 
+ 
+        Universal group may have members from any trusted domain.
+
+        Server 2016 adds the "Expiration time" field in version 2 of this event. 
+      </knowledge>   
+      <description>A member was added to a security-disabled universal group.</description>       
+    </event>
+
+    <event>
+     <id>4762</id>  
+     <knowledge>
+      The user in Subject: removed the user/group/computer in Member: from the Universal Distribution group in Group:.
+
+      This event is only logged on domain controllers.
+ 
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists. 
+ 
+      Universal group may have members from any trusted domain.
+     </knowledge>    
+      <description>A member was removed from a security-disabled universal group.</description>       
+     </event>
+
+    <event>
+     <id>4763</id>  
+     <knowledge>
+      The user in Subject: deleted the Universal Distribution group identified in Deleted Group.
+
+      This event is only logged on domain controllers.
+
+      In Active Directory Users and Computers "Security Disabled" groups are referred to as Distribution groups. AD has 2 types of groups: Security and Distribution. Distribution (security disabled) groups are for distribution lists in Exchange and cannot be assigned permissions or rights. Security (security enabled) groups can be used for permissions, rights and as distribution lists.
+
+      Universal groups may have members from any trusted domain.
+     </knowledge>    
       <description>A security-disabled universal group was deleted</description>       
     </event>
      
@@ -2226,28 +2313,274 @@ For comprehensive logging, including relevant Event IDs, administrators should c
       <description>Central Access Policy on the object was changed</description>       
      </event>
      
-    <event>
-     <id>4760</id>      
-      <description>A security-disabled universal group was changed.</description>       
-     </event>
-     
-    <event>
-     <id>4761</id>      
-      <description>A member was added to a security-disabled universal group.</description>       
-     </event>
-     
-    <event>
-     <id>4762</id>      
-      <description>A member was removed from a security-disabled universal group.</description>       
-     </event>
-     
-    <event>
-     <id>4767</id>      
-      <description>A user account was unlocked.</description>       
-     </event>
+
      
     <event>
      <id>4768</id>      
+     <knowledge>
+      This event is logged on domain controllers only and both success and failure instances of this event are logged.
+
+      At the beginning of the day when a user sits down at his or her workstation and enters his domain username and password, the workstation contacts a local DC and requests a TGT. If the username and password are correct and the user account passes status and restriction checks, the DC grants the TGT and logs event ID 4768 (authentication ticket granted).  
+
+      If the ticket request fails Windows will either log this event, 4768 or 4771 with failure as the type.
+
+      The User field for this event (and all other events in the Audit account logon event category) doesn't help you determine who the user was; the field always reads N/A. Rather look at the Account Information: fields, which identify the user who logged on and the user account's DNS suffix. The User ID field provides the SID of the account. 
+
+      Windows logs other instances of event ID 4768 when a computer in the domain needs to authenticate to the DC typically when a workstation boots up or a server restarts. In these instances, you'll find a computer name in the User Name and fields. Computer generated kerberos events are always identifiable by the $ after the computer account's name.
+
+      Microsoft's Comments:
+
+      This event records that a Kerberos TGT was granted, actual access will not occur until a service ticket is granted, which is audited by Event 673. If the PATYPE is PKINIT, the logon was a smart card logon.
+
+      Result codes:
+
+
+	    <tbody>
+		  <tr>
+			  <td style="vertical-align:bottom"><strong>Result code</strong></td>
+			  <td style="vertical-align:bottom"><strong>Kerberos RFC description</strong></td>
+			  <td style="vertical-align:bottom"><strong>Notes on common failure codes</strong></td>
+		  </tr>
+		  <tr>
+			  <td style="vertical-align:bottom">0x1</td>
+			  <td style="vertical-align:bottom">Client's entry in database has expired</td>
+			  <td style="vertical-align:bottom"> </td>
+		  </tr>
+		  <tr>
+			  <td style="vertical-align:bottom">0x2</td>
+				<td style="vertical-align:bottom">Server's entry in database has expired</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x3</td>
+				<td style="vertical-align:bottom">Requested protocol version # not supported</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x4</td>
+				<td style="vertical-align:bottom">Client's key encrypted in old master key</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x5</td>
+				<td style="vertical-align:bottom">Server's key encrypted in old master key</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x6</td>
+				<td style="vertical-align:bottom">Client not found in Kerberos database</td>
+				<td style="vertical-align:bottom">Bad user name, or new computer/user account has not replicated to DC yet</td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x7</td>
+				<td style="vertical-align:bottom">Server not found in Kerberos database</td>
+				<td style="vertical-align:bottom"> New computer account has not replicated yet or computer is pre-w2k</td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x8</td>
+				<td style="vertical-align:bottom">Multiple principal entries in database</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x9</td>
+				<td style="vertical-align:bottom">The client or server has a null key</td>
+				<td style="vertical-align:bottom"> administrator should reset the password on the account</td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0xA</td>
+				<td style="vertical-align:bottom">Ticket not eligible for postdating</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0xB</td>
+				<td style="vertical-align:bottom">Requested start time is later than end time</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0xC</td>
+				<td style="vertical-align:bottom">KDC policy rejects request</td>
+				<td style="vertical-align:bottom">Workstation restriction, or Authentication Policy Silo (look for event ID <a href="event.aspx?eventID=4820">4820</a>)</td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0xD</td>
+				<td style="vertical-align:bottom">KDC cannot accommodate requested option</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0xE</td>
+				<td style="vertical-align:bottom">KDC has no support for encryption type</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td>0xF</td>
+				<td>KDC has no support for checksum type</td>
+				<td> </td>
+			</tr>
+			<tr>
+				<td>0x10</td>
+				<td>KDC has no support for padata type</td>
+				<td> </td>
+			</tr>
+			<tr>
+				<td>0x11</td>
+				<td>KDC has no support for transited type</td>
+				<td> </td>
+			</tr>
+			<tr>
+				<td>0x12</td>
+				<td>Clients credentials have been revoked</td>
+				<td>Account disabled, expired, locked out, logon hours.</td>
+			</tr>
+			<tr>
+				<td>0x13</td>
+				<td>Credentials for server have been revoked</td>
+				<td> </td>
+			</tr>
+			<tr>
+				<td>0x14</td>
+				<td>TGT has been revoked</td>
+				<td> </td>
+			</tr>
+			<tr>
+				<td>0x15</td>
+				<td>Client not yet valid - try again later</td>
+				<td> </td>
+			</tr>
+			<tr>
+				<td>0x16</td>
+				<td>Server not yet valid - try again later</td>
+				<td> </td>
+			</tr>
+			<tr>
+				<td>0x17</td>
+				<td>Password has expired</td>
+				<td>The user’s password has expired.</td>
+			</tr>
+			<tr>
+				<td>0x18</td>
+				<td>Pre-authentication information was invalid</td>
+				<td>Usually means bad password</td>
+			</tr>
+			<tr>
+				<td>0x19</td>
+				<td>Additional pre-authentication required*</td>
+				<td> </td>
+			</tr>
+			<tr>
+				<td>0x1F</td>
+				<td>Integrity check on decrypted field failed</td>
+				<td> </td>
+			</tr>
+			<tr>
+				<td>0x20</td>
+				<td>Ticket expired</td>
+				<td>Frequently logged by computer accounts</td>
+			</tr>
+			<tr>
+				<td>0x21</td>
+				<td>Ticket not yet valid</td>
+				<td> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x21</td>
+				<td style="vertical-align:bottom">Ticket not yet valid</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x22</td>
+				<td style="vertical-align:bottom">Request is a replay</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x23</td>
+				<td style="vertical-align:bottom">The ticket isn't for us</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x24</td>
+				<td style="vertical-align:bottom">Ticket and authenticator don't match</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x25</td>
+				<td style="vertical-align:bottom">Clock skew too great</td>
+				<td style="vertical-align:bottom">Workstation’s clock too far out of sync with the DC’s</td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x26</td>
+				<td style="vertical-align:bottom">Incorrect net address</td>
+				<td style="vertical-align:bottom"> IP address change?</td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x27</td>
+				<td style="vertical-align:bottom">Protocol version mismatch</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x28</td>
+				<td style="vertical-align:bottom">Invalid msg type</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x29</td>
+				<td style="vertical-align:bottom">Message stream modified</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x2A</td>
+				<td style="vertical-align:bottom">Message out of order</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x2C</td>
+				<td style="vertical-align:bottom">Specified version of key is not available</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x2D</td>
+				<td style="vertical-align:bottom">Service key not available</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x2E</td>
+				<td style="vertical-align:bottom">Mutual authentication failed</td>
+				<td style="vertical-align:bottom"> may be a memory allocation failure</td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x2F</td>
+				<td style="vertical-align:bottom">Incorrect message direction</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x30</td>
+				<td style="vertical-align:bottom">Alternative authentication method required*</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x31</td>
+				<td style="vertical-align:bottom">Incorrect sequence number in message</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x32</td>
+				<td style="vertical-align:bottom">Inappropriate type of checksum in message</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x3C</td>
+				<td style="vertical-align:bottom">Generic error (description in e-text)</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+			<tr>
+				<td style="vertical-align:bottom">0x3D</td>
+				<td style="vertical-align:bottom">Field is too long for this implementation</td>
+				<td style="vertical-align:bottom"> </td>
+			</tr>
+		</tbody>
+
+     
+     
+     </knowledge>
       <description>A Kerberos authentication ticket (TGT) was requested.</description>       
      </event>
      
@@ -2263,6 +2596,247 @@ For comprehensive logging, including relevant Event IDs, administrators should c
      
     <event>
      <id>4771</id>      
+     <knowledge>
+      Result codes:
+
+      <tbody>
+        <tr>
+          <td style="vertical-align:bottom"><strong>Result code</strong></td>
+          <td style="vertical-align:bottom"><strong>Kerberos RFC description</strong></td>
+          <td style="vertical-align:bottom"><strong>Notes on common failure codes</strong></td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x1</td>
+          <td style="vertical-align:bottom">Client's entry in database has expired</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x2</td>
+          <td style="vertical-align:bottom">Server's entry in database has expired</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x3</td>
+          <td style="vertical-align:bottom">Requested protocol version # not supported</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x4</td>
+          <td style="vertical-align:bottom">Client's key encrypted in old master key</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x5</td>
+          <td style="vertical-align:bottom">Server's key encrypted in old master key</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x6</td>
+          <td style="vertical-align:bottom">Client not found in Kerberos database</td>
+          <td style="vertical-align:bottom">Bad user name, or new computer/user account has not replicated to DC yet</td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x7</td>
+          <td style="vertical-align:bottom">Server not found in Kerberos database</td>
+          <td style="vertical-align:bottom"> New computer account has not replicated yet or computer is pre-w2k</td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x8</td>
+          <td style="vertical-align:bottom">Multiple principal entries in database</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x9</td>
+          <td style="vertical-align:bottom">The client or server has a null key</td>
+          <td style="vertical-align:bottom"> administrator should reset the password on the account</td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0xA</td>
+          <td style="vertical-align:bottom">Ticket not eligible for postdating</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0xB</td>
+          <td style="vertical-align:bottom">Requested start time is later than end time</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0xC</td>
+          <td style="vertical-align:bottom">KDC policy rejects request</td>
+          <td style="vertical-align:bottom">Workstation restriction</td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0xD</td>
+          <td style="vertical-align:bottom">KDC cannot accommodate requested option</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0xE</td>
+          <td style="vertical-align:bottom">KDC has no support for encryption type</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0xF</td>
+          <td style="vertical-align:bottom">KDC has no support for checksum type</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x10</td>
+          <td style="vertical-align:bottom">KDC has no support for padata type</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x11</td>
+          <td style="vertical-align:bottom">KDC has no support for transited type</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x12</td>
+          <td style="vertical-align:bottom">Clients credentials have been revoked</td>
+          <td style="vertical-align:bottom">Account disabled, expired, locked out, logon hours.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x13</td>
+          <td style="vertical-align:bottom">Credentials for server have been revoked</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x14</td>
+          <td style="vertical-align:bottom">TGT has been revoked</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x15</td>
+          <td style="vertical-align:bottom">Client not yet valid - try again later</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x16</td>
+          <td style="vertical-align:bottom">Server not yet valid - try again later</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x17</td>
+          <td style="vertical-align:bottom">Password has expired</td>
+          <td style="vertical-align:bottom">The user’s password has expired.</td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x18</td>
+          <td style="vertical-align:bottom">Pre-authentication information was invalid</td>
+          <td style="vertical-align:bottom">Usually means bad password</td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x19</td>
+          <td style="vertical-align:bottom">Additional pre-authentication required*</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x1F</td>
+          <td style="vertical-align:bottom">Integrity check on decrypted field failed</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x20</td>
+          <td style="vertical-align:bottom">Ticket expired</td>
+          <td style="vertical-align:bottom">Frequently logged by computer accounts</td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x21</td>
+          <td style="vertical-align:bottom">Ticket not yet valid</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x22</td>
+          <td style="vertical-align:bottom">Request is a replay</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x23</td>
+          <td style="vertical-align:bottom">The ticket isn't for us</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x24</td>
+          <td style="vertical-align:bottom">Ticket and authenticator don't match</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x25</td>
+          <td style="vertical-align:bottom">Clock skew too great</td>
+          <td style="vertical-align:bottom">Workstation’s clock too far out of sync with the DC’s</td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x26</td>
+          <td style="vertical-align:bottom">Incorrect net address</td>
+          <td style="vertical-align:bottom"> IP address change?</td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x27</td>
+          <td style="vertical-align:bottom">Protocol version mismatch</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x28</td>
+          <td style="vertical-align:bottom">Invalid msg type</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x29</td>
+          <td style="vertical-align:bottom">Message stream modified</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x2A</td>
+          <td style="vertical-align:bottom">Message out of order</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x2C</td>
+          <td style="vertical-align:bottom">Specified version of key is not available</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x2D</td>
+          <td style="vertical-align:bottom">Service key not available</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x2E</td>
+          <td style="vertical-align:bottom">Mutual authentication failed</td>
+          <td style="vertical-align:bottom"> may be a memory allocation failure</td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x2F</td>
+          <td style="vertical-align:bottom">Incorrect message direction</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x30</td>
+          <td style="vertical-align:bottom">Alternative authentication method required*</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x31</td>
+          <td style="vertical-align:bottom">Incorrect sequence number in message</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x32</td>
+          <td style="vertical-align:bottom">Inappropriate type of checksum in message</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x3C</td>
+          <td style="vertical-align:bottom">Generic error (description in e-text)</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+        <tr>
+          <td style="vertical-align:bottom">0x3D</td>
+          <td style="vertical-align:bottom">Field is too long for this implementation</td>
+          <td style="vertical-align:bottom"> </td>
+        </tr>
+      </tbody>
+     </knowledge>
       <description>Kerberos pre-authentication failed.</description>       
      </event>
      
